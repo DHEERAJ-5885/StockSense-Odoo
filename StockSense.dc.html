@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -73,7 +73,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
               <span class="tag" style="background:{{ r.tone.bg }};color:{{ r.tone.fg }}">{{ r.label }}</span>
             </button>
           </sc-for>
-          <sc-if value="{{ noSearchResults }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 10px;font-size:13px;color:var(--color-neutral-700)">No product matches â€œ{{ q }}â€.</div></sc-if>
+          <sc-if value="{{ noSearchResults }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 10px;font-size:13px;color:var(--color-neutral-700)">No product matches “{{ q }}�?.</div></sc-if>
         </div>
       </sc-if>
     </div>
@@ -119,12 +119,12 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div class="card" onClick="{{ kpiAll }}" style="cursor:pointer;gap:4px;padding:var(--space-4)" style-hover="border-color:var(--color-accent)">
             <div class="card-kicker" style="color:var(--color-accent-700)">Products in stock</div>
             <div style="font-family:var(--font-heading);font-size:44px;line-height:1;font-variant-numeric:lining-nums tabular-nums">{{ kpi.inStock }}</div>
-            <div style="font-size:12px;color:var(--color-neutral-700)">of {{ kpi.total }} SKUs Â· {{ kpi.units }} units on hand</div>
+            <div style="font-size:12px;color:var(--color-neutral-700)">of {{ kpi.total }} SKUs · {{ kpi.units }} units on hand</div>
           </div>
           <div class="card" onClick="{{ toggleAlerts }}" style="cursor:pointer;gap:4px;padding:var(--space-4)" style-hover="border-color:var(--color-accent)">
             <div class="card-kicker" style="color:var(--color-accent-700)">Low / Out of stock</div>
             <div style="font-family:var(--font-heading);font-size:44px;line-height:1;font-variant-numeric:lining-nums tabular-nums"><span style="color:oklch(0.52 0.11 65)">{{ kpi.low }}</span><span style="color:var(--color-neutral-400)"> / </span><span style="color:oklch(0.5 0.15 27)">{{ kpi.out }}</span></div>
-            <div style="font-size:12px;color:var(--color-neutral-700)">below minimum Â· at zero</div>
+            <div style="font-size:12px;color:var(--color-neutral-700)">below minimum · at zero</div>
           </div>
           <div class="card" onClick="{{ kpiReceipts }}" style="cursor:pointer;gap:4px;padding:var(--space-4)" style-hover="border-color:var(--color-accent)">
             <div class="card-kicker" style="color:var(--color-accent-700)">Pending receipts</div>
@@ -167,7 +167,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             </div>
           </div>
         </div>
-        <div style="font-size:12px;color:var(--color-neutral-700);margin-top:calc(-1 * var(--space-4))">Late: scheduled before today Â· Upcoming: scheduled after today Â· Waiting: short of stock</div>
+        <div style="font-size:12px;color:var(--color-neutral-700);margin-top:calc(-1 * var(--space-4))">Late: scheduled before today · Upcoming: scheduled after today · Waiting: short of stock</div>
 
         <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--space-4);padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
           <div style="display:flex;flex-direction:column;gap:5px">
@@ -231,12 +231,12 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <sc-for list="{{ lowItems }}" as="a" hint-placeholder-count="2">
               <div style="display:flex;flex-direction:column;gap:8px;padding-top:var(--space-3);border-top:1px solid var(--color-divider)">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-                  <div style="line-height:1.3"><div style="font-size:15px">{{ a.name }}</div><div style="font-size:11px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ a.sku }} Â· {{ a.cat }}</div></div>
+                  <div style="line-height:1.3"><div style="font-size:15px">{{ a.name }}</div><div style="font-size:11px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ a.sku }} · {{ a.cat }}</div></div>
                   <span class="tag" style="background:{{ a.tone.bg }};color:{{ a.tone.fg }}">{{ a.label }}</span>
                 </div>
                 <div style="height:4px;border-radius:2px;background:var(--color-neutral-200);overflow:hidden"><div style="height:100%;width:{{ a.pct }};background:{{ a.tone.fg }}"></div></div>
                 <div style="display:flex;justify-content:space-between;font-size:12px;font-variant-numeric:lining-nums tabular-nums"><span>{{ a.onHand }} {{ a.uom }} on hand</span><span style="color:var(--color-neutral-700)">min {{ a.min }}</span></div>
-                <sc-if value="{{ a.hasIncoming }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost" onClick="{{ a.openIncoming }}" style="align-self:flex-start;font-size:13px;padding:4px 6px">Incoming {{ a.incomingText }} â†’</button></sc-if>
+                <sc-if value="{{ a.hasIncoming }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost" onClick="{{ a.openIncoming }}" style="align-self:flex-start;font-size:13px;padding:4px 6px">Incoming {{ a.incomingText }} →</button></sc-if>
                 <sc-if value="{{ a.noIncoming }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:oklch(0.47 0.14 27)">No incoming receipt scheduled</span></sc-if>
               </div>
             </sc-for>
@@ -251,7 +251,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <div style="display:flex;gap:8px;font-size:12px;color:var(--color-neutral-700)"><span>Operations</span><span>/</span><span>Receipts</span><span>/</span><span style="color:var(--color-text)">WH/IN/0009</span></div>
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
           <div style="display:flex;flex-direction:column;gap:8px"><h1 style="margin:0;font-weight:400;font-variant-numeric:lining-nums tabular-nums">WH/IN/0009</h1><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <sc-for list="{{ rcPipe }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">â€º</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
+          <sc-for list="{{ rcPipe }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">›</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
         </div></div>
           
         </div>
@@ -269,7 +269,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <sc-if value="{{ rc.hasError }}" hint-placeholder-val="{{ false }}">
           <div role="alert" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
-            <div style="font-size:14px"><strong style="font-weight:600">Canâ€™t validate yet.</strong> {{ rc.error }}</div>
+            <div style="font-size:14px"><strong style="font-weight:600">Can’t validate yet.</strong> {{ rc.error }}</div>
           </div>
         </sc-if>
 
@@ -278,13 +278,13 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div style="display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4);border:1px solid oklch(0.62 0.09 150);border-radius:var(--radius-md);animation:ssIn .35s ease-out">
             <div style="display:flex;align-items:center;gap:10px">
               <span style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1px solid oklch(0.55 0.09 150);color:oklch(0.42 0.09 150)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-              <div><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Receipt validated â€” stock increased</div><div style="font-size:12px;color:var(--color-neutral-700)">Posted to WH/Main Store at {{ rc.doneAt }} by Priya Nair</div></div>
+              <div><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Receipt validated — stock increased</div><div style="font-size:12px;color:var(--color-neutral-700)">Posted to WH/Main Store at {{ rc.doneAt }} by Priya Nair</div></div>
             </div>
             <div style="display:flex;gap:var(--space-3);flex-wrap:wrap">
               <sc-for list="{{ rc.result }}" as="x" hint-placeholder-count="2">
                 <div style="display:flex;flex-direction:column;gap:2px;padding:10px 14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);min-width:190px">
                   <div style="font-size:14px">{{ x.name }} <span style="color:oklch(0.42 0.1 150);font-variant-numeric:lining-nums tabular-nums">+{{ x.qty }} {{ x.uom }}</span></div>
-                  <div style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">On hand {{ x.before }} â†’ {{ x.after }}</div>
+                  <div style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">On hand {{ x.before }} → {{ x.after }}</div>
                 </div>
               </sc-for>
             </div>
@@ -297,7 +297,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div class="field"><label>Source document</label><input class="input" value="PO/2026/00231" readOnly="{{ true }}" style="min-height:40px;font-variant-numeric:lining-nums tabular-nums"></div>
           <div class="field"><label>Responsible</label><input class="input" value="{{ pf.name }}" readOnly="{{ true }}" style="min-height:40px"></div>
           <div class="field"><label>Scheduled date</label><input class="input" type="date" value="2026-09-27" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Destination location</label><select class="input" style="min-height:40px" disabled="{{ rc.done }}"><option>WH/Main Store â€” Main Warehouse</option><option>WH/Rack A â€” Main Warehouse</option><option>WH2/Stock â€” Warehouse 2</option></select></div>
+          <div class="field"><label>Destination location</label><select class="input" style="min-height:40px" disabled="{{ rc.done }}"><option>WH/Main Store — Main Warehouse</option><option>WH/Rack A — Main Warehouse</option><option>WH2/Stock — Warehouse 2</option></select></div>
         </div>
 
         <section style="display:flex;flex-direction:column;gap:var(--space-2)">
@@ -327,7 +327,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
       <div style="display:flex;flex-direction:column;gap:var(--space-4)">
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
           <div><div style="font-size:12px;color:var(--color-neutral-700)">Stock ledger</div><h1 style="margin:2px 0 0;font-weight:400">Move History</h1></div>
-          <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ ledgerRows.length }} moves Â· <span style="color:oklch(0.42 0.1 150)">{{ ledgerIn }} in</span> Â· <span style="color:oklch(0.47 0.15 27)">{{ ledgerOut }} out</span></div>
+          <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ ledgerRows.length }} moves · <span style="color:oklch(0.42 0.1 150)">{{ ledgerIn }} in</span> · <span style="color:oklch(0.47 0.15 27)">{{ ledgerOut }} out</span></div>
         </div>
         <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--space-3);padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
           <label class="field"><label>From</label><input class="input" type="date" value="{{ lf.from }}" onChange="{{ lfFrom }}" style="width:auto"></label>
@@ -365,7 +365,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <button class="btn btn-secondary" onClick="{{ lfClear }}">Reset filters</button>
           </div>
         </sc-if>
-        <div style="font-size:12px;color:var(--color-neutral-700)">Internal transfers change location only â€” they are shown without a sign because total stock is unchanged.</div>
+        <div style="font-size:12px;color:var(--color-neutral-700)">Internal transfers change location only — they are shown without a sign because total stock is unchanged.</div>
       </div>
     </sc-if>
 
@@ -449,7 +449,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <div style="display:flex;gap:8px;font-size:12px;color:var(--color-neutral-700)"><span>Operations</span><span>/</span><span>Delivery Orders</span><span>/</span><span style="color:var(--color-text)">WH/OUT/0013</span></div>
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
           <div style="display:flex;flex-direction:column;gap:8px"><h1 style="margin:0;font-weight:400;font-variant-numeric:lining-nums tabular-nums">WH/OUT/0013</h1><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <sc-for list="{{ dvPipe }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">â€º</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
+          <sc-for list="{{ dvPipe }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">›</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
         </div></div>
           <div style="display:flex;align-items:center;gap:8px">
             <sc-for list="{{ dvSteps }}" as="s" hint-placeholder-count="3">
@@ -473,7 +473,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <sc-if value="{{ dv.hasError }}" hint-placeholder-val="{{ false }}">
           <div role="alert" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
-            <div style="font-size:14px"><strong style="font-weight:600">Canâ€™t continue.</strong> {{ dv.error }}</div>
+            <div style="font-size:14px"><strong style="font-weight:600">Can’t continue.</strong> {{ dv.error }}</div>
           </div>
         </sc-if>
         <sc-if value="{{ dvCanceled }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);font-size:14px">This delivery was canceled. No stock was changed.</div></sc-if>
@@ -481,13 +481,13 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div style="display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4);border:1px solid oklch(0.62 0.09 150);border-radius:var(--radius-md);animation:ssIn .35s ease-out">
             <div style="display:flex;align-items:center;gap:10px">
               <span style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1px solid oklch(0.55 0.09 150);color:oklch(0.42 0.09 150)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-              <div><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Delivered â€” stock decreased</div><div style="font-size:12px;color:var(--color-neutral-700)">Shipped to Brightdesk Offices at {{ dv.doneAt }} Â· {{ dv.packages }} packages</div></div>
+              <div><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Delivered — stock decreased</div><div style="font-size:12px;color:var(--color-neutral-700)">Shipped to Brightdesk Offices at {{ dv.doneAt }} · {{ dv.packages }} packages</div></div>
             </div>
             <div style="display:flex;gap:var(--space-3);flex-wrap:wrap">
               <sc-for list="{{ dv.result }}" as="x" hint-placeholder-count="2">
                 <div style="display:flex;flex-direction:column;gap:2px;padding:10px 14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);min-width:190px">
-                  <div style="font-size:14px">{{ x.name }} <span style="color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">âˆ’{{ x.qty }} {{ x.uom }}</span></div>
-                  <div style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">On hand {{ x.before }} â†’ {{ x.after }}</div>
+                  <div style="font-size:14px">{{ x.name }} <span style="color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">−{{ x.qty }} {{ x.uom }}</span></div>
+                  <div style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">On hand {{ x.before }} → {{ x.after }}</div>
                 </div>
               </sc-for>
             </div>
@@ -499,7 +499,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div class="field"><label>Delivery address</label><input class="input" value="4th Floor, Baner Road, Pune" readOnly="{{ true }}" style="min-height:40px"></div>
           <div class="field"><label>Scheduled date</label><input class="input" type="date" value="2026-09-27" readOnly="{{ true }}" style="min-height:40px"></div>
           <div class="field"><label>Responsible</label><input class="input" value="{{ pf.name }}" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Operation type</label><select class="input" style="min-height:40px"><option>Delivery â€” Main Warehouse</option><option>Delivery â€” Warehouse 2</option></select></div>
+          <div class="field"><label>Operation type</label><select class="input" style="min-height:40px"><option>Delivery — Main Warehouse</option><option>Delivery — Warehouse 2</option></select></div>
         </div>
         <section style="display:flex;flex-direction:column;gap:var(--space-2)">
           <h3 style="margin:0">Products</h3>
@@ -527,7 +527,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <sc-if value="{{ dv.isValidate }}" hint-placeholder-val="{{ false }}">
               <div class="card" style="flex:1;min-width:260px;padding:var(--space-3) var(--space-4)">
                 <div class="card-kicker" style="color:var(--color-accent-700)">On validation, stock decreases</div>
-                <sc-for list="{{ dvLines }}" as="l" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;font-size:14px;font-variant-numeric:lining-nums tabular-nums"><span>{{ l.name }}</span><span>{{ l.onHand }} â†’ <span style="color:oklch(0.47 0.15 27)">{{ l.after }}</span> {{ l.uom }}</span></div></sc-for>
+                <sc-for list="{{ dvLines }}" as="l" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;font-size:14px;font-variant-numeric:lining-nums tabular-nums"><span>{{ l.name }}</span><span>{{ l.onHand }} → <span style="color:oklch(0.47 0.15 27)">{{ l.after }}</span> {{ l.uom }}</span></div></sc-for>
               </div>
             </sc-if>
           </div>
@@ -539,7 +539,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <div style="display:flex;gap:8px;font-size:12px;color:var(--color-neutral-700)"><span>Operations</span><span>/</span><span>Internal Transfers</span><span>/</span><span style="color:var(--color-text)">WH/INT/0006</span></div>
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
           <div style="display:flex;flex-direction:column;gap:8px"><h1 style="margin:0;font-weight:400;font-variant-numeric:lining-nums tabular-nums">WH/INT/0006</h1><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <sc-for list="{{ trPipe }}" as="p" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">â€º</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
+          <sc-for list="{{ trPipe }}" as="p" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">›</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
         </div></div>
           
         </div>
@@ -554,13 +554,13 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <sc-if value="{{ tr.hasError }}" hint-placeholder-val="{{ false }}">
           <div role="alert" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
-            <div style="font-size:14px"><strong style="font-weight:600">Canâ€™t transfer yet.</strong> {{ tr.error }}</div>
+            <div style="font-size:14px"><strong style="font-weight:600">Can’t transfer yet.</strong> {{ tr.error }}</div>
           </div>
         </sc-if>
         <sc-if value="{{ tr.done }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:10px;padding:var(--space-3) var(--space-4);border:1px solid oklch(0.62 0.09 150);border-radius:var(--radius-md);animation:ssIn .35s ease-out">
             <span style="width:30px;height:30px;flex:none;border-radius:50%;display:grid;place-items:center;border:1px solid oklch(0.55 0.09 150);color:oklch(0.42 0.09 150)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <div style="flex:1"><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Transferred â€” location updated</div><div style="font-size:12px;color:var(--color-neutral-700)">Validated at {{ tr.doneAt }}. Total stock is unchanged.</div></div>
+            <div style="flex:1"><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Transferred — location updated</div><div style="font-size:12px;color:var(--color-neutral-700)">Validated at {{ tr.doneAt }}. Total stock is unchanged.</div></div>
             <button class="btn btn-primary" onClick="{{ goHistory }}" style="min-height:40px">View in Move History</button>
           </div>
         </sc-if>
@@ -570,7 +570,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <div class="card-kicker" style="color:var(--color-accent-700)">From</div>
             <select class="input" value="{{ tr.src }}" onChange="{{ setSrc }}" disabled="{{ tr.done }}" style="min-height:48px;font-size:15px"><sc-for list="{{ locOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select>
             <sc-for list="{{ trLines }}" as="l" hint-placeholder-count="1">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:var(--space-2);border-top:1px solid var(--color-divider)"><span style="font-size:14px">{{ l.name }}</span><span style="font-family:var(--font-heading);font-size:26px;font-variant-numeric:lining-nums tabular-nums">{{ l.srcBefore }} <span style="color:var(--color-neutral-500)">â†’</span> <span style="color:oklch(0.47 0.15 27)">{{ l.srcAfter }}</span></span></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:var(--space-2);border-top:1px solid var(--color-divider)"><span style="font-size:14px">{{ l.name }}</span><span style="font-family:var(--font-heading);font-size:26px;font-variant-numeric:lining-nums tabular-nums">{{ l.srcBefore }} <span style="color:var(--color-neutral-500)">→</span> <span style="color:oklch(0.47 0.15 27)">{{ l.srcAfter }}</span></span></div>
             </sc-for>
           </div>
           <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
@@ -580,13 +580,13 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <div class="card-kicker" style="color:var(--color-accent-700)">To</div>
             <select class="input" value="{{ tr.dst }}" onChange="{{ setDst }}" disabled="{{ tr.done }}" style="min-height:48px;font-size:15px"><sc-for list="{{ locOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select>
             <sc-for list="{{ trLines }}" as="l" hint-placeholder-count="1">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:var(--space-2);border-top:1px solid var(--color-divider)"><span style="font-size:14px">{{ l.name }}</span><span style="font-family:var(--font-heading);font-size:26px;font-variant-numeric:lining-nums tabular-nums">{{ l.dstBefore }} <span style="color:var(--color-neutral-500)">â†’</span> <span style="color:oklch(0.42 0.1 150)">{{ l.dstAfter }}</span></span></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:var(--space-2);border-top:1px solid var(--color-divider)"><span style="font-size:14px">{{ l.name }}</span><span style="font-family:var(--font-heading);font-size:26px;font-variant-numeric:lining-nums tabular-nums">{{ l.dstBefore }} <span style="color:var(--color-neutral-500)">→</span> <span style="color:oklch(0.42 0.1 150)">{{ l.dstAfter }}</span></span></div>
             </sc-for>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:6px;padding:var(--space-3) var(--space-4);border:1px dashed var(--color-divider);border-radius:var(--radius-md)">
           <sc-for list="{{ trLines }}" as="l" hint-placeholder-count="1">
-            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;font-variant-numeric:lining-nums tabular-nums"><span class="tag" style="background:oklch(0.94 0.045 150);color:oklch(0.40 0.09 150)">Total unchanged</span><span>{{ l.name }} on hand across all locations: <strong style="font-weight:600">{{ l.total }} â†’ {{ l.total }} {{ l.uom }}</strong></span><span style="color:var(--color-neutral-700)">Only the location changes.</span></div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;font-variant-numeric:lining-nums tabular-nums"><span class="tag" style="background:oklch(0.94 0.045 150);color:oklch(0.40 0.09 150)">Total unchanged</span><span>{{ l.name }} on hand across all locations: <strong style="font-weight:600">{{ l.total }} → {{ l.total }} {{ l.uom }}</strong></span><span style="color:var(--color-neutral-700)">Only the location changes.</span></div>
           </sc-for>
         </div>
         <div style="overflow-x:auto">
@@ -650,7 +650,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
               <div style="display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:10px 0;border-top:1px solid var(--color-divider);background:{{ m.bg }}">
                 <span style="font-size:14px">{{ m.product }}</span>
                 <span style="text-align:right;font-variant-numeric:lining-nums tabular-nums;color:{{ m.qtyColor }}">{{ m.qty }}</span>
-                <span style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ m.ref }} Â· {{ m.from }} â†’ {{ m.to }}</span>
+                <span style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ m.ref }} · {{ m.from }} → {{ m.to }}</span>
                 <span style="font-size:12px;color:var(--color-neutral-700);text-align:right;font-variant-numeric:lining-nums tabular-nums">{{ m.date }}</span>
               </div>
             </sc-for>
@@ -706,7 +706,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
                         <td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums;font-size:13px">{{ p.costText }}</td>
                         <td style="padding:6px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums">
                           <sc-if value="{{ p.notEditing }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:flex-end;align-items:center;gap:8px"><span>{{ p.onHand }}</span><button class="btn btn-ghost" onClick="{{ p.startUpd }}" style="font-size:12px;padding:4px 6px">Update</button></div></sc-if>
-                          <sc-if value="{{ p.editing }}" hint-placeholder-val="{{ false }}"><div onClick="{{ stop }}" style="display:flex;justify-content:flex-end;align-items:center;gap:4px"><input class="input" inputMode="numeric" value="{{ p.updVal }}" onChange="{{ p.onUpd }}" style="width:80px;min-height:40px;text-align:right;font-variant-numeric:lining-nums tabular-nums"><button class="btn btn-primary" onClick="{{ p.applyUpd }}" style="min-height:40px;padding:0 10px">Save</button><button class="btn btn-ghost btn-icon" onClick="{{ p.cancelUpd }}" aria-label="Cancel" style="width:32px;height:40px;color:var(--color-neutral-700)">âœ•</button></div><sc-if value="{{ p.hasUpdErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:oklch(0.46 0.14 27);margin-top:2px">{{ p.updErr }}</div></sc-if></sc-if>
+                          <sc-if value="{{ p.editing }}" hint-placeholder-val="{{ false }}"><div onClick="{{ stop }}" style="display:flex;justify-content:flex-end;align-items:center;gap:4px"><input class="input" inputMode="numeric" value="{{ p.updVal }}" onChange="{{ p.onUpd }}" style="width:80px;min-height:40px;text-align:right;font-variant-numeric:lining-nums tabular-nums"><button class="btn btn-primary" onClick="{{ p.applyUpd }}" style="min-height:40px;padding:0 10px">Save</button><button class="btn btn-ghost btn-icon" onClick="{{ p.cancelUpd }}" aria-label="Cancel" style="width:32px;height:40px;color:var(--color-neutral-700)">✕</button></div><sc-if value="{{ p.hasUpdErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:oklch(0.46 0.14 27);margin-top:2px">{{ p.updErr }}</div></sc-if></sc-if>
                         </td>
                         <td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums;color:{{ p.freeColor }}">{{ p.free }}</td>
                         <td style="padding:12px var(--space-2);text-align:right"><span class="tag" style="background:{{ p.tone.bg }};color:{{ p.tone.fg }}">{{ p.label }}</span></td>
@@ -765,14 +765,14 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
               <div>
                 <div style="display:flex;align-items:center;gap:12px"><h1 style="margin:0;font-weight:400">{{ pd.name }}</h1><span class="tag" style="background:{{ pd.tone.bg }};color:{{ pd.tone.fg }}">{{ pd.label }}</span></div>
-                <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ pd.sku }} Â· {{ pd.cat }} Â· {{ pd.uom }}</div>
+                <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ pd.sku }} · {{ pd.cat }} · {{ pd.uom }}</div>
               </div>
               <button class="btn btn-secondary" onClick="{{ editProduct }}" style="min-height:42px">Edit product</button>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
               <div style="padding:var(--space-3) 0"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">On hand</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;font-variant-numeric:lining-nums tabular-nums">{{ pd.onHandText }} <span style="font-size:16px;color:var(--color-neutral-700)">{{ pd.uom }}</span></div></div>
               <div style="padding:var(--space-3);border-left:1px solid var(--color-divider)"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Incoming</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;color:oklch(0.42 0.1 150);font-variant-numeric:lining-nums tabular-nums">+{{ pd.incoming }}</div></div>
-              <div style="padding:var(--space-3);border-left:1px solid var(--color-divider)"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Outgoing</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">âˆ’{{ pd.outgoing }}</div></div>
+              <div style="padding:var(--space-3);border-left:1px solid var(--color-divider)"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Outgoing</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">−{{ pd.outgoing }}</div></div>
               <div style="padding:var(--space-3);border-left:1px solid var(--color-divider)"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Reorder below</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;font-variant-numeric:lining-nums tabular-nums">{{ pd.minText }}</div></div>
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:var(--space-6);align-items:flex-start">
@@ -799,7 +799,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
               </section>
             </div>
             <section style="display:flex;flex-direction:column;gap:var(--space-2)">
-              <div style="display:flex;justify-content:space-between;align-items:baseline"><h4 style="margin:0">Recent moves</h4><button class="btn btn-ghost" onClick="{{ goHistory }}" style="font-size:13px">Full history â†’</button></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><h4 style="margin:0">Recent moves</h4><button class="btn btn-ghost" onClick="{{ goHistory }}" style="font-size:13px">Full history →</button></div>
               <div style="overflow-x:auto">
                 <table class="table" style="min-width:680px">
                   <thead><tr><th>Date</th><th>Reference</th><th>From</th><th>To</th><th style="text-align:right">Quantity</th></tr></thead>
@@ -835,10 +835,10 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
               <div style="display:flex;flex-direction:column;gap:4px">
                 <div style="display:flex;align-items:center;gap:10px"><h3 style="margin:0">{{ w.name }}</h3><span class="tag tag-outline" style="font-variant-numeric:lining-nums tabular-nums">{{ w.code }}</span></div>
-                <sc-if value="{{ w.notEditing }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:var(--color-neutral-700)">{{ w.address }} Â· Manager: {{ w.manager }}</div></sc-if>
+                <sc-if value="{{ w.notEditing }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:var(--color-neutral-700)">{{ w.address }} · Manager: {{ w.manager }}</div></sc-if>
               </div>
               <div style="display:flex;align-items:center;gap:var(--space-4)">
-                <div style="text-align:right;font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ w.locCount }} locations Â· {{ w.totalUnits }} units</div>
+                <div style="text-align:right;font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ w.locCount }} locations · {{ w.totalUnits }} units</div>
                 <sc-if value="{{ w.notEditing }}" hint-placeholder-val="{{ true }}"><button class="btn btn-secondary" onClick="{{ w.onEdit }}" style="min-height:40px">Edit</button></sc-if>
               </div>
             </div>
@@ -924,19 +924,19 @@ const P0 = [
 const O0 = [
   { ref: 'WH/IN/0009', type: 'Receipt', partner: 'Northline Metals', items: [['rods', 50], ['bolts', 400]], wh: 'Main Warehouse', date: '27 Sep', status: 'Ready' },
   { ref: 'WH/OUT/0013', type: 'Delivery', partner: 'Brightdesk Offices', items: [['chairs', 10], ['bolts', 100]], wh: 'Main Warehouse', date: '27 Sep', status: 'Ready' },
-  { ref: 'WH/INT/0006', type: 'Internal', partner: 'Rack A â†’ Rack B', items: [['bolts', 60]], wh: 'Main Warehouse', date: '28 Sep', status: 'Ready' },
+  { ref: 'WH/INT/0006', type: 'Internal', partner: 'Rack A → Rack B', items: [['bolts', 60]], wh: 'Main Warehouse', date: '28 Sep', status: 'Ready' },
   { ref: 'WH/OUT/0014', type: 'Delivery', partner: 'Harbor Interiors', items: [['paint', 6]], wh: 'Main Warehouse', date: '25 Sep', status: 'Waiting' },
-  { ref: 'WH/INT/0007', type: 'Internal', partner: 'Warehouse 1 â†’ Warehouse 2', items: [['chairs', 8]], wh: 'Warehouse 2', date: '29 Sep', status: 'Waiting' },
+  { ref: 'WH/INT/0007', type: 'Internal', partner: 'Warehouse 1 → Warehouse 2', items: [['chairs', 8]], wh: 'Warehouse 2', date: '29 Sep', status: 'Waiting' },
   { ref: 'WH/IN/0010', type: 'Receipt', partner: 'Crestwood Timber', items: [['frames', 40]], wh: 'Warehouse 2', date: '24 Sep', status: 'Draft' },
   { ref: 'WH/OUT/0015', type: 'Delivery', partner: 'Brightdesk Offices', items: [['frames', 12]], wh: 'Warehouse 2', date: '1 Oct', status: 'Draft' },
-  { ref: 'WH/ADJ/0004', type: 'Adjustment', partner: 'Damaged â€” Production Rack', items: [['steel', -3]], wh: 'Main Warehouse', date: '26 Sep', status: 'Done' },
+  { ref: 'WH/ADJ/0004', type: 'Adjustment', partner: 'Damaged — Production Rack', items: [['steel', -3]], wh: 'Main Warehouse', date: '26 Sep', status: 'Done' },
   { ref: 'WH/OUT/0012', type: 'Delivery', partner: 'Apex Fabrication', items: [['steel', 20]], wh: 'Main Warehouse', date: '25 Sep', status: 'Done' },
-  { ref: 'WH/INT/0005', type: 'Internal', partner: 'Main Store â†’ Production Rack', items: [['steel', 40]], wh: 'Main Warehouse', date: '25 Sep', status: 'Done' },
+  { ref: 'WH/INT/0005', type: 'Internal', partner: 'Main Store → Production Rack', items: [['steel', 40]], wh: 'Main Warehouse', date: '25 Sep', status: 'Done' },
   { ref: 'WH/IN/0007', type: 'Receipt', partner: 'Northline Metals', items: [['steel', 100]], wh: 'Main Warehouse', date: '24 Sep', status: 'Done' },
   { ref: 'WH/OUT/0011', type: 'Delivery', partner: 'Harbor Interiors', items: [['paint', 4]], wh: 'Main Warehouse', date: '22 Sep', status: 'Canceled' },
 ];
 const L0 = [
-  { ts: '2026-09-26T11:42', ref: 'WH/ADJ/0004', type: 'Adjustment', pid: 'steel', from: 'WH/Production Rack', to: 'Scrap Â· Damaged', qty: 3, kind: 'out', user: 'Ravi Mehta', wh: 'Main Warehouse' },
+  { ts: '2026-09-26T11:42', ref: 'WH/ADJ/0004', type: 'Adjustment', pid: 'steel', from: 'WH/Production Rack', to: 'Scrap · Damaged', qty: 3, kind: 'out', user: 'Ravi Mehta', wh: 'Main Warehouse' },
   { ts: '2026-09-25T16:05', ref: 'WH/OUT/0012', type: 'Delivery', pid: 'steel', from: 'WH/Main Store', to: 'Apex Fabrication', qty: 20, kind: 'out', user: 'Anya Khan', wh: 'Main Warehouse' },
   { ts: '2026-09-25T09:30', ref: 'WH/INT/0005', type: 'Internal', pid: 'steel', from: 'WH/Main Store', to: 'WH/Production Rack', qty: 40, kind: 'move', user: 'Ravi Mehta', wh: 'Main Warehouse' },
   { ts: '2026-09-24T14:18', ref: 'WH/IN/0007', type: 'Receipt', pid: 'steel', from: 'Northline Metals', to: 'WH/Main Store', qty: 100, kind: 'in', user: 'Priya Nair', wh: 'Main Warehouse' },
@@ -967,7 +967,7 @@ const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','
 const OPEN = { 'WH/IN/0009': 'receipt', 'WH/OUT/0013': 'delivery', 'WH/INT/0006': 'transfer' };
 const TODAY = Date.parse('26 Sep 2026');
 const dayOf = d => Date.parse(d + ' 2026');
-const inr = n => 'â‚¹' + Number(n).toLocaleString('en-IN');
+const inr = n => '₹' + Number(n).toLocaleString('en-IN');
 const fmt = n => Number(n).toLocaleString('en-US');
 const hm = () => { const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
 const stockOf = p => p.onHand <= 0 ? { label: 'Out of stock', tone: T.red } : p.onHand < p.min ? { label: 'Low stock', tone: T.amber } : { label: 'In stock', tone: T.green };
@@ -979,8 +979,8 @@ const take = (p, q, pref) => {
   return { ...p, loc, onHand: p.onHand - (q - left) };
 };
 const mapMove = (m, pById) => {
-  const p = pById[m.pid] || { name: 'â€”', uom: '' }; const [y, mo, dd] = m.ts.slice(0, 10).split('-');
-  const sign = m.kind === 'in' ? '+' : m.kind === 'out' ? 'âˆ’' : 'â‡„ ';
+  const p = pById[m.pid] || { name: '—', uom: '' }; const [y, mo, dd] = m.ts.slice(0, 10).split('-');
+  const sign = m.kind === 'in' ? '+' : m.kind === 'out' ? '−' : '⇄ ';
   return { date: `${Number(dd)} ${MON[Number(mo) - 1]} ${y}`, time: m.ts.slice(11), ref: m.ref, type: m.type, tone: T[TYPE_T[m.type]],
     product: p.name, from: m.from, to: m.to, user: m.user, qty: `${sign}${fmt(m.qty)} ${p.uom}`,
     qtyColor: m.kind === 'in' ? 'oklch(0.42 0.1 150)' : m.kind === 'out' ? 'oklch(0.47 0.15 27)' : 'var(--color-neutral-700)',
@@ -989,7 +989,7 @@ const mapMove = (m, pById) => {
 const segOpt = (on, i) => ({ divider: i ? '1px solid var(--color-divider)' : '0', color: on ? 'var(--color-accent-700)' : 'var(--color-text)', shadow: on ? 'inset 0 0 0 1px var(--color-accent)' : 'none' });
 const steps = (labels, idx, allDone) => labels.map((l, i) => {
   const past = i < idx || allDone; const cur = i === idx && !allDone;
-  return { label: l, line: i > 0, lineColor: i <= idx || allDone ? 'var(--color-accent)' : 'var(--color-divider)', mark: past ? 'âœ“' : String(i + 1),
+  return { label: l, line: i > 0, lineColor: i <= idx || allDone ? 'var(--color-accent)' : 'var(--color-divider)', mark: past ? '✓' : String(i + 1),
     border: past || cur ? 'var(--color-accent)' : 'var(--color-divider)', color: past || cur ? 'var(--color-accent-800)' : 'var(--color-neutral-600)',
     bg: cur ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent' };
 });
@@ -1030,7 +1030,7 @@ class Component extends DCLogic {
     const { rc, products, ops, ledger } = this.state;
     const vals = rc.lines.map(l => l.received === '' ? 0 : Number(l.received));
     if (vals.some(v => isNaN(v) || v < 0)) return this.patch('rc', { error: 'Received quantities must be zero or more.' });
-    if (vals.every(v => v === 0)) return this.patch('rc', { error: 'Enter the quantity actually received on at least one line â€” nothing would be added to stock.' });
+    if (vals.every(v => v === 0)) return this.patch('rc', { error: 'Enter the quantity actually received on at least one line — nothing would be added to stock.' });
     const t = hm(); const result = [];
     const nextProducts = products.map(p => {
       const i = rc.lines.findIndex(l => l.pid === p.id);
@@ -1070,7 +1070,7 @@ class Component extends DCLogic {
     const moves = dv.lines.map((l, i) => vals[i] ? { ts: '2026-09-26T' + t, ref: 'WH/OUT/0013', type: 'Delivery', pid: l.pid, from: l.pid === 'bolts' ? 'WH/Rack A' : 'WH/Main Store', to: 'Brightdesk Offices', qty: vals[i], kind: 'out', user: 'Priya Nair', wh: 'Main Warehouse', fresh: true } : null).filter(Boolean);
     this.setState({ products: nextProducts, ops: ops.map(o => o.ref === 'WH/OUT/0013' ? { ...o, status: 'Done', date: '26 Sep' } : o),
       ledger: [...moves, ...ledger], dv: { ...dv, step: 3, error: null, result, doneAt: t } });
-    this.toast({ title: 'WH/OUT/0013 delivered', lines: result.map(r => `${r.name} âˆ’${r.qty} ${r.uom}`) });
+    this.toast({ title: 'WH/OUT/0013 delivered', lines: result.map(r => `${r.name} −${r.qty} ${r.uom}`) });
   }
   trValidate() {
     const { tr, products, ops, ledger } = this.state; const pById = Object.fromEntries(products.map(p => [p.id, p]));
@@ -1083,7 +1083,7 @@ class Component extends DCLogic {
     tr.lines.forEach((l, i) => { next = next.map(p => p.id === l.pid ? addQ(addQ(p, tr.src, -vals[i]), tr.dst, vals[i]) : p); result.push(`${pById[l.pid].name} ${fmt(vals[i])} ${pById[l.pid].uom}`); });
     const moves = tr.lines.map((l, i) => ({ ts: '2026-09-26T' + t, ref: 'WH/INT/0006', type: 'Internal', pid: l.pid, from: tr.src, to: tr.dst, qty: vals[i], kind: 'move', user: 'Priya Nair', wh: this.whOf(tr.src), fresh: true }));
     this.setState({ products: next, ops: ops.map(o => o.ref === 'WH/INT/0006' ? { ...o, status: 'Done', date: '26 Sep' } : o), ledger: [...moves, ...ledger], tr: { ...tr, done: true, error: null, doneAt: t, result } });
-    this.toast({ title: 'WH/INT/0006 transferred', lines: [...result.map(r => `${r} Â· ${tr.src} â†’ ${tr.dst}`), 'Total stock unchanged'] });
+    this.toast({ title: 'WH/INT/0006 transferred', lines: [...result.map(r => `${r} · ${tr.src} → ${tr.dst}`), 'Total stock unchanged'] });
   }
   adjApply() {
     const { adj, products, ops, ledger, seq } = this.state; const p = products.find(x => x.id === adj.pid);
@@ -1091,14 +1091,14 @@ class Component extends DCLogic {
     const c = Number(adj.counted);
     if (isNaN(c) || c < 0) return this.patch('adj', { error: 'Counted quantity must be zero or more.' });
     const rec = p.loc[adj.loc] || 0; const diff = c - rec;
-    if (diff === 0) return this.patch('adj', { error: 'Counted matches recorded â€” there is nothing to adjust.' });
+    if (diff === 0) return this.patch('adj', { error: 'Counted matches recorded — there is nothing to adjust.' });
     const ref = `WH/ADJ/${String(seq).padStart(4, '0')}`; const t = hm(); const wh = this.whOf(adj.loc);
-    const label = adj.reason === 'Damaged' ? 'Scrap Â· Damaged' : adj.reason === 'Lost' ? 'Lost' : 'Count correction';
+    const label = adj.reason === 'Damaged' ? 'Scrap · Damaged' : adj.reason === 'Lost' ? 'Lost' : 'Count correction';
     const move = { ts: '2026-09-26T' + t, ref, type: 'Adjustment', pid: p.id, from: diff < 0 ? adj.loc : label, to: diff < 0 ? label : adj.loc, qty: Math.abs(diff), kind: diff > 0 ? 'in' : 'out', user: 'Priya Nair', wh, fresh: true };
     this.setState({ products: products.map(x => x.id === p.id ? addQ(x, adj.loc, diff) : x), ledger: [move, ...ledger], seq: seq + 1,
-      ops: [{ ref, type: 'Adjustment', partner: `${adj.reason} â€” ${adj.loc}`, items: [[p.id, diff]], wh, date: '26 Sep', status: 'Done' }, ...ops],
+      ops: [{ ref, type: 'Adjustment', partner: `${adj.reason} — ${adj.loc}`, items: [[p.id, diff]], wh, date: '26 Sep', status: 'Done' }, ...ops],
       adj: { ...adj, counted: '', note: '', error: null } });
-    this.toast({ title: `${ref} applied`, lines: [`${p.name} ${diff > 0 ? '+' : 'âˆ’'}${fmt(Math.abs(diff))} ${p.uom} at ${adj.loc}`, `Reason: ${adj.reason}`] });
+    this.toast({ title: `${ref} applied`, lines: [`${p.name} ${diff > 0 ? '+' : '−'}${fmt(Math.abs(diff))} ${p.uom} at ${adj.loc}`, `Reason: ${adj.reason}`] });
   }
   saveProduct() {
     const { pform: f, products, pedit, ledger, seq } = this.state; const e = {};
@@ -1112,14 +1112,14 @@ class Component extends DCLogic {
     const sku = f.sku.trim().toUpperCase();
     if (pedit) {
       this.setState({ products: products.map(p => p.id === pedit ? { ...p, name: f.name.trim(), sku, cat: f.cat, uom: f.uom } : p), perr: {} });
-      this.toast({ title: 'Product updated', lines: [`${f.name.trim()} Â· ${sku}`] });
+      this.toast({ title: 'Product updated', lines: [`${f.name.trim()} · ${sku}`] });
       return this.openProduct(pedit);
     }
     const id = 'p' + Date.now();
     const np = { id, name: f.name.trim(), sku, cat: f.cat, uom: f.uom, onHand: init, min: 0, max: 0, supplier: '', loc: init ? { [f.loc]: init } : {}, created: true };
     const moves = init ? [{ ts: '2026-09-26T' + hm(), ref: `WH/ADJ/${String(seq).padStart(4, '0')}`, type: 'Adjustment', pid: id, from: 'Opening balance', to: f.loc, qty: init, kind: 'in', user: 'Priya Nair', wh: this.whOf(f.loc), fresh: true }] : [];
     this.setState({ products: [...products, np], ledger: [...moves, ...ledger], seq: init ? seq + 1 : seq, perr: {} }, () => this.openProduct(id));
-    this.toast({ title: 'Product created', lines: [`${np.name} Â· ${sku}`, init ? `Opening stock +${fmt(init)} ${np.uom}` : 'No opening stock'] });
+    this.toast({ title: 'Product created', lines: [`${np.name} · ${sku}`, init ? `Opening stock +${fmt(init)} ${np.uom}` : 'No opening stock'] });
   }
   quickUpdate(pid) {
     const { pupd, products, ledger, seq, ops } = this.state; const p = products.find(x => x.id === pid);
@@ -1131,8 +1131,8 @@ class Component extends DCLogic {
     const ref = `WH/ADJ/${String(seq).padStart(4, '0')}`; const wh = this.whOf(loc);
     this.setState({ products: products.map(x => x.id === pid ? addQ(x, loc, diff) : x), seq: seq + 1, pupd: null,
       ledger: [{ ts: '2026-09-26T' + hm(), ref, type: 'Adjustment', pid, from: diff < 0 ? loc : 'Count correction', to: diff < 0 ? 'Count correction' : loc, qty: Math.abs(diff), kind: diff > 0 ? 'in' : 'out', user: this.state.pf.name, wh, fresh: true }, ...ledger],
-      ops: [{ ref, type: 'Adjustment', partner: `Stock update â€” ${loc}`, items: [[pid, diff]], wh, date: '26 Sep', status: 'Done' }, ...ops] });
-    this.toast({ title: 'Stock updated', lines: [`${p.name} ${diff > 0 ? '+' : 'âˆ’'}${fmt(Math.abs(diff))} ${p.uom} at ${loc}`, `Logged as ${ref}`] });
+      ops: [{ ref, type: 'Adjustment', partner: `Stock update — ${loc}`, items: [[pid, diff]], wh, date: '26 Sep', status: 'Done' }, ...ops] });
+    this.toast({ title: 'Stock updated', lines: [`${p.name} ${diff > 0 ? '+' : '−'}${fmt(Math.abs(diff))} ${p.uom} at ${loc}`, `Logged as ${ref}`] });
   }
   saveRules() {
     const { rr, psel, products } = this.state; const min = Number(rr.min), max = Number(rr.max);
@@ -1152,7 +1152,7 @@ class Component extends DCLogic {
     const isList = ['receipts', 'deliveries', 'transfers'].includes(s.screen);
     const show = { dashboard: s.screen === 'dashboard' && !L, receipt: s.screen === 'receipt' && !L, delivery: s.screen === 'delivery' && !L, transfer: s.screen === 'transfer' && !L,
       adjust: s.screen === 'adjustments' && !L, history: s.screen === 'history' && !L, list: isList && !L, products: s.screen === 'products' && !L, warehouses: s.screen === 'warehouses' && !L, profile: s.screen === 'profile' && !L };
-    const allLocs = s.whs.flatMap(w => w.locs.map(l => ({ value: l.name, label: `${l.name} â€” ${w.name}`, wh: w.name })));
+    const allLocs = s.whs.flatMap(w => w.locs.map(l => ({ value: l.name, label: `${l.name} — ${w.name}`, wh: w.name })));
     const whOpts = s.whs.map(w => ({ name: w.name }));
     const productOpts = s.products.map(p => ({ id: p.id, name: p.name }));
 
@@ -1162,7 +1162,7 @@ class Component extends DCLogic {
       const inc = s.ops.find(o => o.type === 'Receipt' && PENDING.includes(o.status) && o.items.some(([id]) => id === p.id));
       const incQty = inc ? inc.items.find(([id]) => id === p.id)[1] : 0;
       return { ...p, onHand: fmt(p.onHand), min: fmt(p.min), label: st.label, tone: st.tone, pct: Math.max(2, Math.min(100, p.onHand / p.min * 100)) + '%',
-        hasIncoming: !!inc, noIncoming: !inc, incomingText: inc ? `${fmt(incQty)} Â· ${inc.ref}` : '',
+        hasIncoming: !!inc, noIncoming: !inc, incomingText: inc ? `${fmt(incQty)} · ${inc.ref}` : '',
         openIncoming: () => inc && OPEN[inc.ref] && this.go(OPEN[inc.ref]), pick: () => this.openProduct(p.id) };
     });
 
@@ -1185,11 +1185,11 @@ class Component extends DCLogic {
         pick: () => this.setState(x => ({ statuses: x.statuses.includes(l) ? x.statuses.filter(y => y !== l) : [...x.statuses, l] })) };
     });
     const opRow = o => { const target = OPEN[o.ref]; const home = o.wh === 'Warehouse 2' ? 'WH2/Stock' : 'WH/Main Store';
-      const route = o.partner.split(' â†’ ');
+      const route = o.partner.split(' → ');
       const from = o.type === 'Receipt' ? 'Vendor' : o.type === 'Internal' ? route[0] : home;
       const to = o.type === 'Receipt' ? home : o.type === 'Internal' ? (route[1] || '') : o.type === 'Delivery' ? 'Customer' : 'Scrap / count';
       const late = PENDING.includes(o.status) && dayOf(o.date) < TODAY;
-      return { ...o, tone: T[ST[o.status]], from, to, contact: o.type === 'Internal' ? 'â€”' : o.partner, late, summary: o.items.map(([id, q]) => `${pById[id].name} ${q < 0 ? 'âˆ’' + fmt(-q) : fmt(q)} ${pById[id].uom}`).join(', '),
+      return { ...o, tone: T[ST[o.status]], from, to, contact: o.type === 'Internal' ? '—' : o.partner, late, summary: o.items.map(([id, q]) => `${pById[id].name} ${q < 0 ? '−' + fmt(-q) : fmt(q)} ${pById[id].uom}`).join(', '),
         cursor: target ? 'pointer' : 'default', refColor: target ? 'var(--color-accent-700)' : 'var(--color-text)', open: () => target && this.go(target) }; };
     const opRows = s.ops.filter(o => (s.type === 'All' || o.type === s.type) && (!s.statuses.length || s.statuses.includes(o.status)) &&
       (s.wh === 'All' || o.wh === s.wh) && (s.cat === 'All' || o.items.some(([id]) => pById[id].cat === s.cat))).map(opRow);
@@ -1219,7 +1219,7 @@ class Component extends DCLogic {
         if (r < 0) { note = 'Must be zero or more'; noteColor = T.red.fg; }
         else if (r === l.expected) { note = 'Matches expected'; noteColor = T.green.fg; }
         else if (r > l.expected) { note = `${fmt(r - l.expected)} over expected`; noteColor = T.amber.fg; }
-        else { note = `${fmt(l.expected - r)} short â€” backorder`; noteColor = T.amber.fg; }
+        else { note = `${fmt(l.expected - r)} short — backorder`; noteColor = T.amber.fg; }
       }
       const bad = !rcDone && s.rc.error && (r === null || r <= 0);
       return { name: p.name, sku: p.sku, uom: p.uom, onHand: fmt(p.onHand), expected: fmt(l.expected), received: l.received, note, noteColor,
@@ -1233,7 +1233,7 @@ class Component extends DCLogic {
       const p = pById[l.pid]; const v = l.picked === '' ? 0 : Number(l.picked); const over = v > p.onHand;
       let note = over ? `Only ${fmt(p.onHand)} on hand` : v === l.demand ? 'Fully picked' : v < l.demand ? `${fmt(l.demand - v)} short` : 'More than ordered';
       let noteColor = over || v > l.demand ? T.red.fg : v === l.demand ? T.green.fg : T.amber.fg;
-      if (dvDone) { note = `Shipped âˆ’${fmt(v)}`; noteColor = T.red.fg; }
+      if (dvDone) { note = `Shipped −${fmt(v)}`; noteColor = T.red.fg; }
       return { name: p.name, sku: p.sku, uom: p.uom, onHand: fmt(p.onHand), demand: fmt(l.demand), picked: l.picked, note, noteColor, readOnly: dv.step > 0 || !!dv.canceled,
         rowBg: !dvDone && l.demand > p.onHand ? 'oklch(0.97 0.02 25)' : 'transparent',
         inputBorder: dv.error && over && dv.step === 0 ? ERR_BORDER : 'var(--color-divider)', after: fmt(p.onHand - v),
@@ -1268,7 +1268,7 @@ class Component extends DCLogic {
       const reserved = s.ops.filter(o => o.type === 'Delivery' && PENDING.includes(o.status)).reduce((a, o) => a + o.items.filter(([id]) => id === p.id).reduce((b, [, q]) => b + q, 0), 0);
       const editing = s.pupd && s.pupd.pid === p.id;
       return { ...p, onHand: fmt(p.onHand), label: st.label, tone: st.tone, open: () => !editing && this.openProduct(p.id),
-        costText: p.cost ? inr(p.cost) : 'â€”', free: fmt(Math.max(0, p.onHand - reserved)), freeColor: p.onHand - reserved < 0 || p.onHand === 0 ? T.red.fg : 'var(--color-text)',
+        costText: p.cost ? inr(p.cost) : '—', free: fmt(Math.max(0, p.onHand - reserved)), freeColor: p.onHand - reserved < 0 || p.onHand === 0 ? T.red.fg : 'var(--color-text)',
         editing, notEditing: !editing, updVal: editing ? s.pupd.val : '', updErr: editing && s.pupd.err ? s.pupd.err : '', hasUpdErr: !!(editing && s.pupd.err),
         startUpd: e => { e.stopPropagation(); this.setState({ pupd: { pid: p.id, val: String(p.onHand), err: null } }); },
         onUpd: e => this.setState({ pupd: { ...s.pupd, val: e.target.value.replace(/[^0-9]/g, ''), err: null } }),
@@ -1295,10 +1295,10 @@ class Component extends DCLogic {
         if (!n || n === w.code + '/') return this.setState({ whErr: 'Give the location a name.' });
         if (allLocs.some(l => l.value.toLowerCase() === n.toLowerCase())) return this.setState({ whErr: 'A location with this name already exists.' });
         this.setState({ whs: s.whs.map((x, j) => j === i ? { ...x, locs: [...x.locs, { name: n, kind: s.locDraft.kind }] } : x), locAdd: null, whErr: null });
-        this.toast({ title: 'Location added', lines: [`${n} Â· ${s.locDraft.kind}`] }); } }));
+        this.toast({ title: 'Location added', lines: [`${n} · ${s.locDraft.kind}`] }); } }));
 
     const pf = s.pf; const pwRules = [['At least 8 characters', pf.nw.length >= 8], ['One number', /\d/.test(pf.nw)], ['Matches confirmation', !!pf.nw && pf.nw === pf.conf]]
-      .map(([label, ok]) => ({ label, mark: ok ? 'âœ“' : 'Â·', color: ok ? T.green.fg : 'var(--color-neutral-700)', ok }));
+      .map(([label, ok]) => ({ label, mark: ok ? '✓' : '·', color: ok ? T.green.fg : 'var(--color-neutral-700)', ok }));
     const pfSet2 = Object.fromEntries(['name', 'email', 'cur', 'nw', 'conf'].map(k => [k, e => this.setState({ pf: { ...s.pf, [k]: e.target.value, err: null, pwErr: null } })]));
 
     const lf = s.lf;
@@ -1355,7 +1355,7 @@ class Component extends DCLogic {
       swapLocs: () => this.patch('tr', { src: tr.dst, dst: tr.src, error: null }),
       addTrLine: () => this.patch('tr', { lines: [...tr.lines, { pid: s.products.find(p => !tr.lines.some(l => l.pid === p.id))?.id || 'steel', qty: '' }] }),
       adj: { pid: adj.pid, loc: adj.loc, counted: adj.counted, note: adj.note, hasError: !!adj.error, error: adj.error, uom: ap.uom, recorded: fmt(rec),
-        diffText: diff === null ? 'â€”' : diff === 0 ? '0' : (diff > 0 ? '+' : 'âˆ’') + fmt(Math.abs(diff)), diffColor: diff === null || diff === 0 ? 'var(--color-neutral-600)' : diff > 0 ? 'oklch(0.42 0.1 150)' : 'oklch(0.47 0.15 27)',
+        diffText: diff === null ? '—' : diff === 0 ? '0' : (diff > 0 ? '+' : '−') + fmt(Math.abs(diff)), diffColor: diff === null || diff === 0 ? 'var(--color-neutral-600)' : diff > 0 ? 'oklch(0.42 0.1 150)' : 'oklch(0.47 0.15 27)',
         after: diff === null ? '' : `${ap.name} total becomes ${fmt(ap.onHand + diff)} ${ap.uom}`, inputBorder: adj.error ? ERR_BORDER : 'var(--color-divider)' },
       adjSet: { pid: e => this.patch('adj', { pid: e.target.value, error: null }), loc: e => this.patch('adj', { loc: e.target.value, error: null }),
         counted: e => this.patch('adj', { counted: e.target.value.replace(/[^0-9.]/g, ''), error: null }), note: e => this.patch('adj', { note: e.target.value }) },
@@ -1381,17 +1381,17 @@ class Component extends DCLogic {
       saveWh: () => { const f = s.whForm; if (!f.name.trim() || !f.code.trim()) return this.setState({ whErr: 'Name and short code are required.' });
         const code = f.code.trim().toUpperCase(); if (s.whs.some(w => w.code === code)) return this.setState({ whErr: 'That short code is already used.' });
         this.setState({ whs: [...s.whs, { name: f.name.trim(), code, address: f.address.trim(), manager: s.pf.name, locs: [{ name: code + '/Stock', kind: 'Zone' }] }], whForm: null });
-        this.toast({ title: 'Warehouse added', lines: [`${f.name.trim()} Â· ${code}/Stock created`] }); },
+        this.toast({ title: 'Warehouse added', lines: [`${f.name.trim()} · ${code}/Stock created`] }); },
       whDraft: s.whDraft, whDraftSet: Object.fromEntries(['address', 'manager'].map(k => [k, e => this.setState({ whDraft: { ...s.whDraft, [k]: e.target.value } })])),
       cancelWhEdit: () => this.setState({ whEdit: null }), locDraft: s.locDraft, cancelLoc: () => this.setState({ locAdd: null, whErr: null }),
       locDraftSet: Object.fromEntries(['name', 'kind'].map(k => [k, e => this.setState({ locDraft: { ...s.locDraft, [k]: e.target.value }, whErr: null })])),
-      pf, pfSet2, pwRules, initials: pf.name.split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() || 'Â·',
+      pf, pfSet2, pwRules, initials: pf.name.split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() || '·',
       pfHasErr: !!pf.err, pfHasPwErr: !!pf.pwErr,
-      saveProfile: () => { if (!pf.name.trim()) return this.patch('pf', { err: 'Name canâ€™t be empty.' });
+      saveProfile: () => { if (!pf.name.trim()) return this.patch('pf', { err: 'Name can’t be empty.' });
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pf.email)) return this.patch('pf', { err: 'Enter a valid email address.' });
         this.toast({ title: 'Profile saved', lines: [pf.name, pf.email] }); },
       changePw: () => { if (!pf.cur) return this.patch('pf', { pwErr: 'Enter your current password.' });
-        if (!pwRules.every(r => r.ok)) return this.patch('pf', { pwErr: 'The new password doesnâ€™t meet the requirements.' });
+        if (!pwRules.every(r => r.ok)) return this.patch('pf', { pwErr: 'The new password doesn’t meet the requirements.' });
         this.patch('pf', { cur: '', nw: '', conf: '', pwErr: null }); this.toast({ title: 'Password changed', lines: ['Other devices will be signed out.'] }); },
       lf, lfFrom: lfSet('from'), lfTo: lfSet('to'), lfType: lfSet('type'), lfPid: lfSet('pid'), lfRef: lfSet('ref'),
       lfActive: JSON.stringify(lf) !== JSON.stringify(LF0) || s.wh !== 'All', lfClear: () => this.setState({ lf: LF0, wh: 'All' }),
