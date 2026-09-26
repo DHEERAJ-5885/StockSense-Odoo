@@ -21,6 +21,8 @@ router.get("/", async (req, res) => {
     return res.json({
       success: true,
       message: "StockSense API and Supabase are connected",
+      api: "StockSense Inventory API",
+      technology: ["Node.js", "Express", "TypeScript", "Supabase"],
       database: "Supabase",
       productsConnection: true,
       products: data,
