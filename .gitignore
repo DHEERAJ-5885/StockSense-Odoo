@@ -1,4 +1,9 @@
+@"
 node_modules/
-package-lock.json
-*.bak
-package.json
+.env
+.env.*
+!.env.example
+*.log
+StockSense.dc.html.dashboard-backup
+StockSense.dc.html.operations-backup
+"@ | Set-Content .gitignore
