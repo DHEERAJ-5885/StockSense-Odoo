@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -41,7 +41,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <form onSubmit="{{ submitSignup }}" style="display:flex;flex-direction:column;gap:var(--space-4)">
             <div><h1 style="margin:0;font-weight:400">Create your account</h1><div style="font-size:14px;color:var(--color-neutral-700)">One ledger for every shelf, rack and warehouse.</div></div>
             <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="padding:10px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25);font-size:14px">{{ error }}</div></sc-if>
-            <div class="field"><label>Login ID</label><input class="input" placeholder="6â€“12 characters" value="{{ f.login }}" onChange="{{ set.login }}" style="min-height:44px"></div>
+            <div class="field"><label>Login ID</label><input class="input" placeholder="6–12 characters" value="{{ f.login }}" onChange="{{ set.login }}" style="min-height:44px"></div>
             <div class="field"><label>Full name</label><input class="input" value="{{ f.name }}" onChange="{{ set.name }}" style="min-height:44px"></div>
             <div class="field"><label>Work email</label><input class="input" type="email" value="{{ f.email }}" onChange="{{ set.email }}" style="min-height:44px"></div>
             <div class="field"><label>Role</label>
@@ -73,11 +73,11 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
 
         <sc-if value="{{ is.forgot }}" hint-placeholder-val="{{ false }}">
           <form onSubmit="{{ submitForgot }}" style="display:flex;flex-direction:column;gap:var(--space-4)">
-            <div><h1 style="margin:0;font-weight:400">Reset your password</h1><div style="font-size:14px;color:var(--color-neutral-700)">Weâ€™ll email a 6-digit code to the address on your account.</div></div>
+            <div><h1 style="margin:0;font-weight:400">Reset your password</h1><div style="font-size:14px;color:var(--color-neutral-700)">We’ll email a 6-digit code to the address on your account.</div></div>
             <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="padding:10px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25);font-size:14px">{{ error }}</div></sc-if>
             <div class="field"><label>Work email</label><input class="input" type="email" value="{{ f.email }}" onChange="{{ set.email }}" style="min-height:44px"></div>
             <button type="submit" class="btn btn-primary" disabled="{{ busy }}" style="min-height:46px;font-size:16px">{{ sendLabel }}</button>
-            <button type="button" class="btn btn-ghost" onClick="{{ toLogin }}" style="align-self:center;font-size:14px">â† Back to sign in</button>
+            <button type="button" class="btn btn-ghost" onClick="{{ toLogin }}" style="align-self:center;font-size:14px">← Back to sign in</button>
           </form>
         </sc-if>
 
@@ -101,7 +101,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
 
         <sc-if value="{{ is.reset }}" hint-placeholder-val="{{ false }}">
           <form onSubmit="{{ submitReset }}" style="display:flex;flex-direction:column;gap:var(--space-4)">
-            <div><h1 style="margin:0;font-weight:400">Set a new password</h1><div style="font-size:14px;color:var(--color-neutral-700)">Choose something you havenâ€™t used here before.</div></div>
+            <div><h1 style="margin:0;font-weight:400">Set a new password</h1><div style="font-size:14px;color:var(--color-neutral-700)">Choose something you haven’t used here before.</div></div>
             <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="padding:10px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25);font-size:14px">{{ error }}</div></sc-if>
             <div class="field"><label>New password</label><input class="input" type="password" value="{{ f.password }}" onChange="{{ set.password }}" style="min-height:44px"></div>
             <div class="field"><label>Confirm new password</label><input class="input" type="password" value="{{ f.confirm }}" onChange="{{ set.confirm }}" style="min-height:44px"></div>
@@ -121,16 +121,16 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         </sc-if>
       </div>
     </div>
-    <div style="font-size:12px;color:var(--color-neutral-700)">Â© 2026 StockSense Â· Help Â· Privacy</div>
+    <div style="font-size:12px;color:var(--color-neutral-700)">© 2026 StockSense · Help · Privacy</div>
   </section>
 
   <aside style="flex:1 1 460px;display:flex;flex-direction:column;justify-content:center;gap:var(--space-6);padding:var(--space-8) clamp(28px,6vw,96px);border-left:1px solid var(--color-divider)">
     <div class="card-kicker" style="color:var(--color-accent-700)">One steel order, four moves</div>
     <div style="display:flex;flex-direction:column">
       <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:oklch(0.42 0.1 150);font-variant-numeric:lining-nums tabular-nums">+100</span><span style="font-size:14px">kg Steel received from Northline Metals</span></div>
-      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">â‡„ 40</span><span style="font-size:14px">Main Store â†’ Production Rack, total unchanged</span></div>
-      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">âˆ’20</span><span style="font-size:14px">kg delivered to Apex Fabrication</span></div>
-      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">âˆ’3</span><span style="font-size:14px">kg damaged, logged as an adjustment</span></div>
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">⇄ 40</span><span style="font-size:14px">Main Store → Production Rack, total unchanged</span></div>
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">−20</span><span style="font-size:14px">kg delivered to Apex Fabrication</span></div>
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">−3</span><span style="font-size:14px">kg damaged, logged as an adjustment</span></div>
     </div>
     <p style="margin:0;font-family:var(--font-heading);font-size:30px;line-height:1.2;max-width:22ch">Every movement, <em>one ledger.</em></p>
   </aside>
@@ -148,7 +148,7 @@ class Component extends DCLogic {
   to(mode) { this.setState({ mode, error: null, busy: false, f: { ...this.state.f, password: '', confirm: '' } }); }
   busyThen(fn) { this.setState({ busy: true, error: null }); clearTimeout(this._bt); this._bt = setTimeout(() => { this.setState({ busy: false }); fn(); }, 700); }
   startResend() { clearInterval(this._iv); this.setState({ resendIn: 30 }); this._iv = setInterval(() => this.setState(s => { if (s.resendIn <= 1) clearInterval(this._iv); return { resendIn: Math.max(0, s.resendIn - 1) }; }), 1000); }
-  enterApp() { window.location.href = 'StockSense.dc.html'; }
+  enterApp() { window.location.replace('StockSense.dc.html'); }
   validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
   setOtp(i, v) {
     const d = v.replace(/\D/g, '').slice(-1);
@@ -161,11 +161,11 @@ class Component extends DCLogic {
     const pw = f.password;
     const rules = [['More than 8 characters', pw.length > 8], ['A lowercase and an uppercase letter', /[a-z]/.test(pw) && /[A-Z]/.test(pw)], ['A special character (e.g. ! @ # $)', /[^A-Za-z0-9]/.test(pw)]];
     const pwOk = rules.every(r => r[1]);
-    const pwRules = rules.map(([label, ok]) => ({ label, mark: ok ? 'âœ“' : 'Â·', color: ok ? 'oklch(0.42 0.09 150)' : 'var(--color-neutral-700)' }));
+    const pwRules = rules.map(([label, ok]) => ({ label, mark: ok ? '✓' : '·', color: ok ? 'oklch(0.42 0.09 150)' : 'var(--color-neutral-700)' }));
     const stepIdx = { forgot: 0, otp: 1, reset: 2 }[m] ?? 0;
     const resetSteps = ['Email', 'Code', 'New password'].map((label, i) => {
       const past = i < stepIdx, cur = i === stepIdx;
-      return { label, line: i > 0, lineColor: i <= stepIdx ? 'var(--color-accent)' : 'var(--color-divider)', mark: past ? 'âœ“' : String(i + 1),
+      return { label, line: i > 0, lineColor: i <= stepIdx ? 'var(--color-accent)' : 'var(--color-divider)', mark: past ? '✓' : String(i + 1),
         border: past || cur ? 'var(--color-accent)' : 'var(--color-divider)', color: past || cur ? 'var(--color-accent-800)' : 'var(--color-neutral-600)' };
     });
     const otpBoxes = s.otp.map((v, i) => ({ value: v, ref: this.otpRefs[i], aria: `Digit ${i + 1}`, border: s.error ? 'oklch(0.62 0.13 27)' : v ? 'var(--color-accent)' : 'var(--color-divider)',
@@ -179,8 +179,8 @@ class Component extends DCLogic {
       f, set, error: s.error, hasError: !!s.error, busy: s.busy,
       pwType: s.showPw ? 'text' : 'password', pwLabel: s.showPw ? 'Hide' : 'Show', togglePw: () => this.setState({ showPw: !s.showPw }),
       toggleRemember: () => this.setState({ f: { ...f, remember: !f.remember } }),
-      loginLabel: s.busy ? 'Signing inâ€¦' : 'Sign in', signupLabel: s.busy ? 'Creating accountâ€¦' : 'Create account',
-      sendLabel: s.busy ? 'Sendingâ€¦' : 'Send code', verifyLabel: s.busy ? 'Verifyingâ€¦' : 'Verify code',
+      loginLabel: s.busy ? 'Signing in…' : 'Sign in', signupLabel: s.busy ? 'Creating account…' : 'Create account',
+      sendLabel: s.busy ? 'Sending…' : 'Send code', verifyLabel: s.busy ? 'Verifying…' : 'Verify code',
       toLogin: () => this.to('login'), toSignup: () => { this.to('signup'); this.setState(x => ({ f: { ...x.f, login: '', email: '', name: '' } })); }, toForgot: () => this.to('forgot'),
       roleOpts, pwRules, resetSteps, otpBoxes,
       canResend: s.resendIn === 0, waitResend: s.resendIn > 0, resendIn: String(s.resendIn).padStart(2, '0'),
@@ -196,18 +196,18 @@ class Component extends DCLogic {
         if (!f.name.trim()) return this.setState({ error: 'Enter your full name.' });
         if (!this.validEmail(f.email)) return this.setState({ error: 'Enter a valid work email.' });
         if (TAKEN_EMAILS.includes(f.email.trim().toLowerCase())) return this.setState({ error: 'An account with this email already exists.' });
-        if (!pwOk) return this.setState({ error: 'Your password doesnâ€™t meet the requirements below.' });
-        if (f.password !== f.confirm) return this.setState({ error: 'The two passwords donâ€™t match.' });
+        if (!pwOk) return this.setState({ error: 'Your password doesn’t meet the requirements below.' });
+        if (f.password !== f.confirm) return this.setState({ error: 'The two passwords don’t match.' });
         this.busyThen(() => this.enterApp()); },
       submitForgot: e => { e.preventDefault();
         if (!this.validEmail(f.email)) return this.setState({ error: 'Enter the email you sign in with.' });
         this.busyThen(() => { this.setState({ mode: 'otp', otp: ['', '', '', '', '', ''] }); this.startResend(); setTimeout(() => this.otpRefs[0].current?.focus(), 50); }); },
       submitOtp: e => { e.preventDefault(); const code = s.otp.join('');
         if (code.length < 6) return this.setState({ error: 'Enter all 6 digits.' });
-        this.busyThen(() => code === DEMO_OTP ? this.to('reset') : this.setState({ error: 'That code doesnâ€™t match. Check the latest email and try again.' })); },
+        this.busyThen(() => code === DEMO_OTP ? this.to('reset') : this.setState({ error: 'That code doesn’t match. Check the latest email and try again.' })); },
       submitReset: e => { e.preventDefault();
-        if (!pwOk) return this.setState({ error: 'Your password doesnâ€™t meet the requirements below.' });
-        if (f.password !== f.confirm) return this.setState({ error: 'The two passwords donâ€™t match.' });
+        if (!pwOk) return this.setState({ error: 'Your password doesn’t meet the requirements below.' });
+        if (f.password !== f.confirm) return this.setState({ error: 'The two passwords don’t match.' });
         this.to('done'); },
     };
   }

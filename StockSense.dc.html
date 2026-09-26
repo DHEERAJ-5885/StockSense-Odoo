@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -45,7 +45,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
     <button onClick="{{ goWarehouses }}" style="display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:0 10px;border:0;border-radius:var(--radius-md);font:inherit;font-size:14px;text-align:left;cursor:pointer;background:{{ nav.warehouses.bg }};color:{{ nav.warehouses.fg }}">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"></path><path d="M6 18h12"></path><path d="M6 14h12"></path><rect width="12" height="12" x="6" y="10"></rect></svg>Warehouses</button>
   </nav>
-  <div style="margin-top:auto;position:relative">
+  <div id="ss-profile" style="margin-top:auto;position:relative">
     <sc-if value="{{ profileOpen }}" hint-placeholder-val="{{ false }}">
       <div class="elev-md" style="position:absolute;bottom:calc(100% + 6px);left:0;right:0;padding:6px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-md);display:flex;flex-direction:column;gap:2px">
         <button onClick="{{ goProfile }}" style="display:flex;align-items:center;gap:10px;min-height:40px;padding:0 10px;border:0;background:transparent;border-radius:var(--radius-sm);font:inherit;font-size:14px;cursor:pointer;color:var(--color-text)" style-hover="background:var(--color-neutral-200)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>My Profile</button>
@@ -63,17 +63,13 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
   <header style="position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:var(--space-3);height:64px;padding:0 var(--space-8);background:var(--color-bg);border-bottom:1px solid var(--color-divider)">
     <div style="position:relative;flex:1;max-width:440px">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--color-neutral-600)"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-      <input class="input" placeholder="Search products by name or SKU" value="{{ q }}" onChange="{{ onSearch }}" onFocus="{{ openSearch }}" onBlur="{{ closeSearchSoon }}" style="padding-left:34px;min-height:40px">
+      <input class="input" placeholder="Search products by name or SKU" value="{{ q }}" onChange="{{ onSearch }}" onKeyDown="{{ onSearchKey }}" onFocus="{{ openSearch }}" onBlur="{{ closeSearchSoon }}" style="padding-left:34px;min-height:40px">
       <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
         <div class="elev-md" style="position:absolute;top:calc(100% + 6px);left:0;right:0;padding:6px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-md)">
           <sc-for list="{{ searchResults }}" as="r" hint-placeholder-count="3">
-            <button onMouseDown="{{ r.pick }}" style="display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;width:100%;min-height:44px;padding:0 10px;border:0;background:transparent;border-radius:var(--radius-sm);font:inherit;text-align:left;cursor:pointer;color:var(--color-text)" style-hover="background:var(--color-neutral-200)">
-              <span style="display:flex;flex-direction:column;line-height:1.25"><span style="font-size:14px">{{ r.name }}</span><span style="font-size:11px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ r.sku }}</span></span>
-              <span style="font-size:13px;font-variant-numeric:lining-nums tabular-nums">{{ r.onHandText }}</span>
-              <span class="tag" style="background:{{ r.tone.bg }};color:{{ r.tone.fg }}">{{ r.label }}</span>
-            </button>
+            <button onMouseDown="{{ r.pick }}" style="display:block;width:100%;min-height:40px;padding:0 10px;border:0;background:transparent;border-radius:var(--radius-sm);font:inherit;font-size:14px;text-align:left;cursor:pointer;color:var(--color-text)" style-hover="background:var(--color-neutral-200)">{{ r.name }}</button>
           </sc-for>
-          <sc-if value="{{ noSearchResults }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 10px;font-size:13px;color:var(--color-neutral-700)">No product matches â€œ{{ q }}â€.</div></sc-if>
+          <sc-if value="{{ noSearchResults }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 10px;font-size:13px;color:var(--color-neutral-700)">No product matches “{{ q }}”.</div></sc-if>
         </div>
       </sc-if>
     </div>
@@ -85,21 +81,22 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <sc-for list="{{ whOpts }}" as="w" hint-placeholder-count="2"><option value="{{ w.name }}">{{ w.name }}</option></sc-for>
       </select>
     </label>
-    <div style="position:relative">
+    <div id="ss-alerts" style="position:relative">
       <button class="btn btn-secondary btn-icon" onClick="{{ toggleAlerts }}" aria-label="Low stock alerts" style="width:40px;height:40px;position:relative">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
         <sc-if value="{{ hasAlerts }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:oklch(0.52 0.15 27);color:#fff;font-family:var(--font-body);font-size:10px;line-height:18px;font-variant-numeric:lining-nums tabular-nums">{{ alertCount }}</span></sc-if>
       </button>
       <sc-if value="{{ alertsOpen }}" hint-placeholder-val="{{ false }}">
         <div class="elev-md" style="position:absolute;top:calc(100% + 8px);right:0;width:340px;padding:var(--space-3);background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-md);display:flex;flex-direction:column;gap:var(--space-2)">
-          <div style="font-family:var(--font-heading);font-size:18px;font-weight:600">Low stock alerts</div>
-          <sc-for list="{{ lowItems }}" as="a" hint-placeholder-count="2">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><div style="font-family:var(--font-heading);font-size:18px;font-weight:600">Low stock alerts</div><span style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ alertsSummary }}</span></div>
+          <sc-for list="{{ lowPreview }}" as="a" hint-placeholder-count="2">
             <button onClick="{{ a.pick }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:6px 8px;border:0;border-top:1px solid var(--color-divider);background:transparent;font:inherit;text-align:left;cursor:pointer;color:var(--color-text)" style-hover="background:var(--color-neutral-200)">
               <span style="display:flex;flex-direction:column;line-height:1.3"><span style="font-size:14px">{{ a.name }}</span><span style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ a.onHand }} / min {{ a.min }} {{ a.uom }}</span></span>
               <span class="tag" style="background:{{ a.tone.bg }};color:{{ a.tone.fg }}">{{ a.label }}</span>
             </button>
           </sc-for>
           <sc-if value="{{ noAlerts }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--color-neutral-700)">All products are above their minimum.</div></sc-if>
+          <button class="btn btn-ghost" onClick="{{ goAlerts }}" style="justify-content:center;min-height:40px;border-top:1px solid var(--color-divider);border-radius:0;color:var(--color-accent-700)">{{ alertsMore }} →</button>
         </div>
       </sc-if>
     </div>
@@ -119,12 +116,12 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div class="card" onClick="{{ kpiAll }}" style="cursor:pointer;gap:4px;padding:var(--space-4)" style-hover="border-color:var(--color-accent)">
             <div class="card-kicker" style="color:var(--color-accent-700)">Products in stock</div>
             <div style="font-family:var(--font-heading);font-size:44px;line-height:1;font-variant-numeric:lining-nums tabular-nums">{{ kpi.inStock }}</div>
-            <div style="font-size:12px;color:var(--color-neutral-700)">of {{ kpi.total }} SKUs Â· {{ kpi.units }} units on hand</div>
+            <div style="font-size:12px;color:var(--color-neutral-700)">of {{ kpi.total }} SKUs · {{ kpi.units }} units on hand</div>
           </div>
-          <div class="card" onClick="{{ toggleAlerts }}" style="cursor:pointer;gap:4px;padding:var(--space-4)" style-hover="border-color:var(--color-accent)">
+          <div class="card" onClick="{{ goAlerts }}" style="cursor:pointer;gap:4px;padding:var(--space-4)" style-hover="border-color:var(--color-accent)">
             <div class="card-kicker" style="color:var(--color-accent-700)">Low / Out of stock</div>
             <div style="font-family:var(--font-heading);font-size:44px;line-height:1;font-variant-numeric:lining-nums tabular-nums"><span style="color:oklch(0.52 0.11 65)">{{ kpi.low }}</span><span style="color:var(--color-neutral-400)"> / </span><span style="color:oklch(0.5 0.15 27)">{{ kpi.out }}</span></div>
-            <div style="font-size:12px;color:var(--color-neutral-700)">below minimum Â· at zero</div>
+            <div style="font-size:12px;color:var(--color-neutral-700)">below minimum · at zero</div>
           </div>
           <div class="card" onClick="{{ kpiReceipts }}" style="cursor:pointer;gap:4px;padding:var(--space-4)" style-hover="border-color:var(--color-accent)">
             <div class="card-kicker" style="color:var(--color-accent-700)">Pending receipts</div>
@@ -167,7 +164,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             </div>
           </div>
         </div>
-        <div style="font-size:12px;color:var(--color-neutral-700);margin-top:calc(-1 * var(--space-4))">Late: scheduled before today Â· Upcoming: scheduled after today Â· Waiting: short of stock</div>
+        <div style="font-size:12px;color:var(--color-neutral-700);margin-top:calc(-1 * var(--space-4))">Late: scheduled before today · Upcoming: scheduled after today · Waiting: short of stock</div>
 
         <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--space-4);padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
           <div style="display:flex;flex-direction:column;gap:5px">
@@ -231,12 +228,12 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <sc-for list="{{ lowItems }}" as="a" hint-placeholder-count="2">
               <div style="display:flex;flex-direction:column;gap:8px;padding-top:var(--space-3);border-top:1px solid var(--color-divider)">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-                  <div style="line-height:1.3"><div style="font-size:15px">{{ a.name }}</div><div style="font-size:11px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ a.sku }} Â· {{ a.cat }}</div></div>
+                  <div style="line-height:1.3"><div style="font-size:15px">{{ a.name }}</div><div style="font-size:11px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ a.sku }} · {{ a.cat }}</div></div>
                   <span class="tag" style="background:{{ a.tone.bg }};color:{{ a.tone.fg }}">{{ a.label }}</span>
                 </div>
                 <div style="height:4px;border-radius:2px;background:var(--color-neutral-200);overflow:hidden"><div style="height:100%;width:{{ a.pct }};background:{{ a.tone.fg }}"></div></div>
                 <div style="display:flex;justify-content:space-between;font-size:12px;font-variant-numeric:lining-nums tabular-nums"><span>{{ a.onHand }} {{ a.uom }} on hand</span><span style="color:var(--color-neutral-700)">min {{ a.min }}</span></div>
-                <sc-if value="{{ a.hasIncoming }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost" onClick="{{ a.openIncoming }}" style="align-self:flex-start;font-size:13px;padding:4px 6px">Incoming {{ a.incomingText }} â†’</button></sc-if>
+                <sc-if value="{{ a.hasIncoming }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost" onClick="{{ a.openIncoming }}" style="align-self:flex-start;font-size:13px;padding:4px 6px">Incoming {{ a.incomingText }} →</button></sc-if>
                 <sc-if value="{{ a.noIncoming }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:oklch(0.47 0.14 27)">No incoming receipt scheduled</span></sc-if>
               </div>
             </sc-for>
@@ -246,12 +243,45 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
       </div>
     </sc-if>
 
+    <sc-if value="{{ show.alerts }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div><div style="font-size:12px;color:var(--color-neutral-700)">Inventory</div><h1 style="margin:2px 0 0;font-weight:400">Low stock alerts</h1>
+          <div style="margin-top:4px;font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ alertsSummary }}</div></div>
+        <sc-if value="{{ hasAlerts }}" hint-placeholder-val="{{ true }}">
+          <div style="overflow-x:auto">
+            <table class="table" style="min-width:820px">
+              <thead><tr><th>Product</th><th>Category</th><th style="text-align:right">On hand</th><th style="text-align:right">Min / Max</th><th>Status</th><th>Incoming</th><th style="text-align:right">Suggested order</th><th>Supplier</th></tr></thead>
+              <tbody>
+                <sc-for list="{{ lowItems }}" as="a" hint-placeholder-count="3">
+                  <tr onClick="{{ a.pick }}" style="cursor:pointer">
+                    <td style="padding:12px var(--space-2)"><div style="color:var(--color-accent-700)">{{ a.name }}</div><div style="font-size:11px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ a.sku }}</div></td>
+                    <td style="padding:12px var(--space-2)">{{ a.cat }}</td>
+                    <td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums">{{ a.onHand }} {{ a.uom }}</td>
+                    <td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums;color:var(--color-neutral-700)">{{ a.min }} / {{ a.maxText }}</td>
+                    <td style="padding:12px var(--space-2)"><span class="tag" style="background:{{ a.tone.bg }};color:{{ a.tone.fg }}">{{ a.label }}</span></td>
+                    <td style="padding:8px var(--space-2)" onClick="{{ stop }}">
+                      <sc-if value="{{ a.hasIncoming }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost" onClick="{{ a.openIncoming }}" style="font-size:13px;padding:4px 6px">{{ a.incomingText }} →</button></sc-if>
+                      <sc-if value="{{ a.noIncoming }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:oklch(0.47 0.14 27)">None scheduled</span></sc-if>
+                    </td>
+                    <td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums">{{ a.need }} {{ a.uom }}</td>
+                    <td style="padding:12px var(--space-2)">{{ a.supplier }}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+          <div style="font-size:12px;color:var(--color-neutral-700)">Suggested order = reorder maximum − on hand − already incoming. Click a row to open the product.</div>
+        </sc-if>
+        <sc-if value="{{ noAlerts }}" hint-placeholder-val="{{ false }}"><div style="padding:48px 16px;border:1px dashed var(--color-divider);border-radius:var(--radius-md);text-align:center;font-size:14px;color:var(--color-neutral-700)">Every product is above its reorder minimum.</div></sc-if>
+      </div>
+    </sc-if>
+
     <sc-if value="{{ show.receipt }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:var(--space-4)">
-        <div style="display:flex;gap:8px;font-size:12px;color:var(--color-neutral-700)"><span>Operations</span><span>/</span><span>Receipts</span><span>/</span><span style="color:var(--color-text)">WH/IN/0009</span></div>
+        <div style="display:flex;gap:8px;font-size:12px;color:var(--color-neutral-700)"><span>Operations</span><span>/</span><span>Receipts</span><span>/</span><span style="color:var(--color-text)">{{ rcDoc.ref }}</span></div>
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
-          <div style="display:flex;flex-direction:column;gap:8px"><h1 style="margin:0;font-weight:400;font-variant-numeric:lining-nums tabular-nums">WH/IN/0009</h1><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <sc-for list="{{ rcPipe }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">â€º</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
+          <div style="display:flex;flex-direction:column;gap:8px"><h1 style="margin:0;font-weight:400;font-variant-numeric:lining-nums tabular-nums">{{ rcDoc.ref }}</h1><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ rcPipe }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">›</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
         </div></div>
           
         </div>
@@ -260,7 +290,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div style="display:flex;gap:var(--space-2);flex-wrap:wrap;padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
             <button class="btn btn-primary" onClick="{{ validate }}" style="min-height:44px;min-width:132px;font-size:15px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Validate</button>
             <button class="btn btn-secondary" onClick="{{ fillExpected }}" style="min-height:44px">Set received = expected</button>
-            <button class="btn btn-secondary" disabled="{{ true }}" title="Available once the receipt is done" style="min-height:44px">Print</button>
+            <button class="btn btn-secondary" onClick="{{ printRc }}" style="min-height:44px">Print PDF</button>
             <div style="flex:1"></div>
             <button class="btn btn-ghost" onClick="{{ rcCancel }}" style="min-height:44px;color:oklch(0.46 0.14 27)">Cancel receipt</button>
           </div>
@@ -269,7 +299,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <sc-if value="{{ rc.hasError }}" hint-placeholder-val="{{ false }}">
           <div role="alert" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
-            <div style="font-size:14px"><strong style="font-weight:600">Canâ€™t validate yet.</strong> {{ rc.error }}</div>
+            <div style="font-size:14px"><strong style="font-weight:600">Can’t validate yet.</strong> {{ rc.error }}</div>
           </div>
         </sc-if>
 
@@ -278,26 +308,26 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div style="display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4);border:1px solid oklch(0.62 0.09 150);border-radius:var(--radius-md);animation:ssIn .35s ease-out">
             <div style="display:flex;align-items:center;gap:10px">
               <span style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1px solid oklch(0.55 0.09 150);color:oklch(0.42 0.09 150)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-              <div><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Receipt validated â€” stock increased</div><div style="font-size:12px;color:var(--color-neutral-700)">Posted to WH/Main Store at {{ rc.doneAt }} by Priya Nair</div></div>
+              <div><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Receipt validated — stock increased</div><div style="font-size:12px;color:var(--color-neutral-700)">Posted to {{ rcDoc.dest }} · {{ rc.doneAt }}</div></div>
             </div>
             <div style="display:flex;gap:var(--space-3);flex-wrap:wrap">
               <sc-for list="{{ rc.result }}" as="x" hint-placeholder-count="2">
                 <div style="display:flex;flex-direction:column;gap:2px;padding:10px 14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);min-width:190px">
                   <div style="font-size:14px">{{ x.name }} <span style="color:oklch(0.42 0.1 150);font-variant-numeric:lining-nums tabular-nums">+{{ x.qty }} {{ x.uom }}</span></div>
-                  <div style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">On hand {{ x.before }} â†’ {{ x.after }}</div>
+                  <div style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ x.detail }}</div>
                 </div>
               </sc-for>
             </div>
-            <div style="display:flex;gap:var(--space-2);flex-wrap:wrap"><button class="btn btn-primary" onClick="{{ goHistory }}" style="min-height:40px">View in Move History</button><button class="btn btn-secondary" onClick="{{ print }}" style="min-height:40px">Print receipt</button><button class="btn btn-secondary" onClick="{{ goReceipts }}" style="min-height:40px">All receipts</button></div>
+            <div style="display:flex;gap:var(--space-2);flex-wrap:wrap"><button class="btn btn-primary" onClick="{{ goHistory }}" style="min-height:40px">View in Move History</button><button class="btn btn-secondary" onClick="{{ printRc }}" style="min-height:40px">Download receipt PDF</button><button class="btn btn-secondary" onClick="{{ goReceipts }}" style="min-height:40px">All receipts</button></div>
           </div>
         </sc-if>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-4) var(--space-6);padding:var(--space-2) 0">
-          <div class="field"><label>Supplier</label><input class="input" value="Northline Metals Pvt. Ltd." readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Source document</label><input class="input" value="PO/2026/00231" readOnly="{{ true }}" style="min-height:40px;font-variant-numeric:lining-nums tabular-nums"></div>
+          <div class="field"><label>Supplier</label><input class="input" value="{{ rcDoc.partner }}" readOnly="{{ true }}" style="min-height:40px"></div>
+          <div class="field"><label>Source document</label><input class="input" value="{{ rcDoc.origin }}" readOnly="{{ true }}" style="min-height:40px;font-variant-numeric:lining-nums tabular-nums"></div>
           <div class="field"><label>Responsible</label><input class="input" value="{{ pf.name }}" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Scheduled date</label><input class="input" type="date" value="2026-09-27" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Destination location</label><select class="input" style="min-height:40px" disabled="{{ rc.done }}"><option>WH/Main Store â€” Main Warehouse</option><option>WH/Rack A â€” Main Warehouse</option><option>WH2/Stock â€” Warehouse 2</option></select></div>
+          <div class="field"><label>Scheduled date</label><input class="input" type="date" value="{{ rcDoc.date }}" readOnly="{{ true }}" style="min-height:40px"></div>
+          <div class="field"><label>Destination location</label><select class="input" value="{{ rcDoc.dest }}" onChange="{{ rcDoc.onDest }}" style="min-height:40px" disabled="{{ rcLocked }}"><sc-for list="{{ locOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select></div>
         </div>
 
         <section style="display:flex;flex-direction:column;gap:var(--space-2)">
@@ -327,7 +357,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
       <div style="display:flex;flex-direction:column;gap:var(--space-4)">
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
           <div><div style="font-size:12px;color:var(--color-neutral-700)">Stock ledger</div><h1 style="margin:2px 0 0;font-weight:400">Move History</h1></div>
-          <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ ledgerRows.length }} moves Â· <span style="color:oklch(0.42 0.1 150)">{{ ledgerIn }} in</span> Â· <span style="color:oklch(0.47 0.15 27)">{{ ledgerOut }} out</span></div>
+          <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ ledgerRows.length }} moves · <span style="color:oklch(0.42 0.1 150)">{{ ledgerIn }} in</span> · <span style="color:oklch(0.47 0.15 27)">{{ ledgerOut }} out</span></div>
         </div>
         <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--space-3);padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
           <label class="field"><label>From</label><input class="input" type="date" value="{{ lf.from }}" onChange="{{ lfFrom }}" style="width:auto"></label>
@@ -365,7 +395,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <button class="btn btn-secondary" onClick="{{ lfClear }}">Reset filters</button>
           </div>
         </sc-if>
-        <div style="font-size:12px;color:var(--color-neutral-700)">Internal transfers change location only â€” they are shown without a sign because total stock is unchanged.</div>
+        <div style="font-size:12px;color:var(--color-neutral-700)">Internal transfers change location only — they are shown without a sign because total stock is unchanged.</div>
       </div>
     </sc-if>
 
@@ -446,10 +476,10 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
 
     <sc-if value="{{ show.delivery }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:var(--space-4)">
-        <div style="display:flex;gap:8px;font-size:12px;color:var(--color-neutral-700)"><span>Operations</span><span>/</span><span>Delivery Orders</span><span>/</span><span style="color:var(--color-text)">WH/OUT/0013</span></div>
+        <div style="display:flex;gap:8px;font-size:12px;color:var(--color-neutral-700)"><span>Operations</span><span>/</span><span>Delivery Orders</span><span>/</span><span style="color:var(--color-text)">{{ dvDoc.ref }}</span></div>
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
-          <div style="display:flex;flex-direction:column;gap:8px"><h1 style="margin:0;font-weight:400;font-variant-numeric:lining-nums tabular-nums">WH/OUT/0013</h1><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <sc-for list="{{ dvPipe }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">â€º</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
+          <div style="display:flex;flex-direction:column;gap:8px"><h1 style="margin:0;font-weight:400;font-variant-numeric:lining-nums tabular-nums">{{ dvDoc.ref }}</h1><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ dvPipe }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">›</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
         </div></div>
           <div style="display:flex;align-items:center;gap:8px">
             <sc-for list="{{ dvSteps }}" as="s" hint-placeholder-count="3">
@@ -466,14 +496,14 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <button class="btn btn-primary" onClick="{{ dvPrimary }}" style="min-height:48px;min-width:170px;font-size:15px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ dv.primaryLabel }}</button>
             <sc-if value="{{ dv.canBack }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary" onClick="{{ dvBack }}" style="min-height:48px">Back</button></sc-if>
             <div style="flex:1"></div>
-            <button class="btn btn-secondary" disabled="{{ true }}" title="Available once delivered" style="min-height:48px">Print</button>
+            <button class="btn btn-secondary" onClick="{{ printDv }}" style="min-height:48px">Print PDF</button>
             <button class="btn btn-ghost" onClick="{{ dvCancel }}" style="min-height:48px;color:oklch(0.46 0.14 27)">Cancel delivery</button>
           </div>
         </sc-if>
         <sc-if value="{{ dv.hasError }}" hint-placeholder-val="{{ false }}">
           <div role="alert" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
-            <div style="font-size:14px"><strong style="font-weight:600">Canâ€™t continue.</strong> {{ dv.error }}</div>
+            <div style="font-size:14px"><strong style="font-weight:600">Can’t continue.</strong> {{ dv.error }}</div>
           </div>
         </sc-if>
         <sc-if value="{{ dvCanceled }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);font-size:14px">This delivery was canceled. No stock was changed.</div></sc-if>
@@ -481,25 +511,25 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div style="display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4);border:1px solid oklch(0.62 0.09 150);border-radius:var(--radius-md);animation:ssIn .35s ease-out">
             <div style="display:flex;align-items:center;gap:10px">
               <span style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1px solid oklch(0.55 0.09 150);color:oklch(0.42 0.09 150)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-              <div><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Delivered â€” stock decreased</div><div style="font-size:12px;color:var(--color-neutral-700)">Shipped to Brightdesk Offices at {{ dv.doneAt }} Â· {{ dv.packages }} packages</div></div>
+              <div><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Delivered — stock decreased</div><div style="font-size:12px;color:var(--color-neutral-700)">{{ dvDoc.doneText }}</div></div>
             </div>
             <div style="display:flex;gap:var(--space-3);flex-wrap:wrap">
               <sc-for list="{{ dv.result }}" as="x" hint-placeholder-count="2">
                 <div style="display:flex;flex-direction:column;gap:2px;padding:10px 14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);min-width:190px">
-                  <div style="font-size:14px">{{ x.name }} <span style="color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">âˆ’{{ x.qty }} {{ x.uom }}</span></div>
-                  <div style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">On hand {{ x.before }} â†’ {{ x.after }}</div>
+                  <div style="font-size:14px">{{ x.name }} <span style="color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">−{{ x.qty }} {{ x.uom }}</span></div>
+                  <div style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ x.detail }}</div>
                 </div>
               </sc-for>
             </div>
-            <div style="display:flex;gap:var(--space-2)"><button class="btn btn-primary" onClick="{{ goHistory }}" style="min-height:40px">View in Move History</button><button class="btn btn-secondary" onClick="{{ print }}" style="min-height:40px">Print delivery slip</button><button class="btn btn-secondary" onClick="{{ goDeliveries }}" style="min-height:40px">All deliveries</button></div>
+            <div style="display:flex;gap:var(--space-2)"><button class="btn btn-primary" onClick="{{ goHistory }}" style="min-height:40px">View in Move History</button><button class="btn btn-secondary" onClick="{{ printDv }}" style="min-height:40px">Download delivery slip PDF</button><button class="btn btn-secondary" onClick="{{ goDeliveries }}" style="min-height:40px">All deliveries</button></div>
           </div>
         </sc-if>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-4) var(--space-6);padding:var(--space-2) 0">
-          <div class="field"><label>Customer</label><input class="input" value="Brightdesk Offices" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Delivery address</label><input class="input" value="4th Floor, Baner Road, Pune" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Scheduled date</label><input class="input" type="date" value="2026-09-27" readOnly="{{ true }}" style="min-height:40px"></div>
+          <div class="field"><label>Customer</label><input class="input" value="{{ dvDoc.partner }}" readOnly="{{ true }}" style="min-height:40px"></div>
+          <div class="field"><label>Delivery address</label><input class="input" value="{{ dvDoc.address }}" readOnly="{{ true }}" style="min-height:40px"></div>
+          <div class="field"><label>Scheduled date</label><input class="input" type="date" value="{{ dvDoc.date }}" readOnly="{{ true }}" style="min-height:40px"></div>
           <div class="field"><label>Responsible</label><input class="input" value="{{ pf.name }}" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Operation type</label><select class="input" style="min-height:40px"><option>Delivery â€” Main Warehouse</option><option>Delivery â€” Warehouse 2</option></select></div>
+          <div class="field"><label>Operation type</label><input class="input" value="{{ dvDoc.wh }}" readOnly="{{ true }}" style="min-height:40px"></div>
         </div>
         <section style="display:flex;flex-direction:column;gap:var(--space-2)">
           <h3 style="margin:0">Products</h3>
@@ -527,7 +557,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <sc-if value="{{ dv.isValidate }}" hint-placeholder-val="{{ false }}">
               <div class="card" style="flex:1;min-width:260px;padding:var(--space-3) var(--space-4)">
                 <div class="card-kicker" style="color:var(--color-accent-700)">On validation, stock decreases</div>
-                <sc-for list="{{ dvLines }}" as="l" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;font-size:14px;font-variant-numeric:lining-nums tabular-nums"><span>{{ l.name }}</span><span>{{ l.onHand }} â†’ <span style="color:oklch(0.47 0.15 27)">{{ l.after }}</span> {{ l.uom }}</span></div></sc-for>
+                <sc-for list="{{ dvLines }}" as="l" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;font-size:14px;font-variant-numeric:lining-nums tabular-nums"><span>{{ l.name }}</span><span>{{ l.onHand }} → <span style="color:oklch(0.47 0.15 27)">{{ l.after }}</span> {{ l.uom }}</span></div></sc-for>
               </div>
             </sc-if>
           </div>
@@ -536,10 +566,10 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
     </sc-if>
 <sc-if value="{{ show.transfer }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:var(--space-4)">
-        <div style="display:flex;gap:8px;font-size:12px;color:var(--color-neutral-700)"><span>Operations</span><span>/</span><span>Internal Transfers</span><span>/</span><span style="color:var(--color-text)">WH/INT/0006</span></div>
+        <div style="display:flex;gap:8px;font-size:12px;color:var(--color-neutral-700)"><span>Operations</span><span>/</span><span>Internal Transfers</span><span>/</span><span style="color:var(--color-text)">{{ tr.ref }}</span></div>
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
-          <div style="display:flex;flex-direction:column;gap:8px"><h1 style="margin:0;font-weight:400;font-variant-numeric:lining-nums tabular-nums">WH/INT/0006</h1><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <sc-for list="{{ trPipe }}" as="p" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">â€º</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
+          <div style="display:flex;flex-direction:column;gap:8px"><h1 style="margin:0;font-weight:400;font-variant-numeric:lining-nums tabular-nums">{{ tr.ref }}</h1><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ trPipe }}" as="p" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">›</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
         </div></div>
           
         </div>
@@ -554,13 +584,15 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <sc-if value="{{ tr.hasError }}" hint-placeholder-val="{{ false }}">
           <div role="alert" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
-            <div style="font-size:14px"><strong style="font-weight:600">Canâ€™t transfer yet.</strong> {{ tr.error }}</div>
+            <div style="font-size:14px"><strong style="font-weight:600">Can’t transfer yet.</strong> {{ tr.error }}</div>
           </div>
         </sc-if>
+        <sc-if value="{{ trCanceled }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);font-size:14px">This transfer was canceled. No stock was moved.</div></sc-if>
         <sc-if value="{{ tr.done }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:10px;padding:var(--space-3) var(--space-4);border:1px solid oklch(0.62 0.09 150);border-radius:var(--radius-md);animation:ssIn .35s ease-out">
             <span style="width:30px;height:30px;flex:none;border-radius:50%;display:grid;place-items:center;border:1px solid oklch(0.55 0.09 150);color:oklch(0.42 0.09 150)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <div style="flex:1"><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Transferred â€” location updated</div><div style="font-size:12px;color:var(--color-neutral-700)">Validated at {{ tr.doneAt }}. Total stock is unchanged.</div></div>
+            <div style="flex:1"><div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Transferred — location updated</div><div style="font-size:12px;color:var(--color-neutral-700)">Validated {{ tr.doneAt }}. Total stock is unchanged.</div>
+</div>
             <button class="btn btn-primary" onClick="{{ goHistory }}" style="min-height:40px">View in Move History</button>
           </div>
         </sc-if>
@@ -568,25 +600,25 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:var(--space-4);align-items:stretch">
           <div class="card" style="padding:var(--space-4);gap:var(--space-3)">
             <div class="card-kicker" style="color:var(--color-accent-700)">From</div>
-            <select class="input" value="{{ tr.src }}" onChange="{{ setSrc }}" disabled="{{ tr.done }}" style="min-height:48px;font-size:15px"><sc-for list="{{ locOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select>
+            <select class="input" value="{{ tr.src }}" onChange="{{ setSrc }}" disabled="{{ tr.locked }}" style="min-height:48px;font-size:15px"><sc-for list="{{ locOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select>
             <sc-for list="{{ trLines }}" as="l" hint-placeholder-count="1">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:var(--space-2);border-top:1px solid var(--color-divider)"><span style="font-size:14px">{{ l.name }}</span><span style="font-family:var(--font-heading);font-size:26px;font-variant-numeric:lining-nums tabular-nums">{{ l.srcBefore }} <span style="color:var(--color-neutral-500)">â†’</span> <span style="color:oklch(0.47 0.15 27)">{{ l.srcAfter }}</span></span></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:var(--space-2);border-top:1px solid var(--color-divider)"><span style="font-size:14px">{{ l.name }}</span><sc-if value="{{ l.live }}" hint-placeholder-val="{{ true }}"><span style="font-family:var(--font-heading);font-size:26px;font-variant-numeric:lining-nums tabular-nums">{{ l.srcBefore }} <span style="color:var(--color-neutral-500)">→</span> <span style="color:oklch(0.47 0.15 27)">{{ l.srcAfter }}</span></span></sc-if><sc-if value="{{ l.hist }}" hint-placeholder-val="{{ false }}"><span style="font-family:var(--font-heading);font-size:26px;font-variant-numeric:lining-nums tabular-nums;color:oklch(0.47 0.15 27)">{{ l.histOut }}</span></sc-if></div>
             </sc-for>
           </div>
           <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
-            <button class="btn btn-secondary btn-icon" onClick="{{ swapLocs }}" disabled="{{ tr.done }}" aria-label="Swap locations" style="width:48px;height:48px;border-radius:50%"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"></path><path d="M4 7h16"></path><path d="m16 21 4-4-4-4"></path><path d="M20 17H4"></path></svg></button>
+            <button class="btn btn-secondary btn-icon" onClick="{{ swapLocs }}" disabled="{{ tr.locked }}" aria-label="Swap locations" style="width:48px;height:48px;border-radius:50%"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"></path><path d="M4 7h16"></path><path d="m16 21 4-4-4-4"></path><path d="M20 17H4"></path></svg></button>
           </div>
           <div class="card" style="padding:var(--space-4);gap:var(--space-3)">
             <div class="card-kicker" style="color:var(--color-accent-700)">To</div>
-            <select class="input" value="{{ tr.dst }}" onChange="{{ setDst }}" disabled="{{ tr.done }}" style="min-height:48px;font-size:15px"><sc-for list="{{ locOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select>
+            <select class="input" value="{{ tr.dst }}" onChange="{{ setDst }}" disabled="{{ tr.locked }}" style="min-height:48px;font-size:15px"><sc-for list="{{ locOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select>
             <sc-for list="{{ trLines }}" as="l" hint-placeholder-count="1">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:var(--space-2);border-top:1px solid var(--color-divider)"><span style="font-size:14px">{{ l.name }}</span><span style="font-family:var(--font-heading);font-size:26px;font-variant-numeric:lining-nums tabular-nums">{{ l.dstBefore }} <span style="color:var(--color-neutral-500)">â†’</span> <span style="color:oklch(0.42 0.1 150)">{{ l.dstAfter }}</span></span></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:var(--space-2);border-top:1px solid var(--color-divider)"><span style="font-size:14px">{{ l.name }}</span><sc-if value="{{ l.live }}" hint-placeholder-val="{{ true }}"><span style="font-family:var(--font-heading);font-size:26px;font-variant-numeric:lining-nums tabular-nums">{{ l.dstBefore }} <span style="color:var(--color-neutral-500)">→</span> <span style="color:oklch(0.42 0.1 150)">{{ l.dstAfter }}</span></span></sc-if><sc-if value="{{ l.hist }}" hint-placeholder-val="{{ false }}"><span style="font-family:var(--font-heading);font-size:26px;font-variant-numeric:lining-nums tabular-nums;color:oklch(0.42 0.1 150)">{{ l.histIn }}</span></sc-if></div>
             </sc-for>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:6px;padding:var(--space-3) var(--space-4);border:1px dashed var(--color-divider);border-radius:var(--radius-md)">
           <sc-for list="{{ trLines }}" as="l" hint-placeholder-count="1">
-            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;font-variant-numeric:lining-nums tabular-nums"><span class="tag" style="background:oklch(0.94 0.045 150);color:oklch(0.40 0.09 150)">Total unchanged</span><span>{{ l.name }} on hand across all locations: <strong style="font-weight:600">{{ l.total }} â†’ {{ l.total }} {{ l.uom }}</strong></span><span style="color:var(--color-neutral-700)">Only the location changes.</span></div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;font-variant-numeric:lining-nums tabular-nums"><span class="tag" style="background:oklch(0.94 0.045 150);color:oklch(0.40 0.09 150)">Total unchanged</span><span>{{ l.name }} on hand across all locations: <strong style="font-weight:600">{{ l.total }} → {{ l.total }} {{ l.uom }}</strong></span><span style="color:var(--color-neutral-700)">Only the location changes.</span></div>
           </sc-for>
         </div>
         <div style="overflow-x:auto">
@@ -613,7 +645,10 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <div><div style="font-size:12px;color:var(--color-neutral-700)">Operations</div><h1 style="margin:2px 0 0;font-weight:400">Inventory Adjustments</h1></div>
         <div style="display:flex;flex-wrap:wrap;gap:var(--space-6);align-items:flex-start">
           <section class="card" style="flex:1 1 440px;padding:var(--space-4) var(--space-6);gap:var(--space-4)">
-            <h4 style="margin:0">Record a count</h4>
+            <h4 style="margin:0">Adjust stock</h4>
+            <div class="seg" style="display:flex">
+              <sc-for list="{{ adjModes }}" as="o" hint-placeholder-count="3"><button class="seg-opt" onClick="{{ o.pick }}" style="flex:1;justify-content:center;border:0;border-left:{{ o.divider }};background:transparent;font:inherit;font-size:14px;min-height:44px;color:{{ o.color }};box-shadow:{{ o.shadow }}">{{ o.label }}</button></sc-for>
+            </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--space-4)">
               <div class="field"><label>Product</label><select class="input" value="{{ adj.pid }}" onChange="{{ adjSet.pid }}" style="min-height:48px"><sc-for list="{{ productOpts }}" as="p" hint-placeholder-count="6"><option value="{{ p.id }}">{{ p.name }}</option></sc-for></select></div>
               <div class="field"><label>Location</label><select class="input" value="{{ adj.loc }}" onChange="{{ adjSet.loc }}" style="min-height:48px"><sc-for list="{{ locOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select></div>
@@ -625,9 +660,16 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
                 <span style="font-size:12px;color:var(--color-neutral-700)">{{ adj.uom }} in system</span>
               </div>
               <div style="display:flex;flex-direction:column;gap:4px;padding:var(--space-3);border-left:1px solid var(--color-divider)">
-                <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Counted</span>
-                <input class="input" inputMode="numeric" placeholder="0" value="{{ adj.counted }}" onChange="{{ adjSet.counted }}" style="min-height:52px;font-family:var(--font-heading);font-size:34px;padding:0 10px;font-variant-numeric:lining-nums tabular-nums;border-color:{{ adj.inputBorder }}">
-                <span style="font-size:12px;color:var(--color-neutral-700)">{{ adj.uom }} on the shelf</span>
+                <sc-if value="{{ adjIsCount }}" hint-placeholder-val="{{ true }}">
+                  <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Counted</span>
+                  <input class="input" inputMode="numeric" placeholder="0" value="{{ adj.counted }}" onChange="{{ adjSet.counted }}" style="min-height:52px;font-family:var(--font-heading);font-size:34px;padding:0 10px;font-variant-numeric:lining-nums tabular-nums;border-color:{{ adj.inputBorder }}">
+                  <span style="font-size:12px;color:var(--color-neutral-700)">{{ adj.uom }} on the shelf</span>
+                </sc-if>
+                <sc-if value="{{ adjIsDelta }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">{{ adj.deltaLabel }}</span>
+                  <input class="input" inputMode="numeric" placeholder="0" value="{{ adj.delta }}" onChange="{{ adjSet.delta }}" style="min-height:52px;font-family:var(--font-heading);font-size:34px;padding:0 10px;font-variant-numeric:lining-nums tabular-nums;border-color:{{ adj.inputBorder }}">
+                  <span style="font-size:12px;color:var(--color-neutral-700)">{{ adj.deltaHint }}</span>
+                </sc-if>
               </div>
               <div style="display:flex;flex-direction:column;gap:4px;padding:var(--space-3);border-left:1px solid var(--color-divider)">
                 <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Difference</span>
@@ -642,7 +684,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             </div>
             <div class="field"><label>Note (optional)</label><input class="input" placeholder="e.g. Pallet crushed during unloading" value="{{ adj.note }}" onChange="{{ adjSet.note }}" style="min-height:44px"></div>
             <sc-if value="{{ adj.hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="font-size:14px;color:oklch(0.46 0.14 27)">{{ adj.error }}</div></sc-if>
-            <button class="btn btn-primary" onClick="{{ adjApply }}" style="align-self:flex-start;min-height:48px;min-width:160px;font-size:15px">Apply adjustment</button>
+            <button class="btn btn-primary" onClick="{{ adjApply }}" style="align-self:flex-start;min-height:48px;min-width:160px;font-size:15px">{{ adj.applyLabel }}</button>
           </section>
           <section style="flex:1 1 340px;display:flex;flex-direction:column;gap:var(--space-2)">
             <h4 style="margin:0">Recent adjustments</h4>
@@ -650,7 +692,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
               <div style="display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:10px 0;border-top:1px solid var(--color-divider);background:{{ m.bg }}">
                 <span style="font-size:14px">{{ m.product }}</span>
                 <span style="text-align:right;font-variant-numeric:lining-nums tabular-nums;color:{{ m.qtyColor }}">{{ m.qty }}</span>
-                <span style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ m.ref }} Â· {{ m.from }} â†’ {{ m.to }}</span>
+                <span style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ m.ref }} · {{ m.from }} → {{ m.to }}</span>
                 <span style="font-size:12px;color:var(--color-neutral-700);text-align:right;font-variant-numeric:lining-nums tabular-nums">{{ m.date }}</span>
               </div>
             </sc-for>
@@ -706,7 +748,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
                         <td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums;font-size:13px">{{ p.costText }}</td>
                         <td style="padding:6px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums">
                           <sc-if value="{{ p.notEditing }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:flex-end;align-items:center;gap:8px"><span>{{ p.onHand }}</span><button class="btn btn-ghost" onClick="{{ p.startUpd }}" style="font-size:12px;padding:4px 6px">Update</button></div></sc-if>
-                          <sc-if value="{{ p.editing }}" hint-placeholder-val="{{ false }}"><div onClick="{{ stop }}" style="display:flex;justify-content:flex-end;align-items:center;gap:4px"><input class="input" inputMode="numeric" value="{{ p.updVal }}" onChange="{{ p.onUpd }}" style="width:80px;min-height:40px;text-align:right;font-variant-numeric:lining-nums tabular-nums"><button class="btn btn-primary" onClick="{{ p.applyUpd }}" style="min-height:40px;padding:0 10px">Save</button><button class="btn btn-ghost btn-icon" onClick="{{ p.cancelUpd }}" aria-label="Cancel" style="width:32px;height:40px;color:var(--color-neutral-700)">âœ•</button></div><sc-if value="{{ p.hasUpdErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:oklch(0.46 0.14 27);margin-top:2px">{{ p.updErr }}</div></sc-if></sc-if>
+                          <sc-if value="{{ p.editing }}" hint-placeholder-val="{{ false }}"><div onClick="{{ stop }}" style="display:flex;justify-content:flex-end;align-items:center;gap:4px"><input class="input" inputMode="numeric" value="{{ p.updVal }}" onChange="{{ p.onUpd }}" style="width:80px;min-height:40px;text-align:right;font-variant-numeric:lining-nums tabular-nums"><button class="btn btn-primary" onClick="{{ p.applyUpd }}" style="min-height:40px;padding:0 10px">Save</button><button class="btn btn-ghost btn-icon" onClick="{{ p.cancelUpd }}" aria-label="Cancel" style="width:32px;height:40px;color:var(--color-neutral-700)">✕</button></div><sc-if value="{{ p.hasUpdErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:oklch(0.46 0.14 27);margin-top:2px">{{ p.updErr }}</div></sc-if></sc-if>
                         </td>
                         <td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums;color:{{ p.freeColor }}">{{ p.free }}</td>
                         <td style="padding:12px var(--space-2);text-align:right"><span class="tag" style="background:{{ p.tone.bg }};color:{{ p.tone.fg }}">{{ p.label }}</span></td>
@@ -765,14 +807,14 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
               <div>
                 <div style="display:flex;align-items:center;gap:12px"><h1 style="margin:0;font-weight:400">{{ pd.name }}</h1><span class="tag" style="background:{{ pd.tone.bg }};color:{{ pd.tone.fg }}">{{ pd.label }}</span></div>
-                <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ pd.sku }} Â· {{ pd.cat }} Â· {{ pd.uom }}</div>
+                <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ pd.sku }} · {{ pd.cat }} · {{ pd.uom }}</div>
               </div>
               <button class="btn btn-secondary" onClick="{{ editProduct }}" style="min-height:42px">Edit product</button>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
               <div style="padding:var(--space-3) 0"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">On hand</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;font-variant-numeric:lining-nums tabular-nums">{{ pd.onHandText }} <span style="font-size:16px;color:var(--color-neutral-700)">{{ pd.uom }}</span></div></div>
               <div style="padding:var(--space-3);border-left:1px solid var(--color-divider)"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Incoming</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;color:oklch(0.42 0.1 150);font-variant-numeric:lining-nums tabular-nums">+{{ pd.incoming }}</div></div>
-              <div style="padding:var(--space-3);border-left:1px solid var(--color-divider)"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Outgoing</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">âˆ’{{ pd.outgoing }}</div></div>
+              <div style="padding:var(--space-3);border-left:1px solid var(--color-divider)"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Outgoing</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">−{{ pd.outgoing }}</div></div>
               <div style="padding:var(--space-3);border-left:1px solid var(--color-divider)"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Reorder below</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;font-variant-numeric:lining-nums tabular-nums">{{ pd.minText }}</div></div>
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:var(--space-6);align-items:flex-start">
@@ -799,7 +841,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
               </section>
             </div>
             <section style="display:flex;flex-direction:column;gap:var(--space-2)">
-              <div style="display:flex;justify-content:space-between;align-items:baseline"><h4 style="margin:0">Recent moves</h4><button class="btn btn-ghost" onClick="{{ goHistory }}" style="font-size:13px">Full history â†’</button></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><h4 style="margin:0">Recent moves</h4><button class="btn btn-ghost" onClick="{{ goHistory }}" style="font-size:13px">Full history →</button></div>
               <div style="overflow-x:auto">
                 <table class="table" style="min-width:680px">
                   <thead><tr><th>Date</th><th>Reference</th><th>From</th><th>To</th><th style="text-align:right">Quantity</th></tr></thead>
@@ -835,10 +877,10 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
               <div style="display:flex;flex-direction:column;gap:4px">
                 <div style="display:flex;align-items:center;gap:10px"><h3 style="margin:0">{{ w.name }}</h3><span class="tag tag-outline" style="font-variant-numeric:lining-nums tabular-nums">{{ w.code }}</span></div>
-                <sc-if value="{{ w.notEditing }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:var(--color-neutral-700)">{{ w.address }} Â· Manager: {{ w.manager }}</div></sc-if>
+                <sc-if value="{{ w.notEditing }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:var(--color-neutral-700)">{{ w.address }} · Manager: {{ w.manager }}</div></sc-if>
               </div>
               <div style="display:flex;align-items:center;gap:var(--space-4)">
-                <div style="text-align:right;font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ w.locCount }} locations Â· {{ w.totalUnits }} units</div>
+                <div style="text-align:right;font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ w.locCount }} locations · {{ w.totalUnits }} units</div>
                 <sc-if value="{{ w.notEditing }}" hint-placeholder-val="{{ true }}"><button class="btn btn-secondary" onClick="{{ w.onEdit }}" style="min-height:40px">Edit</button></sc-if>
               </div>
             </div>
@@ -922,21 +964,21 @@ const P0 = [
   { id: 'paint', cost: 1150, name: 'Paint 5L', sku: 'CS-PNT-005', cat: 'Consumables', uom: 'cans', onHand: 0, min: 12, max: 60, supplier: 'Harbor Coatings', loc: {} },
 ];
 const O0 = [
-  { ref: 'WH/IN/0009', type: 'Receipt', partner: 'Northline Metals', items: [['rods', 50], ['bolts', 400]], wh: 'Main Warehouse', date: '27 Sep', status: 'Ready' },
+  { ref: 'WH/IN/0009', type: 'Receipt', partner: 'Northline Metals', origin: 'PO/2026/00231', items: [['rods', 50], ['bolts', 400]], wh: 'Main Warehouse', date: '27 Sep', status: 'Ready' },
   { ref: 'WH/OUT/0013', type: 'Delivery', partner: 'Brightdesk Offices', items: [['chairs', 10], ['bolts', 100]], wh: 'Main Warehouse', date: '27 Sep', status: 'Ready' },
-  { ref: 'WH/INT/0006', type: 'Internal', partner: 'Rack A â†’ Rack B', items: [['bolts', 60]], wh: 'Main Warehouse', date: '28 Sep', status: 'Ready' },
+  { ref: 'WH/INT/0006', type: 'Internal', partner: 'Rack A → Rack B', src: 'WH/Rack A', dst: 'WH/Rack B', items: [['bolts', 60]], wh: 'Main Warehouse', date: '28 Sep', status: 'Ready' },
   { ref: 'WH/OUT/0014', type: 'Delivery', partner: 'Harbor Interiors', items: [['paint', 6]], wh: 'Main Warehouse', date: '25 Sep', status: 'Waiting' },
-  { ref: 'WH/INT/0007', type: 'Internal', partner: 'Warehouse 1 â†’ Warehouse 2', items: [['chairs', 8]], wh: 'Warehouse 2', date: '29 Sep', status: 'Waiting' },
-  { ref: 'WH/IN/0010', type: 'Receipt', partner: 'Crestwood Timber', items: [['frames', 40]], wh: 'Warehouse 2', date: '24 Sep', status: 'Draft' },
+  { ref: 'WH/INT/0007', type: 'Internal', partner: 'Warehouse 1 → Warehouse 2', src: 'WH/Main Store', dst: 'WH2/Stock', items: [['chairs', 8]], wh: 'Warehouse 2', date: '29 Sep', status: 'Waiting' },
+  { ref: 'WH/IN/0010', type: 'Receipt', partner: 'Crestwood Timber', origin: 'PO/2026/00236', items: [['frames', 40]], wh: 'Warehouse 2', date: '24 Sep', status: 'Draft' },
   { ref: 'WH/OUT/0015', type: 'Delivery', partner: 'Brightdesk Offices', items: [['frames', 12]], wh: 'Warehouse 2', date: '1 Oct', status: 'Draft' },
-  { ref: 'WH/ADJ/0004', type: 'Adjustment', partner: 'Damaged â€” Production Rack', items: [['steel', -3]], wh: 'Main Warehouse', date: '26 Sep', status: 'Done' },
+  { ref: 'WH/ADJ/0004', type: 'Adjustment', partner: 'Damaged — Production Rack', loc: 'WH/Production Rack', items: [['steel', -3]], wh: 'Main Warehouse', date: '26 Sep', status: 'Done' },
   { ref: 'WH/OUT/0012', type: 'Delivery', partner: 'Apex Fabrication', items: [['steel', 20]], wh: 'Main Warehouse', date: '25 Sep', status: 'Done' },
-  { ref: 'WH/INT/0005', type: 'Internal', partner: 'Main Store â†’ Production Rack', items: [['steel', 40]], wh: 'Main Warehouse', date: '25 Sep', status: 'Done' },
-  { ref: 'WH/IN/0007', type: 'Receipt', partner: 'Northline Metals', items: [['steel', 100]], wh: 'Main Warehouse', date: '24 Sep', status: 'Done' },
+  { ref: 'WH/INT/0005', type: 'Internal', partner: 'Main Store → Production Rack', src: 'WH/Main Store', dst: 'WH/Production Rack', items: [['steel', 40]], wh: 'Main Warehouse', date: '25 Sep', status: 'Done' },
+  { ref: 'WH/IN/0007', type: 'Receipt', partner: 'Northline Metals', origin: 'PO/2026/00219', items: [['steel', 100]], wh: 'Main Warehouse', date: '24 Sep', status: 'Done' },
   { ref: 'WH/OUT/0011', type: 'Delivery', partner: 'Harbor Interiors', items: [['paint', 4]], wh: 'Main Warehouse', date: '22 Sep', status: 'Canceled' },
 ];
 const L0 = [
-  { ts: '2026-09-26T11:42', ref: 'WH/ADJ/0004', type: 'Adjustment', pid: 'steel', from: 'WH/Production Rack', to: 'Scrap Â· Damaged', qty: 3, kind: 'out', user: 'Ravi Mehta', wh: 'Main Warehouse' },
+  { ts: '2026-09-26T11:42', ref: 'WH/ADJ/0004', type: 'Adjustment', pid: 'steel', from: 'WH/Production Rack', to: 'Scrap · Damaged', qty: 3, kind: 'out', user: 'Ravi Mehta', wh: 'Main Warehouse' },
   { ts: '2026-09-25T16:05', ref: 'WH/OUT/0012', type: 'Delivery', pid: 'steel', from: 'WH/Main Store', to: 'Apex Fabrication', qty: 20, kind: 'out', user: 'Anya Khan', wh: 'Main Warehouse' },
   { ts: '2026-09-25T09:30', ref: 'WH/INT/0005', type: 'Internal', pid: 'steel', from: 'WH/Main Store', to: 'WH/Production Rack', qty: 40, kind: 'move', user: 'Ravi Mehta', wh: 'Main Warehouse' },
   { ts: '2026-09-24T14:18', ref: 'WH/IN/0007', type: 'Receipt', pid: 'steel', from: 'Northline Metals', to: 'WH/Main Store', qty: 100, kind: 'in', user: 'Priya Nair', wh: 'Main Warehouse' },
@@ -964,10 +1006,11 @@ const TYPE_T = { Receipt: 'green', Delivery: 'red', Internal: 'blue', Adjustment
 const PENDING = ['Draft', 'Waiting', 'Ready'];
 const LF0 = { from: '2026-09-20', to: '2026-09-26', type: 'All', pid: 'All', ref: '' };
 const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const OPEN = { 'WH/IN/0009': 'receipt', 'WH/OUT/0013': 'delivery', 'WH/INT/0006': 'transfer' };
+const SCREEN_OF = { Receipt: 'receipt', Delivery: 'delivery', Internal: 'transfer' };
+const DOC_KEY = { Receipt: 'rc', Delivery: 'dv', Internal: 'tr' };
 const TODAY = Date.parse('26 Sep 2026');
 const dayOf = d => Date.parse(d + ' 2026');
-const inr = n => 'â‚¹' + Number(n).toLocaleString('en-IN');
+const inr = n => '₹' + Number(n).toLocaleString('en-IN');
 const fmt = n => Number(n).toLocaleString('en-US');
 const hm = () => { const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
 const stockOf = p => p.onHand <= 0 ? { label: 'Out of stock', tone: T.red } : p.onHand < p.min ? { label: 'Low stock', tone: T.amber } : { label: 'In stock', tone: T.green };
@@ -979,8 +1022,8 @@ const take = (p, q, pref) => {
   return { ...p, loc, onHand: p.onHand - (q - left) };
 };
 const mapMove = (m, pById) => {
-  const p = pById[m.pid] || { name: 'â€”', uom: '' }; const [y, mo, dd] = m.ts.slice(0, 10).split('-');
-  const sign = m.kind === 'in' ? '+' : m.kind === 'out' ? 'âˆ’' : 'â‡„ ';
+  const p = pById[m.pid] || { name: '—', uom: '' }; const [y, mo, dd] = m.ts.slice(0, 10).split('-');
+  const sign = m.kind === 'in' ? '+' : m.kind === 'out' ? '−' : '⇄ ';
   return { date: `${Number(dd)} ${MON[Number(mo) - 1]} ${y}`, time: m.ts.slice(11), ref: m.ref, type: m.type, tone: T[TYPE_T[m.type]],
     product: p.name, from: m.from, to: m.to, user: m.user, qty: `${sign}${fmt(m.qty)} ${p.uom}`,
     qtyColor: m.kind === 'in' ? 'oklch(0.42 0.1 150)' : m.kind === 'out' ? 'oklch(0.47 0.15 27)' : 'var(--color-neutral-700)',
@@ -989,13 +1032,28 @@ const mapMove = (m, pById) => {
 const segOpt = (on, i) => ({ divider: i ? '1px solid var(--color-divider)' : '0', color: on ? 'var(--color-accent-700)' : 'var(--color-text)', shadow: on ? 'inset 0 0 0 1px var(--color-accent)' : 'none' });
 const steps = (labels, idx, allDone) => labels.map((l, i) => {
   const past = i < idx || allDone; const cur = i === idx && !allDone;
-  return { label: l, line: i > 0, lineColor: i <= idx || allDone ? 'var(--color-accent)' : 'var(--color-divider)', mark: past ? 'âœ“' : String(i + 1),
+  return { label: l, line: i > 0, lineColor: i <= idx || allDone ? 'var(--color-accent)' : 'var(--color-divider)', mark: past ? '✓' : String(i + 1),
     border: past || cur ? 'var(--color-accent)' : 'var(--color-divider)', color: past || cur ? 'var(--color-accent-800)' : 'var(--color-neutral-600)',
     bg: cur ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent' };
 });
-const DV0 = { step: 0, lines: [{ pid: 'chairs', demand: 10, picked: '10' }, { pid: 'bolts', demand: 100, picked: '100' }], packages: '', error: null, result: null, doneAt: '' };
-const TR0 = { src: 'WH/Rack A', dst: 'WH/Rack B', lines: [{ pid: 'bolts', qty: '60' }], error: null, done: false, doneAt: '', result: [] };
-const ADJ0 = { pid: 'frames', loc: 'WH2/Stock', counted: '', reason: 'Count correction', note: '', error: null };
+const ADDR = { 'Brightdesk Offices': '4th Floor, Baner Road, Pune', 'Harbor Interiors': 'Shop 7, North Main Road, Koregaon Park, Pune', 'Apex Fabrication': 'Plot 22, MIDC Bhosari, Pune' };
+const homeOf = o => o.wh === 'Warehouse 2' ? 'WH2/Stock' : 'WH/Main Store';
+const isoOf = d => { const t = new Date(dayOf(d)); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; };
+const histOf = (ledger, ref) => { const m = ledger.find(x => x.ref === ref); return m ? `${mapMove(m, {}).date}, ${m.ts.slice(11)} by ${m.user}` : 'earlier'; };
+const histResult = (o, pById) => o.items.map(([pid, q]) => ({ name: pById[pid].name, qty: fmt(Math.abs(q)), uom: pById[pid].uom, detail: 'Logged in Move History' }));
+// Build the editable form state for any operation document from its record in `ops`.
+const initDoc = (o, products, ledger) => {
+  const pById = Object.fromEntries(products.map(p => [p.id, p])); const done = o.status === 'Done'; const canceled = o.status === 'Canceled';
+  const doneAt = done ? histOf(ledger, o.ref) : '';
+  if (o.type === 'Receipt') return { ref: o.ref, status: o.status, dest: homeOf(o), error: null, doneAt, result: done ? histResult(o, pById) : null,
+    lines: o.items.map(([pid, q]) => ({ pid, expected: q, received: done ? String(q) : '' })) };
+  if (o.type === 'Delivery') return { ref: o.ref, step: done ? 3 : 0, canceled, packages: '', error: null, doneAt, result: done ? histResult(o, pById) : null,
+    lines: o.items.map(([pid, q]) => ({ pid, demand: q, picked: String(q) })) };
+  return { ref: o.ref, src: o.src || homeOf(o), dst: o.dst || 'WH2/Stock', done, live: false, canceled, error: null, doneAt, result: [],
+    lines: o.items.map(([pid, q]) => ({ pid, qty: String(q) })) };
+};
+const ADJ0 = { pid: 'frames', loc: 'WH2/Stock', mode: 'count', counted: '', delta: '', reason: 'Count correction', note: '', error: null };
+const ADJ_REASONS = { count: ['Damaged', 'Lost', 'Count correction'], add: ['Found', 'Returned', 'Count correction'], remove: ['Damaged', 'Lost', 'Count correction'] };
 const PF0 = { name: '', sku: '', cat: 'Raw Materials', uom: 'pcs', init: '', loc: 'WH/Main Store' };
 
 class Component extends DCLogic {
@@ -1003,14 +1061,62 @@ class Component extends DCLogic {
     screen: this.props.startScreen ?? 'dashboard', loading: false, opsOpen: true,
     wh: 'All', type: 'All', statuses: [], cat: 'All',
     products: P0, ops: O0, ledger: L0, whs: W0, cats: ['Raw Materials', 'Furniture', 'Hardware', 'Consumables'], seq: 5,
-    rc: { status: 'Ready', lines: [{ pid: 'rods', expected: 50, received: '' }, { pid: 'bolts', expected: 400, received: '' }], error: null, result: null, doneAt: '' },
-    dv: DV0, tr: TR0, adj: ADJ0,
+    rc: initDoc(O0[0], P0, L0), dv: initDoc(O0[1], P0, L0), tr: initDoc(O0[2], P0, L0), docs: {}, adj: ADJ0,
     pm: 'list', psel: null, pq: '', pcat: 'All', pstock: 'All', pform: PF0, perr: {}, pedit: null, rr: { min: '', max: '', supplier: '' }, rrErr: null, newCat: '', catErr: null,
     whForm: null, whErr: null, whEdit: null, whDraft: { address: '', manager: '' }, locAdd: null, locDraft: { name: '', kind: 'Rack' },
     pf: { name: 'Priya Nair', email: 'priya.nair@stocksense.app', cur: '', nw: '', conf: '', err: null, pwErr: null },
     lq: '', lview: 'list', pupd: null, q: '', searchOpen: false, alertsOpen: false, profileOpen: false, toast: null, lf: LF0,
   };
-  componentWillUnmount() { clearTimeout(this._lt); clearTimeout(this._tt); clearTimeout(this._st); }
+  componentDidMount() {
+    if (typeof window === 'undefined' || this._listening) return;
+    this._listening = true;
+    // Clicking anywhere outside an open popover (or pressing Esc) closes it.
+    this._outside = e => {
+      const s = this.state; const t = e.target; const shut = {};
+      if (s.alertsOpen && !(t.closest && t.closest('#ss-alerts'))) shut.alertsOpen = false;
+      if (s.profileOpen && !(t.closest && t.closest('#ss-profile'))) shut.profileOpen = false;
+      if (Object.keys(shut).length) this.setState(shut);
+    };
+    this._esc = e => { if (e.key === 'Escape') this.setState({ alertsOpen: false, profileOpen: false, searchOpen: false }); };
+    // Browser Back/Forward move between app screens instead of leaving the app.
+    this._pop = e => { const snap = e.state && e.state.ss; if (snap) this.restore(snap); };
+    document.addEventListener('mousedown', this._outside);
+    document.addEventListener('keydown', this._esc);
+    window.addEventListener('popstate', this._pop);
+    this._snap = this.snap();
+    window.history.replaceState({ ss: JSON.parse(this._snap) }, '');
+  }
+  componentDidUpdate() {
+    if (typeof window === 'undefined' || !this._listening) return;
+    const snap = this.snap();
+    if (snap !== this._snap) { this._snap = snap; window.history.pushState({ ss: JSON.parse(snap) }, ''); }
+  }
+  componentWillUnmount() {
+    clearTimeout(this._lt); clearTimeout(this._tt); clearTimeout(this._st);
+    if (this._listening) { document.removeEventListener('mousedown', this._outside); document.removeEventListener('keydown', this._esc); window.removeEventListener('popstate', this._pop); this._listening = false; }
+  }
+  snap() {
+    const s = this.state; const key = { receipt: 'rc', delivery: 'dv', transfer: 'tr' }[s.screen];
+    return JSON.stringify({ screen: s.screen, pm: s.screen === 'products' ? s.pm : null, psel: s.screen === 'products' ? s.psel : null, ref: key ? s[key].ref : null });
+  }
+  restore(snap) {
+    this._snap = JSON.stringify(snap);
+    const patch = { screen: snap.screen, loading: false, alertsOpen: false, profileOpen: false, searchOpen: false };
+    if (snap.screen === 'products') Object.assign(patch, { pm: snap.pm || 'list', psel: snap.psel });
+    if (snap.ref) Object.assign(patch, this.docPatch(snap.ref));
+    this.setState(patch);
+  }
+  // Swap the open receipt/delivery/transfer form, keeping unsaved progress of the previous one.
+  docPatch(ref) {
+    const s = this.state; const o = s.ops.find(x => x.ref === ref); if (!o || !DOC_KEY[o.type]) return {};
+    const key = DOC_KEY[o.type]; const cur = s[key]; if (cur.ref === ref) return {};
+    return { [key]: s.docs[ref] || initDoc(o, s.products, s.ledger), docs: { ...s.docs, [cur.ref]: cur } };
+  }
+  openOp(ref) {
+    const o = this.state.ops.find(x => x.ref === ref); if (!o) return;
+    if (o.type === 'Adjustment') return this.go('adjustments', { adj: { ...ADJ0, pid: o.items[0][0], loc: o.loc || homeOf(o) } });
+    this.go(SCREEN_OF[o.type], this.docPatch(ref));
+  }
   go(screen, patch = {}) {
     clearTimeout(this._lt);
     const load = this.props.simulateLoading ?? true;
@@ -1030,18 +1136,19 @@ class Component extends DCLogic {
     const { rc, products, ops, ledger } = this.state;
     const vals = rc.lines.map(l => l.received === '' ? 0 : Number(l.received));
     if (vals.some(v => isNaN(v) || v < 0)) return this.patch('rc', { error: 'Received quantities must be zero or more.' });
-    if (vals.every(v => v === 0)) return this.patch('rc', { error: 'Enter the quantity actually received on at least one line â€” nothing would be added to stock.' });
+    if (vals.every(v => v === 0)) return this.patch('rc', { error: 'Enter the quantity actually received on at least one line — nothing would be added to stock.' });
     const t = hm(); const result = [];
     const nextProducts = products.map(p => {
       const i = rc.lines.findIndex(l => l.pid === p.id);
       if (i < 0 || !vals[i]) return p;
-      result.push({ name: p.name, qty: fmt(vals[i]), uom: p.uom, before: fmt(p.onHand), after: fmt(p.onHand + vals[i]) });
-      return addQ(p, 'WH/Main Store', vals[i]);
+      result.push({ name: p.name, qty: fmt(vals[i]), uom: p.uom, detail: `On hand ${fmt(p.onHand)} → ${fmt(p.onHand + vals[i])}` });
+      return addQ(p, rc.dest, vals[i]);
     });
-    const moves = rc.lines.map((l, i) => vals[i] ? { ts: '2026-09-26T' + t, ref: 'WH/IN/0009', type: 'Receipt', pid: l.pid, from: 'Northline Metals', to: 'WH/Main Store', qty: vals[i], kind: 'in', user: 'Priya Nair', wh: 'Main Warehouse', fresh: true } : null).filter(Boolean);
-    this.setState({ products: nextProducts, ops: ops.map(o => o.ref === 'WH/IN/0009' ? { ...o, status: 'Done', date: '26 Sep' } : o),
-      ledger: [...moves, ...ledger], rc: { ...rc, status: 'Done', error: null, result, doneAt: t } });
-    this.toast({ title: 'WH/IN/0009 validated', lines: result.map(r => `${r.name} +${r.qty} ${r.uom}`) });
+    const op = ops.find(o => o.ref === rc.ref); const user = this.state.pf.name;
+    const moves = rc.lines.map((l, i) => vals[i] ? { ts: '2026-09-26T' + t, ref: rc.ref, type: 'Receipt', pid: l.pid, from: op.partner, to: rc.dest, qty: vals[i], kind: 'in', user, wh: this.whOf(rc.dest), fresh: true } : null).filter(Boolean);
+    this.setState({ products: nextProducts, ops: ops.map(o => o.ref === rc.ref ? { ...o, status: 'Done', date: '26 Sep' } : o),
+      ledger: [...moves, ...ledger], rc: { ...rc, status: 'Done', error: null, result, doneAt: `26 Sep 2026, ${t} by ${user}` } });
+    this.toast({ title: `${rc.ref} validated`, lines: result.map(r => `${r.name} +${r.qty} ${r.uom}`) });
   }
   dvPrimary() {
     const { dv, products, ops, ledger } = this.state; const pById = Object.fromEntries(products.map(p => [p.id, p]));
@@ -1060,17 +1167,19 @@ class Component extends DCLogic {
       if (!dv.packages || !Number.isInteger(n) || n < 1) return this.patch('dv', { error: 'Enter how many packages this order was packed into.' });
       return this.patch('dv', { step: 2, error: null });
     }
-    const t = hm(); const result = [];
+    const t = hm(); const result = []; const op = ops.find(o => o.ref === dv.ref); const home = homeOf(op); const user = this.state.pf.name;
+    // Log each line against the location the stock is actually taken from first.
+    const srcOf = p => (p.loc[home] || 0) > 0 ? home : Object.keys(p.loc).sort((a, b) => p.loc[b] - p.loc[a])[0] || home;
     const nextProducts = products.map(p => {
       const i = dv.lines.findIndex(l => l.pid === p.id);
       if (i < 0 || !vals[i]) return p;
-      result.push({ name: p.name, qty: fmt(vals[i]), uom: p.uom, before: fmt(p.onHand), after: fmt(p.onHand - vals[i]) });
-      return take(p, vals[i], 'WH/Main Store');
+      result.push({ name: p.name, qty: fmt(vals[i]), uom: p.uom, detail: `On hand ${fmt(p.onHand)} → ${fmt(p.onHand - vals[i])}` });
+      return take(p, vals[i], home);
     });
-    const moves = dv.lines.map((l, i) => vals[i] ? { ts: '2026-09-26T' + t, ref: 'WH/OUT/0013', type: 'Delivery', pid: l.pid, from: l.pid === 'bolts' ? 'WH/Rack A' : 'WH/Main Store', to: 'Brightdesk Offices', qty: vals[i], kind: 'out', user: 'Priya Nair', wh: 'Main Warehouse', fresh: true } : null).filter(Boolean);
-    this.setState({ products: nextProducts, ops: ops.map(o => o.ref === 'WH/OUT/0013' ? { ...o, status: 'Done', date: '26 Sep' } : o),
-      ledger: [...moves, ...ledger], dv: { ...dv, step: 3, error: null, result, doneAt: t } });
-    this.toast({ title: 'WH/OUT/0013 delivered', lines: result.map(r => `${r.name} âˆ’${r.qty} ${r.uom}`) });
+    const moves = dv.lines.map((l, i) => vals[i] ? { ts: '2026-09-26T' + t, ref: dv.ref, type: 'Delivery', pid: l.pid, from: srcOf(pById[l.pid]), to: op.partner, qty: vals[i], kind: 'out', user, wh: op.wh, fresh: true } : null).filter(Boolean);
+    this.setState({ products: nextProducts, ops: ops.map(o => o.ref === dv.ref ? { ...o, status: 'Done', date: '26 Sep' } : o),
+      ledger: [...moves, ...ledger], dv: { ...dv, step: 3, error: null, result, doneAt: `26 Sep 2026, ${t} by ${user}` } });
+    this.toast({ title: `${dv.ref} delivered`, lines: result.map(r => `${r.name} −${r.qty} ${r.uom}`) });
   }
   trValidate() {
     const { tr, products, ops, ledger } = this.state; const pById = Object.fromEntries(products.map(p => [p.id, p]));
@@ -1081,24 +1190,34 @@ class Component extends DCLogic {
     if (bad >= 0) { const p = pById[tr.lines[bad].pid]; return this.patch('tr', { error: `${p.name}: only ${fmt(p.loc[tr.src] || 0)} ${p.uom} at ${tr.src}.` }); }
     const t = hm(); let next = products; const result = [];
     tr.lines.forEach((l, i) => { next = next.map(p => p.id === l.pid ? addQ(addQ(p, tr.src, -vals[i]), tr.dst, vals[i]) : p); result.push(`${pById[l.pid].name} ${fmt(vals[i])} ${pById[l.pid].uom}`); });
-    const moves = tr.lines.map((l, i) => ({ ts: '2026-09-26T' + t, ref: 'WH/INT/0006', type: 'Internal', pid: l.pid, from: tr.src, to: tr.dst, qty: vals[i], kind: 'move', user: 'Priya Nair', wh: this.whOf(tr.src), fresh: true }));
-    this.setState({ products: next, ops: ops.map(o => o.ref === 'WH/INT/0006' ? { ...o, status: 'Done', date: '26 Sep' } : o), ledger: [...moves, ...ledger], tr: { ...tr, done: true, error: null, doneAt: t, result } });
-    this.toast({ title: 'WH/INT/0006 transferred', lines: [...result.map(r => `${r} Â· ${tr.src} â†’ ${tr.dst}`), 'Total stock unchanged'] });
+    const user = this.state.pf.name;
+    const moves = tr.lines.map((l, i) => ({ ts: '2026-09-26T' + t, ref: tr.ref, type: 'Internal', pid: l.pid, from: tr.src, to: tr.dst, qty: vals[i], kind: 'move', user, wh: this.whOf(tr.src), fresh: true }));
+    this.setState({ products: next, ledger: [...moves, ...ledger], tr: { ...tr, done: true, live: true, error: null, doneAt: `26 Sep 2026, ${t} by ${user}`, result },
+      ops: ops.map(o => o.ref === tr.ref ? { ...o, status: 'Done', date: '26 Sep', src: tr.src, dst: tr.dst, items: tr.lines.map((l, i) => [l.pid, vals[i]]) } : o) });
+    this.toast({ title: `${tr.ref} transferred`, lines: [...result.map(r => `${r} · ${tr.src} → ${tr.dst}`), 'Total stock unchanged'] });
   }
   adjApply() {
     const { adj, products, ops, ledger, seq } = this.state; const p = products.find(x => x.id === adj.pid);
-    if (adj.counted === '') return this.patch('adj', { error: 'Enter the quantity you counted.' });
-    const c = Number(adj.counted);
-    if (isNaN(c) || c < 0) return this.patch('adj', { error: 'Counted quantity must be zero or more.' });
-    const rec = p.loc[adj.loc] || 0; const diff = c - rec;
-    if (diff === 0) return this.patch('adj', { error: 'Counted matches recorded â€” there is nothing to adjust.' });
+    const rec = p.loc[adj.loc] || 0; let diff;
+    if (adj.mode === 'count') {
+      if (adj.counted === '') return this.patch('adj', { error: 'Enter the quantity you counted.' });
+      const c = Number(adj.counted);
+      if (isNaN(c) || c < 0) return this.patch('adj', { error: 'Counted quantity must be zero or more.' });
+      diff = c - rec;
+      if (diff === 0) return this.patch('adj', { error: 'Counted matches recorded — there is nothing to adjust.' });
+    } else {
+      const d = Number(adj.delta);
+      if (adj.delta === '' || isNaN(d) || d <= 0) return this.patch('adj', { error: `Enter how many ${p.uom} to ${adj.mode}.` });
+      if (adj.mode === 'remove' && d > rec) return this.patch('adj', { error: `Only ${fmt(rec)} ${p.uom} at ${adj.loc} — you can’t remove ${fmt(d)}.` });
+      diff = adj.mode === 'add' ? d : -d;
+    }
     const ref = `WH/ADJ/${String(seq).padStart(4, '0')}`; const t = hm(); const wh = this.whOf(adj.loc);
-    const label = adj.reason === 'Damaged' ? 'Scrap Â· Damaged' : adj.reason === 'Lost' ? 'Lost' : 'Count correction';
-    const move = { ts: '2026-09-26T' + t, ref, type: 'Adjustment', pid: p.id, from: diff < 0 ? adj.loc : label, to: diff < 0 ? label : adj.loc, qty: Math.abs(diff), kind: diff > 0 ? 'in' : 'out', user: 'Priya Nair', wh, fresh: true };
+    const label = { Damaged: 'Scrap · Damaged', Lost: 'Lost', Found: 'Found in count', Returned: 'Customer return' }[adj.reason] || 'Count correction';
+    const move = { ts: '2026-09-26T' + t, ref, type: 'Adjustment', pid: p.id, from: diff < 0 ? adj.loc : label, to: diff < 0 ? label : adj.loc, qty: Math.abs(diff), kind: diff > 0 ? 'in' : 'out', user: this.state.pf.name, wh, fresh: true };
     this.setState({ products: products.map(x => x.id === p.id ? addQ(x, adj.loc, diff) : x), ledger: [move, ...ledger], seq: seq + 1,
-      ops: [{ ref, type: 'Adjustment', partner: `${adj.reason} â€” ${adj.loc}`, items: [[p.id, diff]], wh, date: '26 Sep', status: 'Done' }, ...ops],
-      adj: { ...adj, counted: '', note: '', error: null } });
-    this.toast({ title: `${ref} applied`, lines: [`${p.name} ${diff > 0 ? '+' : 'âˆ’'}${fmt(Math.abs(diff))} ${p.uom} at ${adj.loc}`, `Reason: ${adj.reason}`] });
+      ops: [{ ref, type: 'Adjustment', partner: `${adj.reason} — ${adj.loc}`, loc: adj.loc, items: [[p.id, diff]], wh, date: '26 Sep', status: 'Done' }, ...ops],
+      adj: { ...adj, counted: '', delta: '', note: '', error: null } });
+    this.toast({ title: `${ref} applied`, lines: [`${p.name} ${diff > 0 ? '+' : '−'}${fmt(Math.abs(diff))} ${p.uom} at ${adj.loc}`, `Reason: ${adj.reason}`] });
   }
   saveProduct() {
     const { pform: f, products, pedit, ledger, seq } = this.state; const e = {};
@@ -1112,14 +1231,14 @@ class Component extends DCLogic {
     const sku = f.sku.trim().toUpperCase();
     if (pedit) {
       this.setState({ products: products.map(p => p.id === pedit ? { ...p, name: f.name.trim(), sku, cat: f.cat, uom: f.uom } : p), perr: {} });
-      this.toast({ title: 'Product updated', lines: [`${f.name.trim()} Â· ${sku}`] });
+      this.toast({ title: 'Product updated', lines: [`${f.name.trim()} · ${sku}`] });
       return this.openProduct(pedit);
     }
     const id = 'p' + Date.now();
     const np = { id, name: f.name.trim(), sku, cat: f.cat, uom: f.uom, onHand: init, min: 0, max: 0, supplier: '', loc: init ? { [f.loc]: init } : {}, created: true };
     const moves = init ? [{ ts: '2026-09-26T' + hm(), ref: `WH/ADJ/${String(seq).padStart(4, '0')}`, type: 'Adjustment', pid: id, from: 'Opening balance', to: f.loc, qty: init, kind: 'in', user: 'Priya Nair', wh: this.whOf(f.loc), fresh: true }] : [];
     this.setState({ products: [...products, np], ledger: [...moves, ...ledger], seq: init ? seq + 1 : seq, perr: {} }, () => this.openProduct(id));
-    this.toast({ title: 'Product created', lines: [`${np.name} Â· ${sku}`, init ? `Opening stock +${fmt(init)} ${np.uom}` : 'No opening stock'] });
+    this.toast({ title: 'Product created', lines: [`${np.name} · ${sku}`, init ? `Opening stock +${fmt(init)} ${np.uom}` : 'No opening stock'] });
   }
   quickUpdate(pid) {
     const { pupd, products, ledger, seq, ops } = this.state; const p = products.find(x => x.id === pid);
@@ -1131,8 +1250,8 @@ class Component extends DCLogic {
     const ref = `WH/ADJ/${String(seq).padStart(4, '0')}`; const wh = this.whOf(loc);
     this.setState({ products: products.map(x => x.id === pid ? addQ(x, loc, diff) : x), seq: seq + 1, pupd: null,
       ledger: [{ ts: '2026-09-26T' + hm(), ref, type: 'Adjustment', pid, from: diff < 0 ? loc : 'Count correction', to: diff < 0 ? 'Count correction' : loc, qty: Math.abs(diff), kind: diff > 0 ? 'in' : 'out', user: this.state.pf.name, wh, fresh: true }, ...ledger],
-      ops: [{ ref, type: 'Adjustment', partner: `Stock update â€” ${loc}`, items: [[pid, diff]], wh, date: '26 Sep', status: 'Done' }, ...ops] });
-    this.toast({ title: 'Stock updated', lines: [`${p.name} ${diff > 0 ? '+' : 'âˆ’'}${fmt(Math.abs(diff))} ${p.uom} at ${loc}`, `Logged as ${ref}`] });
+      ops: [{ ref, type: 'Adjustment', partner: `Stock update — ${loc}`, items: [[pid, diff]], wh, date: '26 Sep', status: 'Done' }, ...ops] });
+    this.toast({ title: 'Stock updated', lines: [`${p.name} ${diff > 0 ? '+' : '−'}${fmt(Math.abs(diff))} ${p.uom} at ${loc}`, `Logged as ${ref}`] });
   }
   saveRules() {
     const { rr, psel, products } = this.state; const min = Number(rr.min), max = Number(rr.max);
@@ -1140,6 +1259,51 @@ class Component extends DCLogic {
     if (rr.max === '' || isNaN(max) || max < min) return this.setState({ rrErr: 'Maximum must be at least the minimum.' });
     this.setState({ products: products.map(p => p.id === psel ? { ...p, min, max, supplier: rr.supplier } : p), rrErr: null });
     this.toast({ title: 'Reordering rule saved', lines: [`Reorder below ${fmt(min)}, up to ${fmt(max)}`] });
+  }
+  loadPdfLib() {
+    if (window.jspdf) return Promise.resolve(window.jspdf.jsPDF);
+    return this._pdfLib || (this._pdfLib = new Promise((ok, fail) => {
+      const el = document.createElement('script');
+      el.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      el.onload = () => ok(window.jspdf.jsPDF);
+      el.onerror = () => { this._pdfLib = null; fail(new Error('PDF library failed to load')); };
+      document.head.appendChild(el);
+    }));
+  }
+  // Download a receipt or delivery slip as a real PDF document (not a print of the web page).
+  async printDoc(kind) {
+    const s = this.state; const isRc = kind === 'rc'; const d = s[kind]; const o = s.ops.find(x => x.ref === d.ref);
+    const pById = Object.fromEntries(s.products.map(p => [p.id, p]));
+    let JsPDF;
+    try { JsPDF = await this.loadPdfLib(); } catch (e) { return this.toast({ title: 'Couldn’t create the PDF', lines: ['Check your internet connection and try again.'] }); }
+    const txt = v => String(v).replace(/[→]/g, '->').replace(/[—–−]/g, '-').replace(/[’‘]/g, "'").replace(/[^\x20-\x7E]/g, '');
+    const doc = new JsPDF({ unit: 'mm', format: 'a4' }); const W = 210, M = 16; let y = 20;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(20); doc.text('StockSense', M, y);
+    doc.setFontSize(11); doc.setTextColor(110); doc.text(isRc ? 'GOODS RECEIPT' : 'DELIVERY SLIP', W - M, y, { align: 'right' });
+    doc.setTextColor(0); y += 12;
+    doc.setFontSize(16); doc.text(txt(d.ref), M, y);
+    const status = isRc ? d.status : d.canceled ? 'Canceled' : d.step === 3 ? 'Done' : o.status;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.text(`Status: ${status}`, W - M, y, { align: 'right' }); y += 4;
+    doc.setDrawColor(200); doc.line(M, y, W - M, y); y += 8;
+    const info = isRc
+      ? [['Supplier', o.partner], ['Source document', o.origin || '-'], ['Scheduled date', `${o.date} 2026`], ['Destination', d.dest], ['Warehouse', this.whOf(d.dest)], ['Responsible', s.pf.name], ['Validated', d.status === 'Done' ? d.doneAt : 'Not validated yet']]
+      : [['Customer', o.partner], ['Delivery address', ADDR[o.partner] || '-'], ['Scheduled date', `${o.date} 2026`], ['Ship from', homeOf(o)], ['Warehouse', o.wh], ['Responsible', s.pf.name], ['Packages', d.packages || '-'], ['Delivered', d.step === 3 ? d.doneAt : 'Not delivered yet']];
+    info.forEach(([k, v], i) => { const x = i % 2 ? W / 2 + 4 : M; if (i && !(i % 2)) y += 11;
+      doc.setFontSize(8); doc.setTextColor(120); doc.text(k.toUpperCase(), x, y);
+      doc.setFontSize(10); doc.setTextColor(0); doc.text(doc.splitTextToSize(txt(v), W / 2 - M - 4)[0], x, y + 5); });
+    y += 18;
+    const cols = [[M, 'Product'], [M + 62, 'SKU'], [W - M - 58, isRc ? 'Expected' : 'Ordered', 'right'], [W - M - 26, isRc ? 'Received' : 'Picked', 'right'], [W - M, 'Unit', 'right']];
+    doc.setFillColor(242, 240, 236); doc.rect(M, y - 5, W - 2 * M, 8, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); cols.forEach(([x, h, a]) => doc.text(h, x + (a ? -2 : 2), y, a ? { align: 'right' } : undefined));
+    doc.setFont('helvetica', 'normal'); y += 9; let tA = 0, tB = 0;
+    d.lines.forEach(l => { const p = pById[l.pid]; const a = isRc ? l.expected : l.demand; const b = Number(isRc ? l.received : l.picked) || 0; tA += a; tB += b;
+      [[p.name], [p.sku], [fmt(a), 'right'], [fmt(b), 'right'], [p.uom, 'right']].forEach(([v, al], i) => doc.text(txt(v), cols[i][0] + (al ? -2 : 2), y, al ? { align: 'right' } : undefined));
+      y += 3; doc.setDrawColor(225); doc.line(M, y, W - M, y); y += 6; });
+    doc.setFont('helvetica', 'bold'); doc.text('Total', M + 2, y); doc.text(fmt(tA), cols[2][0] - 2, y, { align: 'right' }); doc.text(fmt(tB), cols[3][0] - 2, y, { align: 'right' });
+    y += 28; doc.setFont('helvetica', 'normal'); doc.setDrawColor(150);
+    [[M, isRc ? 'Received by' : 'Dispatched by'], [W / 2 + 4, isRc ? 'Checked by' : 'Received by (customer)']].forEach(([x, l]) => { doc.line(x, y, x + 70, y); doc.setFontSize(9); doc.text(l, x, y + 5); });
+    doc.setFontSize(8); doc.setTextColor(130); doc.text(`Printed ${new Date().toLocaleString('en-IN')} - StockSense Inventory`, M, 285);
+    doc.save(`${d.ref.replace(/\//g, '-')}.pdf`);
   }
 
   renderVals() {
@@ -1151,8 +1315,8 @@ class Component extends DCLogic {
     const L = s.loading;
     const isList = ['receipts', 'deliveries', 'transfers'].includes(s.screen);
     const show = { dashboard: s.screen === 'dashboard' && !L, receipt: s.screen === 'receipt' && !L, delivery: s.screen === 'delivery' && !L, transfer: s.screen === 'transfer' && !L,
-      adjust: s.screen === 'adjustments' && !L, history: s.screen === 'history' && !L, list: isList && !L, products: s.screen === 'products' && !L, warehouses: s.screen === 'warehouses' && !L, profile: s.screen === 'profile' && !L };
-    const allLocs = s.whs.flatMap(w => w.locs.map(l => ({ value: l.name, label: `${l.name} â€” ${w.name}`, wh: w.name })));
+      adjust: s.screen === 'adjustments' && !L, history: s.screen === 'history' && !L, list: isList && !L, products: s.screen === 'products' && !L, warehouses: s.screen === 'warehouses' && !L, profile: s.screen === 'profile' && !L, alerts: s.screen === 'alerts' && !L };
+    const allLocs = s.whs.flatMap(w => w.locs.map(l => ({ value: l.name, label: `${l.name} — ${w.name}`, wh: w.name })));
     const whOpts = s.whs.map(w => ({ name: w.name }));
     const productOpts = s.products.map(p => ({ id: p.id, name: p.name }));
 
@@ -1162,9 +1326,11 @@ class Component extends DCLogic {
       const inc = s.ops.find(o => o.type === 'Receipt' && PENDING.includes(o.status) && o.items.some(([id]) => id === p.id));
       const incQty = inc ? inc.items.find(([id]) => id === p.id)[1] : 0;
       return { ...p, onHand: fmt(p.onHand), min: fmt(p.min), label: st.label, tone: st.tone, pct: Math.max(2, Math.min(100, p.onHand / p.min * 100)) + '%',
-        hasIncoming: !!inc, noIncoming: !inc, incomingText: inc ? `${fmt(incQty)} Â· ${inc.ref}` : '',
-        openIncoming: () => inc && OPEN[inc.ref] && this.go(OPEN[inc.ref]), pick: () => this.openProduct(p.id) };
+        hasIncoming: !!inc, noIncoming: !inc, incomingText: inc ? `${fmt(incQty)} · ${inc.ref}` : '',
+        openIncoming: () => inc && this.openOp(inc.ref), pick: () => this.openProduct(p.id),
+        maxText: fmt(p.max), need: fmt(Math.max(0, (p.max || p.min) - p.onHand - incQty)), supplier: p.supplier || '—' };
     });
+    const ALERT_PREVIEW = 4;
 
     const byType = t => s.ops.filter(o => o.type === t && PENDING.includes(o.status));
     const kpiSet = (type) => () => this.setState({ type, statuses: PENDING });
@@ -1184,13 +1350,12 @@ class Component extends DCLogic {
       return { label: l, dot: t.fg, bg: on ? t.bg : 'transparent', fg: on ? t.fg : 'var(--color-text)', border: on ? t.fg : 'var(--color-divider)',
         pick: () => this.setState(x => ({ statuses: x.statuses.includes(l) ? x.statuses.filter(y => y !== l) : [...x.statuses, l] })) };
     });
-    const opRow = o => { const target = OPEN[o.ref]; const home = o.wh === 'Warehouse 2' ? 'WH2/Stock' : 'WH/Main Store';
-      const route = o.partner.split(' â†’ ');
-      const from = o.type === 'Receipt' ? 'Vendor' : o.type === 'Internal' ? route[0] : home;
-      const to = o.type === 'Receipt' ? home : o.type === 'Internal' ? (route[1] || '') : o.type === 'Delivery' ? 'Customer' : 'Scrap / count';
+    const opRow = o => { const home = homeOf(o);
+      const from = o.type === 'Receipt' ? 'Vendor' : o.type === 'Internal' ? o.src : home;
+      const to = o.type === 'Receipt' ? home : o.type === 'Internal' ? o.dst : o.type === 'Delivery' ? 'Customer' : 'Scrap / count';
       const late = PENDING.includes(o.status) && dayOf(o.date) < TODAY;
-      return { ...o, tone: T[ST[o.status]], from, to, contact: o.type === 'Internal' ? 'â€”' : o.partner, late, summary: o.items.map(([id, q]) => `${pById[id].name} ${q < 0 ? 'âˆ’' + fmt(-q) : fmt(q)} ${pById[id].uom}`).join(', '),
-        cursor: target ? 'pointer' : 'default', refColor: target ? 'var(--color-accent-700)' : 'var(--color-text)', open: () => target && this.go(target) }; };
+      return { ...o, tone: T[ST[o.status]], from, to, contact: o.type === 'Internal' ? '—' : o.partner, late, summary: o.items.map(([id, q]) => `${pById[id].name} ${q < 0 ? '−' + fmt(-q) : fmt(q)} ${pById[id].uom}`).join(', '),
+        cursor: 'pointer', refColor: 'var(--color-accent-700)', open: () => this.openOp(o.ref) }; };
     const opRows = s.ops.filter(o => (s.type === 'All' || o.type === s.type) && (!s.statuses.length || s.statuses.includes(o.status)) &&
       (s.wh === 'All' || o.wh === s.wh) && (s.cat === 'All' || o.items.some(([id]) => pById[id].cat === s.cat))).map(opRow);
     const filtersActive = s.type !== 'All' || s.statuses.length > 0 || s.wh !== 'All' || s.cat !== 'All';
@@ -1219,7 +1384,7 @@ class Component extends DCLogic {
         if (r < 0) { note = 'Must be zero or more'; noteColor = T.red.fg; }
         else if (r === l.expected) { note = 'Matches expected'; noteColor = T.green.fg; }
         else if (r > l.expected) { note = `${fmt(r - l.expected)} over expected`; noteColor = T.amber.fg; }
-        else { note = `${fmt(l.expected - r)} short â€” backorder`; noteColor = T.amber.fg; }
+        else { note = `${fmt(l.expected - r)} short — backorder`; noteColor = T.amber.fg; }
       }
       const bad = !rcDone && s.rc.error && (r === null || r <= 0);
       return { name: p.name, sku: p.sku, uom: p.uom, onHand: fmt(p.onHand), expected: fmt(l.expected), received: l.received, note, noteColor,
@@ -1233,21 +1398,26 @@ class Component extends DCLogic {
       const p = pById[l.pid]; const v = l.picked === '' ? 0 : Number(l.picked); const over = v > p.onHand;
       let note = over ? `Only ${fmt(p.onHand)} on hand` : v === l.demand ? 'Fully picked' : v < l.demand ? `${fmt(l.demand - v)} short` : 'More than ordered';
       let noteColor = over || v > l.demand ? T.red.fg : v === l.demand ? T.green.fg : T.amber.fg;
-      if (dvDone) { note = `Shipped âˆ’${fmt(v)}`; noteColor = T.red.fg; }
+      if (dvDone) { note = `Shipped −${fmt(v)}`; noteColor = T.red.fg; }
       return { name: p.name, sku: p.sku, uom: p.uom, onHand: fmt(p.onHand), demand: fmt(l.demand), picked: l.picked, note, noteColor, readOnly: dv.step > 0 || !!dv.canceled,
         rowBg: !dvDone && l.demand > p.onHand ? 'oklch(0.97 0.02 25)' : 'transparent',
         inputBorder: dv.error && over && dv.step === 0 ? ERR_BORDER : 'var(--color-divider)', after: fmt(p.onHand - v),
         onInput: e => { const val = e.target.value.replace(/[^0-9.\-]/g, ''); this.setState(x => ({ dv: { ...x.dv, error: null, lines: x.dv.lines.map((m, j) => j === i ? { ...m, picked: val } : m) } })); } };
     });
     const dvShort = dv.lines.some(l => l.demand > pById[l.pid].onHand);
-    const dvStatus = dv.canceled ? 'Canceled' : dvDone ? 'Done' : dvShort ? 'Waiting' : 'Ready';
+    const dvOp = s.ops.find(o => o.ref === dv.ref); const rcOp = s.ops.find(o => o.ref === s.rc.ref);
+    const dvStatus = dv.canceled ? 'Canceled' : dvDone ? 'Done' : dvShort ? 'Waiting' : dvOp.status === 'Draft' ? 'Draft' : 'Ready';
     const pipe = (labels, cur) => labels.map((l, i) => { const ci = labels.indexOf(cur); const on = l === cur;
       return { label: l, sep: i > 0, color: on ? T[ST[l]].fg : i < ci ? 'var(--color-text)' : 'var(--color-neutral-600)', bg: on ? T[ST[l]].bg : 'transparent', border: on ? T[ST[l]].fg : 'var(--color-divider)' }; });
     const dvLabels = ['Confirm pick', 'Confirm pack', 'Validate delivery'];
 
-    const tr = s.tr;
+    const tr = s.tr; const trOp = s.ops.find(o => o.ref === tr.ref);
+    const trStatus = tr.canceled ? 'Canceled' : tr.done ? 'Done' : trOp.status;
     const trLines = tr.lines.map((l, i) => { const p = pById[l.pid]; const q = Number(l.qty) || 0; const at = p.loc[tr.src] || 0;
-      return { pid: l.pid, qty: l.qty, uom: p.uom, avail: fmt(at), readOnly: tr.done, canRemove: !tr.done && tr.lines.length > 1, name: p.name,
+      // Before → after only makes sense while planning or right after validating here; older transfers just show the moved quantity.
+      const live = !tr.done || tr.live;
+      return { pid: l.pid, qty: l.qty, uom: p.uom, avail: fmt(at), readOnly: tr.done || tr.canceled, canRemove: !tr.done && !tr.canceled && tr.lines.length > 1, name: p.name,
+        live, hist: !live, histOut: `−${fmt(q)} ${p.uom}`, histIn: `+${fmt(q)} ${p.uom}`,
         srcBefore: fmt(tr.done ? at + q : at), srcAfter: fmt(tr.done ? at : at - q), dstBefore: fmt(tr.done ? (p.loc[tr.dst] || 0) - q : (p.loc[tr.dst] || 0)), dstAfter: fmt(tr.done ? (p.loc[tr.dst] || 0) : (p.loc[tr.dst] || 0) + q),
         total: fmt(p.onHand), inputBorder: tr.error && q > at ? ERR_BORDER : 'var(--color-divider)',
         onPid: e => this.setState(x => ({ tr: { ...x.tr, error: null, lines: x.tr.lines.map((m, j) => j === i ? { ...m, pid: e.target.value } : m) } })),
@@ -1256,7 +1426,10 @@ class Component extends DCLogic {
     });
 
     const adj = s.adj; const ap = pById[adj.pid]; const rec = ap.loc[adj.loc] || 0;
-    const cnt = adj.counted === '' ? null : Number(adj.counted); const diff = cnt === null || isNaN(cnt) ? null : cnt - rec;
+    const cnt = adj.counted === '' ? null : Number(adj.counted); const dl = adj.delta === '' ? null : Number(adj.delta);
+    const diff = adj.mode === 'count' ? (cnt === null || isNaN(cnt) ? null : cnt - rec) : (dl === null || isNaN(dl) ? null : adj.mode === 'add' ? dl : -dl);
+    const adjModes = [['count', 'Set counted total'], ['add', 'Add pieces'], ['remove', 'Remove pieces']].map(([k, l], i) => ({ label: l, ...segOpt(adj.mode === k, i),
+      pick: () => this.patch('adj', { mode: k, error: null, counted: '', delta: '', reason: ADJ_REASONS[k].includes(adj.reason) ? adj.reason : ADJ_REASONS[k][0] }) }));
     const adjRecent = s.ledger.filter(m => m.type === 'Adjustment').sort((a, b) => b.ts.localeCompare(a.ts)).slice(0, 6).map(m => mapMove(m, pById));
 
     const pd = s.psel && pById[s.psel];
@@ -1268,7 +1441,7 @@ class Component extends DCLogic {
       const reserved = s.ops.filter(o => o.type === 'Delivery' && PENDING.includes(o.status)).reduce((a, o) => a + o.items.filter(([id]) => id === p.id).reduce((b, [, q]) => b + q, 0), 0);
       const editing = s.pupd && s.pupd.pid === p.id;
       return { ...p, onHand: fmt(p.onHand), label: st.label, tone: st.tone, open: () => !editing && this.openProduct(p.id),
-        costText: p.cost ? inr(p.cost) : 'â€”', free: fmt(Math.max(0, p.onHand - reserved)), freeColor: p.onHand - reserved < 0 || p.onHand === 0 ? T.red.fg : 'var(--color-text)',
+        costText: p.cost ? inr(p.cost) : '—', free: fmt(Math.max(0, p.onHand - reserved)), freeColor: p.onHand - reserved < 0 || p.onHand === 0 ? T.red.fg : 'var(--color-text)',
         editing, notEditing: !editing, updVal: editing ? s.pupd.val : '', updErr: editing && s.pupd.err ? s.pupd.err : '', hasUpdErr: !!(editing && s.pupd.err),
         startUpd: e => { e.stopPropagation(); this.setState({ pupd: { pid: p.id, val: String(p.onHand), err: null } }); },
         onUpd: e => this.setState({ pupd: { ...s.pupd, val: e.target.value.replace(/[^0-9]/g, ''), err: null } }),
@@ -1295,10 +1468,10 @@ class Component extends DCLogic {
         if (!n || n === w.code + '/') return this.setState({ whErr: 'Give the location a name.' });
         if (allLocs.some(l => l.value.toLowerCase() === n.toLowerCase())) return this.setState({ whErr: 'A location with this name already exists.' });
         this.setState({ whs: s.whs.map((x, j) => j === i ? { ...x, locs: [...x.locs, { name: n, kind: s.locDraft.kind }] } : x), locAdd: null, whErr: null });
-        this.toast({ title: 'Location added', lines: [`${n} Â· ${s.locDraft.kind}`] }); } }));
+        this.toast({ title: 'Location added', lines: [`${n} · ${s.locDraft.kind}`] }); } }));
 
     const pf = s.pf; const pwRules = [['At least 8 characters', pf.nw.length >= 8], ['One number', /\d/.test(pf.nw)], ['Matches confirmation', !!pf.nw && pf.nw === pf.conf]]
-      .map(([label, ok]) => ({ label, mark: ok ? 'âœ“' : 'Â·', color: ok ? T.green.fg : 'var(--color-neutral-700)', ok }));
+      .map(([label, ok]) => ({ label, mark: ok ? '✓' : '·', color: ok ? T.green.fg : 'var(--color-neutral-700)', ok }));
     const pfSet2 = Object.fromEntries(['name', 'email', 'cur', 'nw', 'conf'].map(k => [k, e => this.setState({ pf: { ...s.pf, [k]: e.target.value, err: null, pwErr: null } })]));
 
     const lf = s.lf;
@@ -1309,8 +1482,8 @@ class Component extends DCLogic {
     const lfSet = k => e => this.setState({ lf: { ...s.lf, [k]: e.target.value } });
 
     const q = s.q.trim().toLowerCase();
-    const searchResults = q ? s.products.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)).slice(0, 6).map(p => {
-      const st = stockOf(p); return { name: p.name, sku: p.sku, onHandText: `${fmt(p.onHand)} ${p.uom}`, label: st.label, tone: st.tone, pick: () => { this.setState({ q: '' }); this.openProduct(p.id); } }; }) : [];
+    const searchResults = q ? s.products.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)).slice(0, 8)
+      .map(p => ({ name: p.name, pick: e => { if (e) e.preventDefault(); this.setState({ q: '' }); this.openProduct(p.id); } })) : [];
 
     const pulse = (st, i) => React.createElement('div', { key: i, style: { ...st, animation: `ssPulse 1.1s ${i * 0.07}s ease-in-out infinite` } });
     const skeleton = React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 16 } },
@@ -1323,43 +1496,55 @@ class Component extends DCLogic {
       nav, show, loading: L, skeleton, opsOpen: s.opsOpen, opsChevron: s.opsOpen ? 'rotate(180deg)' : 'none', whOpts, locOpts: allLocs, productOpts,
       goDashboard: () => this.go('dashboard'), goProducts: () => this.go('products', { pm: 'list', psel: null }), goReceipt: () => this.go('receipt'), goReceipts: () => this.go('receipts'),
       goDeliveries: () => this.go('deliveries'), goTransfers: () => this.go('transfers'), goAdjustments: () => this.go('adjustments'), goDelivery: () => this.go('delivery'), goTransfer: () => this.go('transfer'),
-      goHistory: () => this.go('history'), goWarehouses: () => this.go('warehouses'), goProfile: () => this.go('profile'), goLogout: () => { window.location.href = 'Auth.dc.html'; },
+      goHistory: () => this.go('history'), goWarehouses: () => this.go('warehouses'), goProfile: () => this.go('profile'), goLogout: () => { window.location.replace('Auth.dc.html'); },
+      goAlerts: () => this.go('alerts'),
       toggleOps: () => this.setState({ opsOpen: !s.opsOpen }),
       profileOpen: s.profileOpen, toggleProfile: () => this.setState({ profileOpen: !s.profileOpen, alertsOpen: false }),
       alertsOpen: s.alertsOpen, toggleAlerts: () => this.setState({ alertsOpen: !s.alertsOpen, profileOpen: false }),
-      alertCount: low.length, hasAlerts: low.length > 0, noAlerts: low.length === 0, lowItems,
+      alertCount: low.length, hasAlerts: low.length > 0, noAlerts: low.length === 0, lowItems, lowPreview: lowItems.slice(0, ALERT_PREVIEW),
+      alertsMore: low.length > ALERT_PREVIEW ? `See all ${low.length} alerts` : 'See all alerts',
+      alertsSummary: `${kpi.low} below minimum · ${kpi.out} out of stock`,
       q: s.q, searchOpen: s.searchOpen && !!q, searchResults, noSearchResults: !!q && searchResults.length === 0,
       onSearch: e => this.setState({ q: e.target.value, searchOpen: true }), openSearch: () => this.setState({ searchOpen: true }),
+      onSearchKey: e => { if (e.key === 'Enter' && searchResults.length) searchResults[0].pick(e); },
       closeSearchSoon: () => { clearTimeout(this._st); this._st = setTimeout(() => this.setState({ searchOpen: false }), 150); },
       wh: s.wh, onWh: e => this.setState({ wh: e.target.value }), cat: s.cat, onCat: e => this.setState({ cat: e.target.value }),
-      rcCard: opCard('Receipt'), dvCard: opCard('Delivery'), stop: e => e.stopPropagation(), print: () => window.print(),
-      rcCancel: () => { this.patch('rc', { status: 'Canceled', error: null }); this.setState(x => ({ ops: x.ops.map(o => o.ref === 'WH/IN/0009' ? { ...o, status: 'Canceled' } : o) })); this.toast({ title: 'WH/IN/0009 canceled', lines: ['No stock was changed.'] }); },
-      dvCancel: () => { this.patch('dv', { canceled: true, error: null }); this.setState(x => ({ ops: x.ops.map(o => o.ref === 'WH/OUT/0013' ? { ...o, status: 'Canceled' } : o) })); this.toast({ title: 'WH/OUT/0013 canceled', lines: ['No stock was changed.'] }); },
+      rcCard: opCard('Receipt'), dvCard: opCard('Delivery'), stop: e => e.stopPropagation(),
+      printRc: () => this.printDoc('rc'), printDv: () => this.printDoc('dv'),
+      rcCancel: () => { const ref = s.rc.ref; this.patch('rc', { status: 'Canceled', error: null }); this.setState(x => ({ ops: x.ops.map(o => o.ref === ref ? { ...o, status: 'Canceled' } : o) })); this.toast({ title: `${ref} canceled`, lines: ['No stock was changed.'] }); },
+      dvCancel: () => { const ref = dv.ref; this.patch('dv', { canceled: true, error: null }); this.setState(x => ({ ops: x.ops.map(o => o.ref === ref ? { ...o, status: 'Canceled' } : o) })); this.toast({ title: `${ref} canceled`, lines: ['No stock was changed.'] }); },
       rcPipe: pipe(['Draft', 'Ready', 'Done'], s.rc.status === 'Canceled' ? 'Draft' : s.rc.status), dvPipe: pipe(['Draft', 'Waiting', 'Ready', 'Done'], dvStatus === 'Canceled' ? 'Draft' : dvStatus),
-      trPipe: pipe(['Draft', 'Ready', 'Done'], tr.done ? 'Done' : 'Ready'), rcCanceled: s.rc.status === 'Canceled', dvCanceled: !!dv.canceled,
+      trPipe: pipe(['Draft', 'Waiting', 'Ready', 'Done'], trStatus === 'Canceled' ? 'Draft' : trStatus), rcCanceled: s.rc.status === 'Canceled', dvCanceled: !!dv.canceled, trCanceled: !!tr.canceled,
+      rcDoc: { ref: s.rc.ref, partner: rcOp.partner, origin: rcOp.origin || '—', date: isoOf(rcOp.date), dest: s.rc.dest, onDest: e => this.patch('rc', { dest: e.target.value }) },
+      dvDoc: { ref: dv.ref, partner: dvOp.partner, address: ADDR[dvOp.partner] || '—', date: isoOf(dvOp.date), wh: `Delivery — ${dvOp.wh}`,
+        doneText: `Shipped to ${dvOp.partner} · ${dv.doneAt}${dv.packages ? ` · ${dv.packages} packages` : ''}` },
       kpi, kpiAll: () => this.setState({ type: 'All', statuses: [], cat: 'All' }), kpiReceipts: kpiSet('Receipt'), kpiDeliveries: kpiSet('Delivery'), kpiTransfers: kpiSet('Internal'),
       typeOpts, statusOpts, opRows, noOps: opRows.length === 0, filtersActive, list,
       clearFilters: () => this.setState({ type: 'All', statuses: [], wh: 'All', cat: 'All' }),
       rc: { status: s.rc.status, tone: T[ST[s.rc.status]], hasError: !!s.rc.error, error: s.rc.error, done: rcDone, result: s.rc.result || [], doneAt: s.rc.doneAt,
         totalReceived: fmt(sumRec), totalExpected: fmt(s.rc.lines.reduce((a, l) => a + l.expected, 0)) },
-      rcNotDone: !rcDone && s.rc.status !== 'Canceled', rcLines, rcSteps, validate: () => this.validate(),
+      rcNotDone: !rcDone && s.rc.status !== 'Canceled', rcLocked: rcDone || s.rc.status === 'Canceled', rcLines, rcSteps, validate: () => this.validate(),
       fillExpected: () => this.patch('rc', { error: null, lines: s.rc.lines.map(l => ({ ...l, received: String(l.expected) })) }),
       dv: { status: dvStatus, tone: T[ST[dvStatus]], hasError: !!dv.error, error: dv.error, done: dvDone, active: !dvDone && !dv.canceled, result: dv.result || [], doneAt: dv.doneAt, packages: dv.packages,
         primaryLabel: dvLabels[Math.min(dv.step, 2)], canBack: dv.step === 1 || dv.step === 2, showPack: dv.step >= 1, packReadOnly: dv.step !== 1, isValidate: dv.step === 2,
         packBorder: dv.error && dv.step === 1 ? ERR_BORDER : 'var(--color-divider)' },
       dvLines, dvSteps: steps(['Pick', 'Pack', 'Validate'], Math.min(dv.step, 2), dvDone), dvPrimary: () => this.dvPrimary(),
       dvBack: () => this.patch('dv', { step: dv.step - 1, error: null }), setPackages: e => this.patch('dv', { packages: e.target.value.replace(/\D/g, ''), error: null }),
-      tr: { src: tr.src, dst: tr.dst, hasError: !!tr.error, error: tr.error, done: tr.done, active: !tr.done, doneAt: tr.done ? tr.doneAt : '', result: tr.result, status: tr.done ? 'Done' : 'Ready', tone: T[tr.done ? 'green' : 'blue'] },
+      tr: { ref: tr.ref, src: tr.src, dst: tr.dst, hasError: !!tr.error, error: tr.error, done: tr.done, active: !tr.done && !tr.canceled, locked: tr.done || !!tr.canceled, doneAt: tr.done ? tr.doneAt : '', result: tr.result, status: trStatus, tone: T[ST[trStatus]] },
       trLines, trSteps: steps(['Draft', 'Ready', 'Done'], tr.done ? 2 : 1, tr.done), trValidate: () => this.trValidate(),
       setSrc: e => this.patch('tr', { src: e.target.value, error: null }), setDst: e => this.patch('tr', { dst: e.target.value, error: null }),
       swapLocs: () => this.patch('tr', { src: tr.dst, dst: tr.src, error: null }),
       addTrLine: () => this.patch('tr', { lines: [...tr.lines, { pid: s.products.find(p => !tr.lines.some(l => l.pid === p.id))?.id || 'steel', qty: '' }] }),
-      adj: { pid: adj.pid, loc: adj.loc, counted: adj.counted, note: adj.note, hasError: !!adj.error, error: adj.error, uom: ap.uom, recorded: fmt(rec),
-        diffText: diff === null ? 'â€”' : diff === 0 ? '0' : (diff > 0 ? '+' : 'âˆ’') + fmt(Math.abs(diff)), diffColor: diff === null || diff === 0 ? 'var(--color-neutral-600)' : diff > 0 ? 'oklch(0.42 0.1 150)' : 'oklch(0.47 0.15 27)',
+      adjModes, adjIsCount: adj.mode === 'count', adjIsDelta: adj.mode !== 'count',
+      adj: { pid: adj.pid, loc: adj.loc, counted: adj.counted, delta: adj.delta, note: adj.note, deltaLabel: adj.mode === 'add' ? 'Add' : 'Remove',
+        deltaHint: adj.mode === 'add' ? `${ap.uom} to add` : `${ap.uom} to remove`,
+        applyLabel: adj.mode === 'add' ? 'Add to stock' : adj.mode === 'remove' ? 'Remove from stock' : 'Apply adjustment', hasError: !!adj.error, error: adj.error, uom: ap.uom, recorded: fmt(rec),
+        diffText: diff === null ? '—' : diff === 0 ? '0' : (diff > 0 ? '+' : '−') + fmt(Math.abs(diff)), diffColor: diff === null || diff === 0 ? 'var(--color-neutral-600)' : diff > 0 ? 'oklch(0.42 0.1 150)' : 'oklch(0.47 0.15 27)',
         after: diff === null ? '' : `${ap.name} total becomes ${fmt(ap.onHand + diff)} ${ap.uom}`, inputBorder: adj.error ? ERR_BORDER : 'var(--color-divider)' },
       adjSet: { pid: e => this.patch('adj', { pid: e.target.value, error: null }), loc: e => this.patch('adj', { loc: e.target.value, error: null }),
-        counted: e => this.patch('adj', { counted: e.target.value.replace(/[^0-9.]/g, ''), error: null }), note: e => this.patch('adj', { note: e.target.value }) },
-      reasonOpts: ['Damaged', 'Lost', 'Count correction'].map((l, i) => ({ label: l, ...segOpt(adj.reason === l, i), pick: () => this.patch('adj', { reason: l }) })),
+        counted: e => this.patch('adj', { counted: e.target.value.replace(/[^0-9.]/g, ''), error: null }), note: e => this.patch('adj', { note: e.target.value }),
+        delta: e => this.patch('adj', { delta: e.target.value.replace(/[^0-9.]/g, ''), error: null }) },
+      reasonOpts: ADJ_REASONS[adj.mode].map((l, i) => ({ label: l, ...segOpt(adj.reason === l, i), pick: () => this.patch('adj', { reason: l }) })),
       adjApply: () => this.adjApply(), adjRecent,
       pIs: { list: s.pm === 'list', form: s.pm === 'form', detail: s.pm === 'detail' && !!pd, categories: s.pm === 'categories', tabs: s.pm === 'list' || s.pm === 'categories' },
       pTabs, prows, pEmptyAll: pool.length === 0, pHasPool: pool.length > 0, pEmptyFilter: pool.length > 0 && prows.length === 0, hasProws: prows.length > 0, pq: s.pq, onPq: e => this.setState({ pq: e.target.value }),
@@ -1381,17 +1566,17 @@ class Component extends DCLogic {
       saveWh: () => { const f = s.whForm; if (!f.name.trim() || !f.code.trim()) return this.setState({ whErr: 'Name and short code are required.' });
         const code = f.code.trim().toUpperCase(); if (s.whs.some(w => w.code === code)) return this.setState({ whErr: 'That short code is already used.' });
         this.setState({ whs: [...s.whs, { name: f.name.trim(), code, address: f.address.trim(), manager: s.pf.name, locs: [{ name: code + '/Stock', kind: 'Zone' }] }], whForm: null });
-        this.toast({ title: 'Warehouse added', lines: [`${f.name.trim()} Â· ${code}/Stock created`] }); },
+        this.toast({ title: 'Warehouse added', lines: [`${f.name.trim()} · ${code}/Stock created`] }); },
       whDraft: s.whDraft, whDraftSet: Object.fromEntries(['address', 'manager'].map(k => [k, e => this.setState({ whDraft: { ...s.whDraft, [k]: e.target.value } })])),
       cancelWhEdit: () => this.setState({ whEdit: null }), locDraft: s.locDraft, cancelLoc: () => this.setState({ locAdd: null, whErr: null }),
       locDraftSet: Object.fromEntries(['name', 'kind'].map(k => [k, e => this.setState({ locDraft: { ...s.locDraft, [k]: e.target.value }, whErr: null })])),
-      pf, pfSet2, pwRules, initials: pf.name.split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() || 'Â·',
+      pf, pfSet2, pwRules, initials: pf.name.split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() || '·',
       pfHasErr: !!pf.err, pfHasPwErr: !!pf.pwErr,
-      saveProfile: () => { if (!pf.name.trim()) return this.patch('pf', { err: 'Name canâ€™t be empty.' });
+      saveProfile: () => { if (!pf.name.trim()) return this.patch('pf', { err: 'Name can’t be empty.' });
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pf.email)) return this.patch('pf', { err: 'Enter a valid email address.' });
         this.toast({ title: 'Profile saved', lines: [pf.name, pf.email] }); },
       changePw: () => { if (!pf.cur) return this.patch('pf', { pwErr: 'Enter your current password.' });
-        if (!pwRules.every(r => r.ok)) return this.patch('pf', { pwErr: 'The new password doesnâ€™t meet the requirements.' });
+        if (!pwRules.every(r => r.ok)) return this.patch('pf', { pwErr: 'The new password doesn’t meet the requirements.' });
         this.patch('pf', { cur: '', nw: '', conf: '', pwErr: null }); this.toast({ title: 'Password changed', lines: ['Other devices will be signed out.'] }); },
       lf, lfFrom: lfSet('from'), lfTo: lfSet('to'), lfType: lfSet('type'), lfPid: lfSet('pid'), lfRef: lfSet('ref'),
       lfActive: JSON.stringify(lf) !== JSON.stringify(LF0) || s.wh !== 'All', lfClear: () => this.setState({ lf: LF0, wh: 'All' }),
