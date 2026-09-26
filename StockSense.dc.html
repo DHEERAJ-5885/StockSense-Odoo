@@ -10,6 +10,7 @@
 <helmet>
 <link rel="stylesheet" href="styles.css">
 <script src="_ds_bundle.js"></script>
+<script src="stocksense-auth.js"></script>
 <style>
 body{margin:0;background:var(--color-bg)}
 a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
@@ -190,8 +191,12 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <select class="input" value="{{ wh }}" onChange="{{ onWh }}" style="width:auto;min-width:170px"><option value="All">All warehouses</option><sc-for list="{{ whOpts }}" as="w" hint-placeholder-count="2"><option value="{{ w.name }}">{{ w.name }}</option></sc-for></select>
           </label>
           <label style="display:flex;flex-direction:column;gap:5px">
+            <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Location</span>
+            <select class="input" value="{{ loc }}" onChange="{{ onLoc }}" style="width:auto;min-width:170px"><option value="All">All locations</option><sc-for list="{{ dashLocOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.value }}</option></sc-for></select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:5px">
             <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Category</span>
-            <select class="input" value="{{ cat }}" onChange="{{ onCat }}" style="width:auto;min-width:160px"><option value="All">All categories</option><option>Raw Materials</option><option>Furniture</option><option>Hardware</option><option>Consumables</option></select>
+            <select class="input" value="{{ cat }}" onChange="{{ onCat }}" style="width:auto;min-width:160px"><option value="All">All categories</option><sc-for list="{{ catOpts }}" as="c" hint-placeholder-count="4"><option value="{{ c.name }}">{{ c.name }}</option></sc-for></select>
           </label>
           <sc-if value="{{ filtersActive }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost" onClick="{{ clearFilters }}" style="min-height:36px">Clear filters</button></sc-if>
         </div>
@@ -352,9 +357,12 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
 
         <sc-if value="{{ rcNotDone }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;gap:var(--space-2);flex-wrap:wrap;padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
+            <sc-if value="{{ rcIsDraft }}" hint-placeholder-val="{{ false }}"><button class="btn btn-primary" onClick="{{ rcToDo }}" style="min-height:44px;min-width:132px;font-size:15px">To Do</button></sc-if>
+            <sc-if value="{{ rcIsReady }}" hint-placeholder-val="{{ true }}">
             <button class="btn btn-primary" onClick="{{ validate }}" style="min-height:44px;min-width:132px;font-size:15px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Validate</button>
             <button class="btn btn-secondary" onClick="{{ fillExpected }}" style="min-height:44px">Set received = expected</button>
-            <button class="btn btn-secondary" onClick="{{ printRc }}" style="min-height:44px">Print PDF</button>
+            </sc-if>
+            <button class="btn btn-secondary" disabled="{{ true }}" title="Available once the receipt is done" style="min-height:44px">Print</button>
             <div style="flex:1"></div>
             <button class="btn btn-ghost" onClick="{{ rcCancel }}" style="min-height:44px;color:oklch(0.46 0.14 27)">Cancel receipt</button>
           </div>
@@ -363,14 +371,13 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <sc-if value="{{ rcViewOnly }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
             <span style="flex:1 1 260px;font-size:14px;color:var(--color-neutral-800)">View only. An Inventory Manager receives and validates incoming goods.</span>
-            <button class="btn btn-secondary" onClick="{{ printRc }}" style="min-height:44px">Print PDF</button>
           </div>
         </sc-if>
 
         <sc-if value="{{ rc.hasError }}" hint-placeholder-val="{{ false }}">
           <div role="alert" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
-            <div style="font-size:14px"><strong style="font-weight:600">Can’t validate yet.</strong> {{ rc.error }}</div>
+            <div style="font-size:14px"><strong style="font-weight:600">Can’t continue yet.</strong> {{ rc.error }}</div>
           </div>
         </sc-if>
 
@@ -394,16 +401,36 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         </sc-if>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-4) var(--space-6);padding:var(--space-2) 0">
-          <div class="field"><label>Supplier</label><input class="input" value="{{ rcDoc.partner }}" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Source document</label><input class="input" value="{{ rcDoc.origin }}" readOnly="{{ true }}" style="min-height:40px;font-variant-numeric:lining-nums tabular-nums"></div>
+          <div class="field"><label>Supplier</label><input class="input" list="ss-suppliers" placeholder="Who is sending the goods?" value="{{ rcDoc.partner }}" onChange="{{ rcDoc.onPartner }}" readOnly="{{ rcDoc.roHead }}" style="min-height:40px"></div>
+          <div class="field"><label>Source document</label><input class="input" placeholder="e.g. PO/2026/00231" value="{{ rcDoc.origin }}" onChange="{{ rcDoc.onOrigin }}" readOnly="{{ rcDoc.roHead }}" style="min-height:40px;font-variant-numeric:lining-nums tabular-nums"></div>
           <div class="field"><label>Responsible</label><input class="input" value="{{ pf.name }}" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Scheduled date</label><input class="input" type="date" value="{{ rcDoc.date }}" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Destination location</label><select class="input" value="{{ rcDoc.dest }}" onChange="{{ rcDoc.onDest }}" style="min-height:40px" disabled="{{ rcLocked }}"><sc-for list="{{ locOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select></div>
+          <div class="field"><label>Scheduled date</label><input class="input" type="date" value="{{ rcDoc.date }}" onChange="{{ rcDoc.onDate }}" readOnly="{{ rcDoc.roHead }}" style="min-height:40px"></div>
+          <div class="field"><label>Destination location</label><select class="input" value="{{ rcDoc.dest }}" onChange="{{ rcDoc.onDest }}" style="min-height:40px" disabled="{{ rcLocked }}"><sc-for list="{{ rcDoc.destOpts }}" as="o" hint-placeholder-count="4"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select></div>
+          <datalist id="ss-suppliers"><sc-for list="{{ supplierOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.name }}"></option></sc-for></datalist>
         </div>
 
         <section style="display:flex;flex-direction:column;gap:var(--space-2)">
           <div style="display:flex;align-items:baseline;justify-content:space-between"><h3 style="margin:0">Products</h3><span style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">Received {{ rc.totalReceived }} of {{ rc.totalExpected }} expected</span></div>
-          <div style="overflow-x:auto">
+          <sc-if value="{{ rcIsDraft }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <div style="overflow-x:auto">
+              <table class="table" style="min-width:600px">
+                <thead><tr><th>Product</th><th style="text-align:right;width:190px">Quantity</th><th>Unit</th><th></th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ rcDraftLines }}" as="l" hint-placeholder-count="1">
+                    <tr style="background:{{ l.rowBg }}">
+                      <td style="padding:8px var(--space-2)"><select class="input" value="{{ l.pid }}" onChange="{{ l.onPid }}" disabled="{{ rcLocked }}" style="min-height:44px;min-width:220px"><sc-for list="{{ productOpts }}" as="p" hint-placeholder-count="6"><option value="{{ p.id }}">{{ p.name }}</option></sc-for></select></td>
+                      <td style="padding:8px var(--space-2)"><input class="input" inputMode="numeric" placeholder="0" value="{{ l.qty }}" onChange="{{ l.onQty }}" readOnly="{{ rcLocked }}" style="min-height:44px;text-align:right;font-size:16px;font-variant-numeric:lining-nums tabular-nums;border-color:{{ l.inputBorder }}"></td>
+                      <td style="padding:8px var(--space-2);color:var(--color-neutral-700)">{{ l.uom }}</td>
+                      
+                      <td style="padding:8px var(--space-2);text-align:right"><sc-if value="{{ l.canRemove }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost btn-icon" onClick="{{ l.remove }}" aria-label="Remove line" style="color:var(--color-neutral-700)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></sc-if></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <sc-if value="{{ rcMgrDraft }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary" onClick="{{ addRcLine }}" style="align-self:flex-start;min-height:44px">Add a product</button></sc-if>
+          </div></sc-if>
+          <sc-if value="{{ rcNotDraft }}" hint-placeholder-val="{{ true }}"><div style="overflow-x:auto">
             <table class="table" style="min-width:680px">
               <thead><tr><th>Product</th><th style="text-align:right">On hand</th><th style="text-align:right">Expected</th><th style="text-align:right;width:170px">Received</th><th>Unit</th><th>Note</th></tr></thead>
               <tbody>
@@ -419,7 +446,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
                 </sc-for>
               </tbody>
             </table>
-          </div>
+          </div></sc-if>
         </section>
       </div>
     </sc-if>
@@ -428,37 +455,64 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
       <div style="display:flex;flex-direction:column;gap:var(--space-4)">
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
           <div><div style="font-size:12px;color:var(--color-neutral-700)">Stock ledger</div><h1 style="margin:2px 0 0;font-weight:400">Move History</h1></div>
-          <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ ledgerRows.length }} moves · <span style="color:oklch(0.42 0.1 150)">{{ ledgerIn }} in</span> · <span style="color:oklch(0.47 0.15 27)">{{ ledgerOut }} out</span></div>
+          <div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap">
+            <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ ledgerRows.length }} moves · <span style="color:oklch(0.42 0.1 150)">{{ ledgerIn }} in</span> · <span style="color:oklch(0.47 0.15 27)">{{ ledgerOut }} out</span></div>
+            <div style="display:flex">
+              <button onClick="{{ hist.toList }}" aria-label="List view" style="width:42px;height:42px;display:grid;place-items:center;background:transparent;cursor:pointer;border:1px solid {{ hist.listBorder }};border-radius:var(--radius-md) 0 0 var(--radius-md);color:{{ hist.listBtn }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"></path><path d="M3 6h18"></path><path d="M3 18h18"></path></svg></button>
+              <button onClick="{{ hist.toKanban }}" aria-label="Kanban view" style="width:42px;height:42px;display:grid;place-items:center;background:transparent;cursor:pointer;border:1px solid {{ hist.kanbanBorder }};margin-left:-1px;border-radius:0 var(--radius-md) var(--radius-md) 0;color:{{ hist.kanbanBtn }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect width="6" height="16" x="4" y="4" rx="1"></rect><rect width="6" height="10" x="14" y="4" rx="1"></rect></svg></button>
+            </div>
+          </div>
         </div>
         <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--space-3);padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
           <label class="field"><label>From</label><input class="input" type="date" value="{{ lf.from }}" onChange="{{ lfFrom }}" style="width:auto"></label>
           <label class="field"><label>To</label><input class="input" type="date" value="{{ lf.to }}" onChange="{{ lfTo }}" style="width:auto"></label>
           <div class="field"><label>Operation</label><select class="input" value="{{ lf.type }}" onChange="{{ lfType }}" style="width:auto;min-width:150px"><option value="All">All operations</option><option>Receipt</option><option>Delivery</option><option>Internal</option><option>Adjustment</option></select></div>
+          <div class="field"><label>Status</label><select class="input" value="{{ lf.status }}" onChange="{{ lfStatus }}" style="width:auto;min-width:130px"><option value="All">All statuses</option><option>Draft</option><option>Waiting</option><option>Ready</option><option>Done</option><option>Canceled</option></select></div>
           <div class="field"><label>Product</label><select class="input" value="{{ lf.pid }}" onChange="{{ lfPid }}" style="width:auto;min-width:160px"><option value="All">All products</option><sc-for list="{{ productOpts }}" as="p" hint-placeholder-count="6"><option value="{{ p.id }}">{{ p.name }}</option></sc-for></select></div>
           <div class="field"><label>Warehouse</label><select class="input" value="{{ wh }}" onChange="{{ onWh }}" style="width:auto;min-width:160px"><option value="All">All warehouses</option><sc-for list="{{ whOpts }}" as="w" hint-placeholder-count="2"><option value="{{ w.name }}">{{ w.name }}</option></sc-for></select></div>
           <div class="field" style="flex:1;min-width:160px"><label>Search reference or contact</label><input class="input" placeholder="e.g. WH/IN or Northline" value="{{ lf.ref }}" onChange="{{ lfRef }}"></div>
           <sc-if value="{{ lfActive }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost" onClick="{{ lfClear }}" style="min-height:36px">Reset</button></sc-if>
         </div>
-        <div style="overflow-x:auto">
-          <table class="table" style="min-width:900px">
-            <thead><tr><th>Date</th><th>Reference</th><th>Operation</th><th>Product</th><th>From</th><th></th><th>To</th><th style="text-align:right">Quantity</th><th>User</th></tr></thead>
+        <sc-if value="{{ hist.isKanban }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-3);align-items:start">
+            <sc-for list="{{ hist.kanban }}" as="c" hint-placeholder-count="5">
+              <div style="display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-3);border:1px solid var(--color-divider);border-radius:var(--radius-md);min-height:140px">
+                <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="width:8px;height:8px;border-radius:50%;background:{{ c.dot }}"></span><span style="flex:1">{{ c.label }}</span><span style="color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ c.count }}</span></div>
+                <sc-for list="{{ c.rows }}" as="m" hint-placeholder-count="1">
+                  <div class="elev-sm" style="display:flex;flex-direction:column;gap:3px;padding:10px 12px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-md)">
+                    <div style="display:flex;justify-content:space-between;gap:8px;font-size:13px;font-variant-numeric:lining-nums tabular-nums"><span style="color:var(--color-accent-700)">{{ m.ref }}</span><span style="color:{{ m.qtyColor }}">{{ m.qty }}</span></div>
+                    <div style="font-size:14px">{{ m.product }}</div>
+                    <div style="font-size:12px;color:var(--color-neutral-700)">{{ m.from }} → {{ m.to }}</div>
+                    <div style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ m.contact }} · {{ m.date }}</div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ c.empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--color-neutral-600)">Nothing here</div></sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ hist.isList }}" hint-placeholder-val="{{ true }}"><div style="overflow-x:auto">
+          <table class="table" style="min-width:1100px">
+            <thead><tr><th>Date</th><th>Reference</th><th>Contact</th><th>Operation</th><th>Product</th><th>From</th><th></th><th>To</th><th style="text-align:right">Quantity</th><th>Status</th><th>User</th></tr></thead>
             <tbody>
               <sc-for list="{{ ledgerRows }}" as="m" hint-placeholder-count="8">
                 <tr style="background:{{ m.bg }}">
                   <td style="padding:11px var(--space-2);white-space:nowrap;font-variant-numeric:lining-nums tabular-nums"><div>{{ m.date }}</div><div style="font-size:11px;color:var(--color-neutral-700)">{{ m.time }}</div></td>
                   <td style="padding:11px var(--space-2);white-space:nowrap;font-variant-numeric:lining-nums tabular-nums;color:var(--color-accent-700)">{{ m.ref }}</td>
+                  <td style="padding:11px var(--space-2);font-size:13px">{{ m.contact }}</td>
                   <td style="padding:11px var(--space-2)"><span class="tag" style="background:{{ m.tone.bg }};color:{{ m.tone.fg }}">{{ m.type }}</span></td>
                   <td style="padding:11px var(--space-2)">{{ m.product }}</td>
                   <td style="padding:11px var(--space-2);font-size:13px">{{ m.from }}</td>
                   <td style="padding:11px 0;color:var(--color-neutral-500)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></td>
                   <td style="padding:11px var(--space-2);font-size:13px">{{ m.to }}</td>
                   <td style="padding:11px var(--space-2);text-align:right;white-space:nowrap;font-variant-numeric:lining-nums tabular-nums;font-size:15px;color:{{ m.qtyColor }}">{{ m.qty }}</td>
+                  <td style="padding:11px var(--space-2)"><span class="tag" style="background:{{ m.statusTone.bg }};color:{{ m.statusTone.fg }}">{{ m.status }}</span></td>
                   <td style="padding:11px var(--space-2);font-size:13px;white-space:nowrap">{{ m.user }}</td>
                 </tr>
               </sc-for>
             </tbody>
           </table>
-        </div>
+        </div></sc-if>
         <sc-if value="{{ noLedger }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:56px 16px;border:1px dashed var(--color-divider);border-radius:var(--radius-md);text-align:center">
             <div style="font-family:var(--font-heading);font-size:20px">No stock moves in this range</div>
@@ -466,7 +520,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <button class="btn btn-secondary" onClick="{{ lfClear }}">Reset filters</button>
           </div>
         </sc-if>
-        <div style="font-size:12px;color:var(--color-neutral-700)">Internal transfers change location only — they are shown without a sign because total stock is unchanged.</div>
+        <div style="font-size:12px;color:var(--color-neutral-700)">Scheduled moves (Draft, Waiting, Ready, Canceled) are shown without a sign until they are done. Internal transfers change location only, so they never carry a sign.</div>
       </div>
     </sc-if>
 
@@ -552,7 +606,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div style="display:flex;flex-direction:column;gap:8px"><h1 style="margin:0;font-weight:400;font-variant-numeric:lining-nums tabular-nums">{{ dvDoc.ref }}</h1><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
           <sc-for list="{{ dvPipe }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:6px"><sc-if value="{{ p.sep }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-500)">›</span></sc-if><span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }}">{{ p.label }}</span></div></sc-for>
         </div></div>
-          <div style="display:flex;align-items:center;gap:8px">
+          <sc-if value="{{ dvNotDraft }}" hint-placeholder-val="{{ true }}"><div style="display:flex;align-items:center;gap:8px">
             <sc-for list="{{ dvSteps }}" as="s" hint-placeholder-count="3">
               <div style="display:flex;align-items:center;gap:8px">
                 <sc-if value="{{ s.line }}" hint-placeholder-val="{{ false }}"><span style="width:36px;height:1px;background:{{ s.lineColor }}"></span></sc-if>
@@ -560,7 +614,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
                 <span style="font-size:15px;color:{{ s.color }}">{{ s.label }}</span>
               </div>
             </sc-for>
-          </div>
+          </div></sc-if>
         </div>
         <sc-if value="{{ dv.active }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;gap:var(--space-2);flex-wrap:wrap;padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
@@ -568,7 +622,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <sc-if value="{{ dv.awaitMgr }}" hint-placeholder-val="{{ false }}"><span style="align-self:center;font-size:14px;color:var(--color-neutral-800)">Picked and packed. An Inventory Manager validates the delivery.</span></sc-if>
             <sc-if value="{{ dv.canBack }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary" onClick="{{ dvBack }}" style="min-height:48px">Back</button></sc-if>
             <div style="flex:1"></div>
-            <button class="btn btn-secondary" onClick="{{ printDv }}" style="min-height:48px">Print PDF</button>
+            <button class="btn btn-secondary" disabled="{{ true }}" title="Available once delivered" style="min-height:48px">Print</button>
             <sc-if value="{{ dv.canCancel }}" hint-placeholder-val="{{ true }}"><button class="btn btn-ghost" onClick="{{ dvCancel }}" style="min-height:48px;color:oklch(0.46 0.14 27)">Cancel delivery</button></sc-if>
           </div>
         </sc-if>
@@ -597,15 +651,35 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           </div>
         </sc-if>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-4) var(--space-6);padding:var(--space-2) 0">
-          <div class="field"><label>Customer</label><input class="input" value="{{ dvDoc.partner }}" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Delivery address</label><input class="input" value="{{ dvDoc.address }}" readOnly="{{ true }}" style="min-height:40px"></div>
-          <div class="field"><label>Scheduled date</label><input class="input" type="date" value="{{ dvDoc.date }}" readOnly="{{ true }}" style="min-height:40px"></div>
+          <div class="field"><label>Customer</label><input class="input" list="ss-customers" placeholder="Who is this for?" value="{{ dvDoc.partner }}" onChange="{{ dvDoc.onPartner }}" readOnly="{{ dvDoc.roHead }}" style="min-height:40px"></div>
+          <div class="field"><label>Delivery address</label><input class="input" placeholder="Street, city" value="{{ dvDoc.addr }}" onChange="{{ dvDoc.onAddr }}" readOnly="{{ dvDoc.roHead }}" style="min-height:40px"></div>
+          <div class="field"><label>Scheduled date</label><input class="input" type="date" value="{{ dvDoc.date }}" onChange="{{ dvDoc.onDate }}" readOnly="{{ dvDoc.roHead }}" style="min-height:40px"></div>
           <div class="field"><label>Responsible</label><input class="input" value="{{ pf.name }}" readOnly="{{ true }}" style="min-height:40px"></div>
           <div class="field"><label>Operation type</label><input class="input" value="{{ dvDoc.wh }}" readOnly="{{ true }}" style="min-height:40px"></div>
+          <datalist id="ss-customers"><sc-for list="{{ customerOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.name }}"></option></sc-for></datalist>
         </div>
         <section style="display:flex;flex-direction:column;gap:var(--space-2)">
           <h3 style="margin:0">Products</h3>
-          <div style="overflow-x:auto">
+          <sc-if value="{{ dvIsDraft }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <div style="overflow-x:auto">
+              <table class="table" style="min-width:600px">
+                <thead><tr><th>Product</th><th style="text-align:right;width:190px">Quantity</th><th>Unit</th><th>Availability</th><th></th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ dvDraftLines }}" as="l" hint-placeholder-count="1">
+                    <tr style="background:{{ l.rowBg }}">
+                      <td style="padding:8px var(--space-2)"><select class="input" value="{{ l.pid }}" onChange="{{ l.onPid }}" disabled="{{ dvDoc.roHead }}" style="min-height:44px;min-width:220px"><sc-for list="{{ productOpts }}" as="p" hint-placeholder-count="6"><option value="{{ p.id }}">{{ p.name }}</option></sc-for></select></td>
+                      <td style="padding:8px var(--space-2)"><input class="input" inputMode="numeric" placeholder="0" value="{{ l.qty }}" onChange="{{ l.onQty }}" readOnly="{{ dvDoc.roHead }}" style="min-height:44px;text-align:right;font-size:16px;font-variant-numeric:lining-nums tabular-nums;border-color:{{ l.inputBorder }}"></td>
+                      <td style="padding:8px var(--space-2);color:var(--color-neutral-700)">{{ l.uom }}</td>
+                      <td style="padding:8px var(--space-2);font-size:13px;color:{{ l.noteColor }}">{{ l.note }}</td>
+                      <td style="padding:8px var(--space-2);text-align:right"><sc-if value="{{ l.canRemove }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost btn-icon" onClick="{{ l.remove }}" aria-label="Remove line" style="color:var(--color-neutral-700)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></sc-if></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <sc-if value="{{ dvMgrDraft }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary" onClick="{{ addDvLine }}" style="align-self:flex-start;min-height:44px">Add a product</button></sc-if>
+          </div></sc-if>
+          <sc-if value="{{ dvNotDraft }}" hint-placeholder-val="{{ true }}"><div style="overflow-x:auto">
             <table class="table" style="min-width:680px">
               <thead><tr><th>Product</th><th style="text-align:right">On hand</th><th style="text-align:right">Ordered</th><th style="text-align:right;width:170px">Picked</th><th>Unit</th><th>Availability</th></tr></thead>
               <tbody>
@@ -621,7 +695,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
                 </sc-for>
               </tbody>
             </table>
-          </div>
+          </div></sc-if>
         </section>
         <sc-if value="{{ dv.showPack }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-wrap:wrap;gap:var(--space-6);align-items:flex-start;padding-top:var(--space-2)">
@@ -647,7 +721,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         </div>
         <sc-if value="{{ tr.active }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;gap:var(--space-2);flex-wrap:wrap;padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
-            <button class="btn btn-primary" onClick="{{ trValidate }}" style="min-height:48px;min-width:150px;font-size:15px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Validate transfer</button>
+            <button class="btn btn-primary" onClick="{{ trValidate }}" style="min-height:48px;min-width:150px;font-size:15px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ tr.primaryLabel }}</button>
             <button class="btn btn-secondary" onClick="{{ addTrLine }}" style="min-height:48px">Add product line</button>
             <div style="flex:1"></div>
             <button class="btn btn-ghost" onClick="{{ goTransfers }}" style="min-height:48px;color:var(--color-neutral-700)">Discard</button>
@@ -1076,12 +1150,12 @@ const ERR_BORDER = 'oklch(0.62 0.13 27)';
 const ST = { Draft: 'grey', Waiting: 'amber', Ready: 'blue', Done: 'green', Canceled: 'red' };
 const TYPE_T = { Receipt: 'green', Delivery: 'red', Internal: 'blue', Adjustment: 'amber' };
 const PENDING = ['Draft', 'Waiting', 'Ready'];
-const LF0 = { from: '2026-09-20', to: '2026-09-26', type: 'All', pid: 'All', ref: '' };
+const LF0 = { from: '2026-09-20', to: '', type: 'All', pid: 'All', status: 'All', ref: '' };
 const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const SCREEN_OF = { Receipt: 'receipt', Delivery: 'delivery', Internal: 'transfer' };
 const DOC_KEY = { Receipt: 'rc', Delivery: 'dv', Internal: 'tr' };
 const TODAY = Date.parse('26 Sep 2026');
-const dayOf = d => Date.parse(d + ' 2026');
+const dayOf = d => Date.parse(/\d{4}/.test(d) ? d : d + ' 2026');
 const inr = n => '₹' + Number(n).toLocaleString('en-IN');
 const fmt = n => Number(n).toLocaleString('en-US');
 const hm = () => { const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
@@ -1093,12 +1167,14 @@ const take = (p, q, pref) => {
   for (const k of order) { if (!left) break; const t = Math.min(loc[k] || 0, left); if (t > 0) { loc[k] -= t; left -= t; } }
   return { ...p, loc, onHand: p.onHand - (q - left) };
 };
-const mapMove = (m, pById) => {
+const mapMove = (m, pById, opBy = {}) => {
   const p = pById[m.pid] || { name: '—', uom: '' }; const [y, mo, dd] = m.ts.slice(0, 10).split('-');
+  const status = m.plan ? m.status : 'Done'; const op = opBy[m.ref];
+  const contact = m.type === 'Receipt' ? (op ? op.partner : m.from) : m.type === 'Delivery' ? (op ? op.partner : m.to) : '—';
   const sign = m.kind === 'in' ? '+' : m.kind === 'out' ? '−' : '⇄ ';
-  return { date: `${Number(dd)} ${MON[Number(mo) - 1]} ${y}`, time: m.ts.slice(11), ref: m.ref, type: m.type, tone: T[TYPE_T[m.type]],
+  return { date: `${Number(dd)} ${MON[Number(mo) - 1]} ${y}`, time: m.plan ? 'Scheduled' : m.ts.slice(11), ref: m.ref, type: m.type, tone: T[TYPE_T[m.type]], contact, status, statusTone: T[ST[status]], plan: !!m.plan,
     product: p.name, from: m.from, to: m.to, user: m.user, qty: `${sign}${fmt(m.qty)} ${p.uom}`,
-    qtyColor: m.kind === 'in' ? 'oklch(0.42 0.1 150)' : m.kind === 'out' ? 'oklch(0.47 0.15 27)' : 'var(--color-neutral-700)',
+    qtyColor: m.plan ? 'var(--color-neutral-700)' : m.kind === 'in' ? 'oklch(0.42 0.1 150)' : m.kind === 'out' ? 'oklch(0.47 0.15 27)' : 'var(--color-neutral-700)',
     bg: m.fresh ? 'color-mix(in srgb, var(--color-accent) 7%, transparent)' : 'transparent' };
 };
 const segOpt = (on, i) => ({ divider: i ? '1px solid var(--color-divider)' : '0', color: on ? 'var(--color-accent-700)' : 'var(--color-text)', shadow: on ? 'inset 0 0 0 1px var(--color-accent)' : 'none' });
@@ -1111,26 +1187,41 @@ const steps = (labels, idx, allDone) => labels.map((l, i) => {
 const SESSION_KEY = 'stocksense.session';
 const MGR = 'Inventory Manager';
 const DEMO_USER = { loginId: 'priya.nair', name: 'Priya Nair', email: 'priya.nair@stocksense.app', role: MGR };
-// The signed-in user comes from the login page; opening this file directly falls back to the demo manager.
+// The signed-in user comes from the login page. Without a session the app sends you back to sign in.
 const loadUser = () => {
-  try { const u = JSON.parse(window.sessionStorage.getItem(SESSION_KEY)); if (u && u.name && (u.role === MGR || u.role === 'Warehouse Staff')) return { ...DEMO_USER, ...u }; } catch (e) { /* no session */ }
+  for (const store of ['sessionStorage', 'localStorage']) {
+    try { const u = JSON.parse(window[store].getItem(SESSION_KEY)); if (u && u.name && (u.role === MGR || u.role === 'Warehouse Staff')) return { ...DEMO_USER, ...u }; } catch (e) { /* try the next store */ }
+  }
+  try { window.location.replace('Auth.dc.html'); } catch (e) { /* not in a browser */ }
   return DEMO_USER;
 };
 const ADDR = { 'Brightdesk Offices': '4th Floor, Baner Road, Pune', 'Harbor Interiors': 'Shop 7, North Main Road, Koregaon Park, Pune', 'Apex Fabrication': 'Plot 22, MIDC Bhosari, Pune' };
 const homeOf = o => o.wh === 'Warehouse 2' ? 'WH2/Stock' : 'WH/Main Store';
 const isoOf = d => { const t = new Date(dayOf(d)); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; };
+const dateLabel = iso => { const [y, m, d] = iso.split('-'); return `${Number(d)} ${MON[Number(m) - 1]}${y === '2026' ? '' : ' ' + y}`; };
+const shortLoc = l => l.split('/').pop();
+const OP_CODE = { Receipt: 'IN', Delivery: 'OUT', Internal: 'INT' };
+// <Warehouse code>/<IN|OUT|INT>/<auto-incrementing id, unique per operation type>
+const nextRef = (ops, type, code) => `${code}/${OP_CODE[type]}/${String(Math.max(0, ...ops.filter(o => o.type === type).map(o => Number(o.ref.split('/').pop()) || 0)) + 1).padStart(4, '0')}`;
+// Waiting is not stored: a delivery/transfer is Waiting whenever stock can't cover it, and Ready again once stock arrives.
+const deriveOps = (ops, products) => { const pById = Object.fromEntries(products.map(p => [p.id, p]));
+  return ops.map(o => { if (o.status !== 'Ready' && o.status !== 'Waiting') return o;
+    const short = o.type === 'Delivery' ? o.items.some(([id, q]) => q > pById[id].onHand) : o.type === 'Internal' ? o.items.some(([id, q]) => q > (pById[id].loc[o.src] || 0)) : false;
+    return short === (o.status === 'Waiting') ? o : { ...o, status: short ? 'Waiting' : 'Ready' }; }); };
+const opLocs = o => o.type === 'Receipt' ? [o.dest || homeOf(o)] : o.type === 'Internal' ? [o.src, o.dst] : o.type === 'Adjustment' ? [o.loc || homeOf(o)] : [homeOf(o)];
 const histOf = (ledger, ref) => { const m = ledger.find(x => x.ref === ref); return m ? `${mapMove(m, {}).date}, ${m.ts.slice(11)} by ${m.user}` : 'earlier'; };
 const histResult = (o, pById) => o.items.map(([pid, q]) => ({ name: pById[pid].name, qty: fmt(Math.abs(q)), uom: pById[pid].uom, detail: 'Logged in Move History' }));
 // Build the editable form state for any operation document from its record in `ops`.
 const initDoc = (o, products, ledger) => {
   const pById = Object.fromEntries(products.map(p => [p.id, p])); const done = o.status === 'Done'; const canceled = o.status === 'Canceled';
   const doneAt = done ? histOf(ledger, o.ref) : '';
-  if (o.type === 'Receipt') return { ref: o.ref, status: o.status, dest: homeOf(o), error: null, doneAt, result: done ? histResult(o, pById) : null,
-    lines: o.items.map(([pid, q]) => ({ pid, expected: q, received: done ? String(q) : '' })) };
-  if (o.type === 'Delivery') return { ref: o.ref, step: done ? 3 : 0, canceled, packages: '', error: null, doneAt, result: done ? histResult(o, pById) : null,
-    lines: o.items.map(([pid, q]) => ({ pid, demand: q, picked: String(q) })) };
-  return { ref: o.ref, src: o.src || homeOf(o), dst: o.dst || 'WH2/Stock', done, live: false, canceled, error: null, doneAt, result: [],
-    lines: o.items.map(([pid, q]) => ({ pid, qty: String(q) })) };
+  const raw = o.items.length ? o.items.map(([pid, q]) => ({ pid, qty: String(q) })) : [{ pid: products[0].id, qty: '' }];
+  const base = { ref: o.ref, error: null, doneAt, partner: o.partner, date: isoOf(o.date), result: done ? histResult(o, pById) : null };
+  if (o.type === 'Receipt') return { ...base, status: o.status, dest: o.dest || homeOf(o), origin: o.origin || '',
+    lines: raw.map(l => ({ ...l, expected: Number(l.qty) || 0, received: done ? l.qty : '' })) };
+  if (o.type === 'Delivery') return { ...base, step: done ? 3 : 0, canceled, packages: '', addr: o.addr || ADDR[o.partner] || '',
+    lines: raw.map(l => ({ ...l, demand: Number(l.qty) || 0, picked: l.qty })) };
+  return { ...base, result: [], src: o.src || homeOf(o), dst: o.dst || 'WH2/Stock', done, live: false, canceled, lines: raw };
 };
 const ADJ0 = { pid: 'frames', loc: 'WH2/Stock', mode: 'count', counted: '', delta: '', reason: 'Count correction', note: '', error: null };
 const ADJ_REASONS = { count: ['Damaged', 'Lost', 'Count correction'], add: ['Found', 'Returned', 'Count correction'], remove: ['Damaged', 'Lost', 'Count correction'] };
@@ -1139,17 +1230,24 @@ const PF0 = { name: '', sku: '', cat: 'Raw Materials', uom: 'pcs', init: '', loc
 class Component extends DCLogic {
   state = {
     screen: this.props.startScreen ?? 'dashboard', loading: false, opsOpen: true,
-    wh: 'All', type: 'All', statuses: [], cat: 'All',
+    wh: 'All', loc: 'All', type: 'All', statuses: [], cat: 'All', hview: 'list',
     products: P0, ops: O0, ledger: L0, whs: W0, cats: ['Raw Materials', 'Furniture', 'Hardware', 'Consumables'], seq: 5,
     rc: initDoc(O0[0], P0, L0), dv: initDoc(O0[1], P0, L0), tr: initDoc(O0[2], P0, L0), docs: {}, adj: ADJ0,
     pm: 'list', psel: null, pq: '', pcat: 'All', pstock: 'All', pform: PF0, perr: {}, pedit: null, rr: { min: '', max: '', supplier: '' }, rrErr: null, newCat: '', catErr: null,
     whForm: null, whErr: null, whEdit: null, whDraft: { address: '', manager: '' }, locAdd: null, locDraft: { name: '', kind: 'Rack' },
-    role: loadUser().role, pf: { name: loadUser().name, email: loadUser().email, cur: '', nw: '', conf: '', err: null, pwErr: null },
+    role: loadUser().role, email0: loadUser().email, pf: { name: loadUser().name, email: loadUser().email, cur: '', nw: '', conf: '', err: null, pwErr: null },
     lq: '', lview: 'list', pupd: null, q: '', searchOpen: false, alertsOpen: false, profileOpen: false, toast: null, lf: LF0,
   };
+  // With Supabase, the cached name/role is only trusted while a real Supabase session exists.
+  async guardSession() {
+    for (let i = 0; i < 60 && !window.SSAuth; i++) await new Promise(r => setTimeout(r, 100));
+    const A = window.SSAuth; if (!A) return;
+    if (!(await A.requireSession())) { A.clearSession(); window.location.replace('Auth.dc.html'); }
+  }
   componentDidMount() {
     if (typeof window === 'undefined' || this._listening) return;
     this._listening = true;
+    this.guardSession();
     // Clicking anywhere outside an open popover (or pressing Esc) closes it.
     this._outside = e => {
       const s = this.state; const t = e.target; const shut = {};
@@ -1192,6 +1290,57 @@ class Component extends DCLogic {
     const key = DOC_KEY[o.type]; const cur = s[key]; if (cur.ref === ref) return {};
     return { [key]: s.docs[ref] || initDoc(o, s.products, s.ledger), docs: { ...s.docs, [cur.ref]: cur } };
   }
+  // New receipt / delivery / transfer: a Draft with the next reference for the chosen warehouse (Main Warehouse when "All").
+  newOp(type) {
+    const s = this.state; const wh = s.whs.find(w => w.name === s.wh) || s.whs[0];
+    const first = wh.locs[0].name; const second = (wh.locs[1] || wh.locs[0]).name; const ref = nextRef(s.ops, type, wh.code);
+    const op = { ref, type, partner: '', items: [], wh: wh.name, date: '26 Sep', status: 'Draft' };
+    if (type === 'Receipt') Object.assign(op, { dest: first, origin: '' });
+    if (type === 'Delivery') Object.assign(op, { addr: '' });
+    if (type === 'Internal') Object.assign(op, { src: first, dst: second, partner: `${shortLoc(first)} → ${shortLoc(second)}` });
+    this.setState({ ops: [op, ...s.ops] }, () => this.go(SCREEN_OF[type], this.docPatch(ref)));
+  }
+  // Edit the open document; a Draft also keeps its list row (contact, date, products) in step.
+  editDoc(key, patch) {
+    this.setState(x => {
+      const doc = { ...x[key], ...patch, error: null }; const op = x.ops.find(o => o.ref === doc.ref); const draft = op && op.status === 'Draft';
+      const opPatch = key === 'rc' ? { partner: doc.partner, origin: doc.origin, dest: doc.dest, date: dateLabel(doc.date) }
+        : key === 'dv' ? { partner: doc.partner, addr: doc.addr, date: dateLabel(doc.date) }
+        : { src: doc.src, dst: doc.dst, partner: `${shortLoc(doc.src)} → ${shortLoc(doc.dst)}`, date: dateLabel(doc.date) };
+      if (draft) opPatch.items = doc.lines.filter(l => Number(l.qty) > 0).map(l => [l.pid, Number(l.qty)]);
+      return { [key]: doc, ops: x.ops.map(o => o.ref === doc.ref ? { ...o, ...opPatch } : o) };
+    });
+  }
+  editLine(key, i, patch) {
+    this.editDoc(key, { lines: this.state[key].lines.map((l, j) => j === i ? { ...l, ...patch } : l) });
+    if (key === 'dv') { // alert as soon as a delivery line asks for more than is in stock
+      const l = { ...this.state.dv.lines[i], ...patch }; const p = this.state.products.find(x => x.id === l.pid); const q = Number(l.qty) || 0;
+      if (p && q > p.onHand) this.toast({ title: p.onHand <= 0 ? `${p.name} is out of stock` : `Not enough ${p.name}`, lines: [`Ordered ${fmt(q)} but only ${fmt(p.onHand)} ${p.uom} on hand. The delivery will wait for stock.`] });
+    }
+  }
+  addLine(key) {
+    const s = this.state; const used = s[key].lines.map(l => l.pid);
+    this.editDoc(key, { lines: [...s[key].lines, { pid: (s.products.find(p => !used.includes(p.id)) || s.products[0]).id, qty: '' }] });
+  }
+  removeLine(key, i) { this.editDoc(key, { lines: this.state[key].lines.filter((_, j) => j !== i) }); }
+  // Draft -> Ready ("To Do"). Deliveries/transfers become Waiting on their own when stock is short.
+  toDo(key) {
+    const s = this.state; const doc = s[key]; const pById = Object.fromEntries(s.products.map(p => [p.id, p])); const fail = m => this.patch(key, { error: m });
+    if (key === 'rc' && !doc.partner.trim()) return fail('Add the supplier this receipt is from.');
+    if (key === 'dv' && !doc.partner.trim()) return fail('Add the customer this delivery is for.');
+    if (key === 'tr' && doc.src === doc.dst) return fail('Source and destination must be different locations.');
+    if (doc.lines.some(l => l.qty !== '' && !(Number(l.qty) > 0))) return fail('Quantities must be greater than zero.');
+    const lines = doc.lines.filter(l => Number(l.qty) > 0);
+    if (!lines.length) return fail('Add at least one product with a quantity.');
+    if (new Set(lines.map(l => l.pid)).size !== lines.length) return fail('Each product can appear only once — combine the duplicate lines.');
+    const items = lines.map(l => [l.pid, Number(l.qty)]);
+    const next = key === 'rc' ? { ...doc, status: 'Ready', lines: lines.map(l => ({ ...l, expected: Number(l.qty), received: '' })) }
+      : key === 'dv' ? { ...doc, lines: lines.map(l => ({ ...l, demand: Number(l.qty), picked: l.qty })) } : { ...doc, lines };
+    const short = key === 'dv' ? items.filter(([id, q]) => q > pById[id].onHand) : key === 'tr' ? items.filter(([id, q]) => q > (pById[id].loc[doc.src] || 0)) : [];
+    this.setState({ [key]: { ...next, error: null }, ops: s.ops.map(o => o.ref === doc.ref ? { ...o, items, status: 'Ready' } : o) });
+    if (short.length) this.toast({ title: `${doc.ref} is waiting for stock`, lines: short.map(([id, q]) => `${pById[id].name}: need ${fmt(q)}, ${fmt(key === 'dv' ? pById[id].onHand : pById[id].loc[doc.src] || 0)} available`) });
+    else this.toast({ title: `${doc.ref} is ready`, lines: [key === 'rc' ? 'Enter the quantities received, then validate.' : key === 'dv' ? 'Pick, pack, then validate.' : 'Validate to move the stock.'] });
+  }
   openOp(ref) {
     const o = this.state.ops.find(x => x.ref === ref); if (!o) return;
     if (o.type === 'Adjustment') return this.go('adjustments', { adj: { ...ADJ0, pid: o.items[0][0], loc: o.loc || homeOf(o) } });
@@ -1215,6 +1364,7 @@ class Component extends DCLogic {
   }
   validate() {
     const { rc, products, ops, ledger } = this.state;
+    if (rc.status !== 'Ready') return this.patch('rc', { error: 'Mark the receipt To Do before validating it.' });
     const vals = rc.lines.map(l => l.received === '' ? 0 : Number(l.received));
     if (vals.some(v => isNaN(v) || v < 0)) return this.patch('rc', { error: 'Received quantities must be zero or more.' });
     if (vals.every(v => v === 0)) return this.patch('rc', { error: 'Enter the quantity actually received on at least one line — nothing would be added to stock.' });
@@ -1234,6 +1384,7 @@ class Component extends DCLogic {
   dvPrimary() {
     const { dv, products, ops, ledger } = this.state; const pById = Object.fromEntries(products.map(p => [p.id, p]));
     const vals = dv.lines.map(l => l.picked === '' ? 0 : Number(l.picked));
+    if (ops.find(o => o.ref === dv.ref).status === 'Draft') return this.toDo('dv');
     if (dv.step === 0) {
       if (vals.some(v => isNaN(v) || v < 0)) return this.patch('dv', { error: 'Picked quantities must be zero or more.' });
       const over = dv.lines.map((l, i) => ({ p: pById[l.pid], v: vals[i] })).filter(x => x.v > x.p.onHand);
@@ -1265,6 +1416,7 @@ class Component extends DCLogic {
   }
   trValidate() {
     const { tr, products, ops, ledger } = this.state; const pById = Object.fromEntries(products.map(p => [p.id, p]));
+    if (ops.find(o => o.ref === tr.ref).status === 'Draft') return this.toDo('tr');
     if (tr.src === tr.dst) return this.patch('tr', { error: 'Source and destination must be different locations.' });
     const vals = tr.lines.map(l => Number(l.qty) || 0);
     if (vals.some(v => v <= 0)) return this.patch('tr', { error: 'Every line needs a quantity greater than zero.' });
@@ -1369,7 +1521,7 @@ class Component extends DCLogic {
     doc.setDrawColor(200); doc.line(M, y, W - M, y); y += 8;
     const info = isRc
       ? [['Supplier', o.partner], ['Source document', o.origin || '-'], ['Scheduled date', `${o.date} 2026`], ['Destination', d.dest], ['Warehouse', this.whOf(d.dest)], ['Responsible', s.pf.name], ['Validated', d.status === 'Done' ? d.doneAt : 'Not validated yet']]
-      : [['Customer', o.partner], ['Delivery address', ADDR[o.partner] || '-'], ['Scheduled date', `${o.date} 2026`], ['Ship from', homeOf(o)], ['Warehouse', o.wh], ['Responsible', s.pf.name], ['Packages', d.packages || '-'], ['Delivered', d.step === 3 ? d.doneAt : 'Not delivered yet']];
+      : [['Customer', o.partner], ['Delivery address', d.addr || ADDR[o.partner] || '-'], ['Scheduled date', `${o.date} 2026`], ['Ship from', homeOf(o)], ['Warehouse', o.wh], ['Responsible', s.pf.name], ['Packages', d.packages || '-'], ['Delivered', d.step === 3 ? d.doneAt : 'Not delivered yet']];
     info.forEach(([k, v], i) => { const x = i % 2 ? W / 2 + 4 : M; if (i && !(i % 2)) y += 11;
       doc.setFontSize(8); doc.setTextColor(120); doc.text(k.toUpperCase(), x, y);
       doc.setFontSize(10); doc.setTextColor(0); doc.text(doc.splitTextToSize(txt(v), W / 2 - M - 4)[0], x, y + 5); });
@@ -1393,6 +1545,7 @@ class Component extends DCLogic {
     const isMgr = s.role === MGR; const isStaff = !isMgr;
     const firstName = s.pf.name.split(/\s+/)[0] || s.pf.name;
     const pById = Object.fromEntries(s.products.map(p => [p.id, p]));
+    const ops = deriveOps(s.ops, s.products);
     const navKeys = ['dashboard', 'products', 'receipts', 'deliveries', 'transfers', 'adjustments', 'history', 'warehouses'];
     const activeKey = { receipt: 'receipts', delivery: 'deliveries', transfer: 'transfers' }[s.screen] || s.screen;
     const nav = Object.fromEntries(navKeys.map(k => [k, k === activeKey ? { bg: 'color-mix(in srgb, var(--color-accent) 13%, transparent)', fg: 'var(--color-accent-800)' } : { bg: 'transparent', fg: 'var(--color-text)' }]));
@@ -1403,11 +1556,16 @@ class Component extends DCLogic {
     const allLocs = s.whs.flatMap(w => w.locs.map(l => ({ value: l.name, label: `${l.name} — ${w.name}`, wh: w.name })));
     const whOpts = s.whs.map(w => ({ name: w.name }));
     const productOpts = s.products.map(p => ({ id: p.id, name: p.name }));
+    const whLocs = name => allLocs.filter(l => l.wh === name);
+    const dashLocOpts = allLocs.filter(l => s.wh === 'All' || l.wh === s.wh);
+    const catOpts = s.cats.map(c => ({ name: c }));
+    const supplierOpts = [...new Set([...s.products.map(p => p.supplier), ...ops.filter(o => o.type === 'Receipt').map(o => o.partner)].filter(Boolean))].map(name => ({ name }));
+    const customerOpts = [...new Set([...Object.keys(ADDR), ...ops.filter(o => o.type === 'Delivery').map(o => o.partner)].filter(Boolean))].map(name => ({ name }));
 
     const low = s.products.filter(p => p.onHand < p.min);
     const lowItems = low.map(p => {
       const st = stockOf(p);
-      const inc = s.ops.find(o => o.type === 'Receipt' && PENDING.includes(o.status) && o.items.some(([id]) => id === p.id));
+      const inc = ops.find(o => o.type === 'Receipt' && PENDING.includes(o.status) && o.items.some(([id]) => id === p.id));
       const incQty = inc ? inc.items.find(([id]) => id === p.id)[1] : 0;
       return { ...p, onHand: fmt(p.onHand), min: fmt(p.min), label: st.label, tone: st.tone, pct: Math.max(2, Math.min(100, p.onHand / p.min * 100)) + '%',
         hasIncoming: !!inc, noIncoming: !inc, incomingText: inc ? `${fmt(incQty)} · ${inc.ref}` : '',
@@ -1416,7 +1574,7 @@ class Component extends DCLogic {
     });
     const ALERT_PREVIEW = 4;
 
-    const byType = t => s.ops.filter(o => o.type === t && PENDING.includes(o.status));
+    const byType = t => ops.filter(o => o.type === t && PENDING.includes(o.status));
     const kpiSet = (type) => () => this.setState({ type, statuses: PENDING });
     const kpi = {
       inStock: s.products.filter(p => p.onHand > 0).length, total: s.products.length, units: fmt(s.products.reduce((a, p) => a + p.onHand, 0)),
@@ -1424,7 +1582,7 @@ class Component extends DCLogic {
       receipts: byType('Receipt').length, receiptsReady: byType('Receipt').filter(o => o.status === 'Ready').length,
       deliveries: byType('Delivery').length, deliveriesWaiting: byType('Delivery').filter(o => o.status === 'Waiting').length, transfers: byType('Internal').length,
     };
-    const opCard = (type) => { const all = s.ops.filter(o => o.type === type); const pend = all.filter(o => PENDING.includes(o.status));
+    const opCard = (type) => { const all = ops.filter(o => o.type === type); const pend = all.filter(o => PENDING.includes(o.status));
       return { toDo: pend.filter(o => o.status === 'Ready').length, late: pend.filter(o => dayOf(o.date) < TODAY).length, waiting: pend.filter(o => o.status === 'Waiting').length,
         upcoming: pend.filter(o => dayOf(o.date) > TODAY).length, open: () => this.go(type === 'Receipt' ? 'receipts' : 'deliveries', { statuses: [], lq: '' }) }; };
     const TYPE_MAP = { All: 'All', Receipts: 'Receipt', Delivery: 'Delivery', Internal: 'Internal', Adjustments: 'Adjustment' };
@@ -1436,15 +1594,15 @@ class Component extends DCLogic {
     });
     const opRow = o => { const home = homeOf(o);
       const from = o.type === 'Receipt' ? 'Vendor' : o.type === 'Internal' ? o.src : home;
-      const to = o.type === 'Receipt' ? home : o.type === 'Internal' ? o.dst : o.type === 'Delivery' ? 'Customer' : 'Scrap / count';
+      const to = o.type === 'Receipt' ? (o.dest || home) : o.type === 'Internal' ? o.dst : o.type === 'Delivery' ? 'Customer' : 'Scrap / count';
       const late = PENDING.includes(o.status) && dayOf(o.date) < TODAY;
       return { ...o, tone: T[ST[o.status]], from, to, contact: o.type === 'Internal' ? '—' : o.partner, late, summary: o.items.map(([id, q]) => `${pById[id].name} ${q < 0 ? '−' + fmt(-q) : fmt(q)} ${pById[id].uom}`).join(', '),
         cursor: 'pointer', refColor: 'var(--color-accent-700)', open: () => this.openOp(o.ref) }; };
-    const opRows = s.ops.filter(o => (s.type === 'All' || o.type === s.type) && (!s.statuses.length || s.statuses.includes(o.status)) &&
-      (s.wh === 'All' || o.wh === s.wh) && (s.cat === 'All' || o.items.some(([id]) => pById[id].cat === s.cat))).map(opRow);
-    const filtersActive = s.type !== 'All' || s.statuses.length > 0 || s.wh !== 'All' || s.cat !== 'All';
+    const opRows = ops.filter(o => (s.type === 'All' || o.type === s.type) && (!s.statuses.length || s.statuses.includes(o.status)) &&
+      (s.wh === 'All' || o.wh === s.wh) && (s.loc === 'All' || opLocs(o).includes(s.loc)) && (s.cat === 'All' || o.items.some(([id]) => pById[id].cat === s.cat))).map(opRow);
+    const filtersActive = s.type !== 'All' || s.statuses.length > 0 || s.wh !== 'All' || s.loc !== 'All' || s.cat !== 'All';
 
-    const staffTasks = s.ops.filter(o => ['Delivery', 'Internal'].includes(o.type) && PENDING.includes(o.status) && (s.wh === 'All' || o.wh === s.wh))
+    const staffTasks = ops.filter(o => ['Delivery', 'Internal'].includes(o.type) && PENDING.includes(o.status) && (s.wh === 'All' || o.wh === s.wh))
       .sort((a, b) => dayOf(a.date) - dayOf(b.date)).map(o => ({ ...opRow(o), task: o.type === 'Delivery' ? 'Pick & pack' : 'Move stock' }));
     const staff = { pick: byType('Delivery').filter(o => o.status === 'Ready').length, pickWaiting: byType('Delivery').filter(o => o.status === 'Waiting').length,
       moves: byType('Internal').length, movesLate: byType('Internal').filter(o => dayOf(o.date) < TODAY).length, check: low.length, checkOut: low.filter(p => p.onHand <= 0).length,
@@ -1452,19 +1610,19 @@ class Component extends DCLogic {
     const LISTS = { receipts: ['Receipt', 'Receipts', 'Receive goods', 'receipt'], deliveries: ['Delivery', 'Delivery Orders', 'Open WH/OUT/0013', 'delivery'], transfers: ['Internal', 'Internal Transfers', 'Open WH/INT/0006', 'transfer'] };
     const LD = LISTS[s.screen] || LISTS.receipts;
     const lq = s.lq.trim().toLowerCase();
-    const listRows = s.ops.filter(o => o.type === LD[0] && (!s.statuses.length || s.statuses.includes(o.status)) && (s.wh === 'All' || o.wh === s.wh) &&
+    const listRows = ops.filter(o => o.type === LD[0] && (!s.statuses.length || s.statuses.includes(o.status)) && (s.wh === 'All' || o.wh === s.wh) &&
       (!lq || o.ref.toLowerCase().includes(lq) || o.partner.toLowerCase().includes(lq))).map(opRow);
     const kanbanStatuses = LD[0] === 'Receipt' ? ['Draft', 'Ready', 'Done', 'Canceled'] : ['Draft', 'Waiting', 'Ready', 'Done', 'Canceled'];
     const kanban = kanbanStatuses.map(st => { const rows = listRows.filter(r => r.status === st); return { label: st, count: rows.length, rows, dot: T[ST[st]].fg, empty: rows.length === 0 }; });
     const isKanban = s.lview === 'kanban';
-    const list = { showCta: isMgr || LD[0] === 'Internal', title: LD[1], cta: 'New', onCta: () => this.go(LD[3]), rows: listRows, empty: listRows.length === 0, count: listRows.length,
+    const list = { showCta: isMgr || LD[0] === 'Internal', title: LD[1], cta: 'New', onCta: () => this.newOp(LD[0]), rows: listRows, empty: listRows.length === 0, count: listRows.length,
       isList: !isKanban, isKanban, kanban, q: s.lq, onQ: e => this.setState({ lq: e.target.value }),
       toList: () => this.setState({ lview: 'list' }), toKanban: () => this.setState({ lview: 'kanban' }),
       listBtn: isKanban ? 'var(--color-neutral-700)' : 'var(--color-accent-700)', kanbanBtn: isKanban ? 'var(--color-accent-700)' : 'var(--color-neutral-700)',
       listBorder: isKanban ? 'var(--color-divider)' : 'var(--color-accent)', kanbanBorder: isKanban ? 'var(--color-accent)' : 'var(--color-divider)',
       searchPh: LD[0] === 'Internal' ? 'Search reference or location' : 'Search reference or contact', contactHead: LD[0] === 'Internal' ? 'Route' : 'Contact' };
 
-    const rcDone = s.rc.status === 'Done';
+    const rcDone = s.rc.status === 'Done'; const rcIsDraft = s.rc.status === 'Draft';
     const rcLines = s.rc.lines.map((l, i) => {
       const p = pById[l.pid]; const r = l.received === '' ? null : Number(l.received);
       let note = 'Awaiting count', noteColor = 'var(--color-neutral-700)';
@@ -1494,13 +1652,18 @@ class Component extends DCLogic {
         onInput: e => { const val = e.target.value.replace(/[^0-9.\-]/g, ''); this.setState(x => ({ dv: { ...x.dv, error: null, lines: x.dv.lines.map((m, j) => j === i ? { ...m, picked: val } : m) } })); } };
     });
     const dvShort = dv.lines.some(l => l.demand > pById[l.pid].onHand);
-    const dvOp = s.ops.find(o => o.ref === dv.ref); const rcOp = s.ops.find(o => o.ref === s.rc.ref);
-    const dvStatus = dv.canceled ? 'Canceled' : dvDone ? 'Done' : dvShort ? 'Waiting' : dvOp.status === 'Draft' ? 'Draft' : 'Ready';
+    const dvOp = ops.find(o => o.ref === dv.ref); const rcOp = ops.find(o => o.ref === s.rc.ref);
+    const dvStatus = dv.canceled ? 'Canceled' : dvDone ? 'Done' : dvOp.status; const dvIsDraft = dvStatus === 'Draft';
     const pipe = (labels, cur) => labels.map((l, i) => { const ci = labels.indexOf(cur); const on = l === cur;
       return { label: l, sep: i > 0, color: on ? T[ST[l]].fg : i < ci ? 'var(--color-text)' : 'var(--color-neutral-600)', bg: on ? T[ST[l]].bg : 'transparent', border: on ? T[ST[l]].fg : 'var(--color-divider)' }; });
     const dvLabels = ['Confirm pick', 'Confirm pack', 'Validate delivery'];
+    const draftLines = key => s[key].lines.map((l, i) => { const p = pById[l.pid]; const q = Number(l.qty) || 0; const short = key === 'dv' && q > p.onHand;
+      return { pid: l.pid, qty: l.qty, uom: p.uom, canRemove: s[key].lines.length > 1, short, note: short ? (p.onHand <= 0 ? 'Out of stock' : `Only ${fmt(p.onHand)} on hand`) : key === 'dv' ? `${fmt(p.onHand)} on hand` : '',
+        noteColor: short ? T.red.fg : 'var(--color-neutral-700)', rowBg: short ? 'oklch(0.97 0.02 25)' : 'transparent', inputBorder: s[key].error && !(q > 0) ? ERR_BORDER : short ? ERR_BORDER : 'var(--color-divider)',
+        onPid: e => this.editLine(key, i, { pid: e.target.value }), onQty: e => this.editLine(key, i, { qty: e.target.value.replace(/[^0-9.]/g, '') }), remove: () => this.removeLine(key, i) }; });
+    const rcDraftLines = draftLines('rc'); const dvDraftLines = draftLines('dv');
 
-    const tr = s.tr; const trOp = s.ops.find(o => o.ref === tr.ref);
+    const tr = s.tr; const trOp = ops.find(o => o.ref === tr.ref);
     const trStatus = tr.canceled ? 'Canceled' : tr.done ? 'Done' : trOp.status;
     const trLines = tr.lines.map((l, i) => { const p = pById[l.pid]; const q = Number(l.qty) || 0; const at = p.loc[tr.src] || 0;
       // Before → after only makes sense while planning or right after validating here; older transfers just show the moved quantity.
@@ -1509,9 +1672,9 @@ class Component extends DCLogic {
         live, hist: !live, histOut: `−${fmt(q)} ${p.uom}`, histIn: `+${fmt(q)} ${p.uom}`,
         srcBefore: fmt(tr.done ? at + q : at), srcAfter: fmt(tr.done ? at : at - q), dstBefore: fmt(tr.done ? (p.loc[tr.dst] || 0) - q : (p.loc[tr.dst] || 0)), dstAfter: fmt(tr.done ? (p.loc[tr.dst] || 0) : (p.loc[tr.dst] || 0) + q),
         total: fmt(p.onHand), inputBorder: tr.error && q > at ? ERR_BORDER : 'var(--color-divider)',
-        onPid: e => this.setState(x => ({ tr: { ...x.tr, error: null, lines: x.tr.lines.map((m, j) => j === i ? { ...m, pid: e.target.value } : m) } })),
-        onQty: e => { const val = e.target.value.replace(/[^0-9.]/g, ''); this.setState(x => ({ tr: { ...x.tr, error: null, lines: x.tr.lines.map((m, j) => j === i ? { ...m, qty: val } : m) } })); },
-        remove: () => this.setState(x => ({ tr: { ...x.tr, lines: x.tr.lines.filter((_, j) => j !== i) } })) };
+        onPid: e => this.editLine('tr', i, { pid: e.target.value }),
+        onQty: e => this.editLine('tr', i, { qty: e.target.value.replace(/[^0-9.]/g, '') }),
+        remove: () => this.removeLine('tr', i) };
     });
 
     const adj = s.adj; const ap = pById[adj.pid]; const rec = ap.loc[adj.loc] || 0;
@@ -1527,7 +1690,7 @@ class Component extends DCLogic {
     const pq = s.pq.trim().toLowerCase();
     const prows = pool.filter(p => (!pq || p.name.toLowerCase().includes(pq) || p.sku.toLowerCase().includes(pq)) && (s.pcat === 'All' || p.cat === s.pcat) &&
       (s.pstock === 'All' || stockOf(p).label === s.pstock)).map(p => { const st = stockOf(p);
-      const reserved = s.ops.filter(o => o.type === 'Delivery' && PENDING.includes(o.status)).reduce((a, o) => a + o.items.filter(([id]) => id === p.id).reduce((b, [, q]) => b + q, 0), 0);
+      const reserved = ops.filter(o => o.type === 'Delivery' && PENDING.includes(o.status)).reduce((a, o) => a + o.items.filter(([id]) => id === p.id).reduce((b, [, q]) => b + q, 0), 0);
       const editing = s.pupd && s.pupd.pid === p.id;
       return { ...p, canUpdate: isMgr, onHand: fmt(p.onHand), label: st.label, tone: st.tone, open: () => !editing && this.openProduct(p.id),
         costText: p.cost ? inr(p.cost) : '—', free: fmt(Math.max(0, p.onHand - reserved)), freeColor: p.onHand - reserved < 0 || p.onHand === 0 ? T.red.fg : 'var(--color-text)',
@@ -1539,7 +1702,7 @@ class Component extends DCLogic {
     const pstockOpts = ['All', 'In stock', 'Low stock', 'Out of stock'].map((l, i) => ({ label: l, ...segOpt(s.pstock === l, i), pick: () => this.setState({ pstock: l }) }));
     const pTabs = [['list', 'Products'], ['categories', 'Categories']].map(([k, l]) => { const on = s.pm === k || (k === 'list' && s.pm !== 'categories');
       return { label: l, color: on ? 'var(--color-accent-800)' : 'var(--color-neutral-700)', border: on ? 'var(--color-accent)' : 'transparent', pick: () => this.setState({ pm: k, psel: null }) }; });
-    const pendingQty = (type) => pd ? s.ops.filter(o => o.type === type && PENDING.includes(o.status)).reduce((a, o) => a + o.items.filter(([id]) => id === pd.id).reduce((b, [, q]) => b + q, 0), 0) : 0;
+    const pendingQty = (type) => pd ? ops.filter(o => o.type === type && PENDING.includes(o.status)).reduce((a, o) => a + o.items.filter(([id]) => id === pd.id).reduce((b, [, q]) => b + q, 0), 0) : 0;
     const pdLocs = pd ? allLocs.filter(l => (pd.loc[l.value] || 0) > 0).map(l => ({ name: l.value, wh: l.wh, qty: fmt(pd.loc[l.value]), pct: (pd.loc[l.value] / Math.max(1, pd.onHand) * 100) + '%' })) : [];
     const pdMoves = pd ? s.ledger.filter(m => m.pid === pd.id).sort((a, b) => b.ts.localeCompare(a.ts)).slice(0, 6).map(m => mapMove(m, pById)) : [];
     const pdView = pd ? { ...pd, onHandText: fmt(pd.onHand), ...stockOf(pd), incoming: fmt(pendingQty('Receipt')), outgoing: fmt(pendingQty('Delivery')), minText: fmt(pd.min) } : { name: '', sku: '', cat: '', uom: '', onHandText: '', label: '', tone: T.grey, incoming: '', outgoing: '', minText: '' };
@@ -1564,10 +1727,19 @@ class Component extends DCLogic {
     const pfSet2 = Object.fromEntries(['name', 'email', 'cur', 'nw', 'conf'].map(k => [k, e => this.setState({ pf: { ...s.pf, [k]: e.target.value, err: null, pwErr: null } })]));
 
     const lf = s.lf;
-    const ledgerFiltered = s.ledger.filter(m => { const day = m.ts.slice(0, 10);
-      return (!lf.from || day >= lf.from) && (!lf.to || day <= lf.to) && (lf.type === 'All' || m.type === lf.type) &&
-        (lf.pid === 'All' || m.pid === lf.pid) && (s.wh === 'All' || m.wh === s.wh) && (!lf.ref || [m.ref, m.from, m.to].some(x => x.toLowerCase().includes(lf.ref.toLowerCase()))); }).sort((a, b) => b.ts.localeCompare(a.ts));
-    const ledgerRows = ledgerFiltered.map(m => mapMove(m, pById));
+    const opBy = Object.fromEntries(ops.map(o => [o.ref, o]));
+    // Moves not done yet (Draft / Waiting / Ready / Canceled documents) sit in the history as scheduled moves, without a +/- sign.
+    const planned = ops.filter(o => o.type !== 'Adjustment' && o.status !== 'Done').flatMap(o => o.items.map(([pid, q]) => ({ ts: isoOf(o.date) + 'T00:00', ref: o.ref, type: o.type, pid, qty: Math.abs(q), plan: true, status: o.status,
+      kind: o.type === 'Receipt' ? 'in' : o.type === 'Delivery' ? 'out' : 'move', user: '—', wh: o.wh,
+      from: o.type === 'Receipt' ? o.partner : o.type === 'Delivery' ? homeOf(o) : o.src, to: o.type === 'Receipt' ? (o.dest || homeOf(o)) : o.type === 'Delivery' ? o.partner : o.dst })));
+    const ledgerFiltered = [...planned, ...s.ledger].filter(m => { const day = m.ts.slice(0, 10); const r = mapMove(m, pById, opBy);
+      return (!lf.from || day >= lf.from) && (!lf.to || day <= lf.to) && (lf.type === 'All' || m.type === lf.type) && (lf.status === 'All' || r.status === lf.status) &&
+        (lf.pid === 'All' || m.pid === lf.pid) && (s.wh === 'All' || m.wh === s.wh) && (!lf.ref || [m.ref, m.from, m.to, r.contact].some(x => x.toLowerCase().includes(lf.ref.toLowerCase()))); }).sort((a, b) => b.ts.localeCompare(a.ts));
+    const ledgerRows = ledgerFiltered.map(m => mapMove(m, pById, opBy));
+    const hKanban = ['Draft', 'Waiting', 'Ready', 'Done', 'Canceled'].map(st => { const rows = ledgerRows.filter(r => r.status === st); return { label: st, count: rows.length, rows, dot: T[ST[st]].fg, empty: rows.length === 0 }; });
+    const hist = { isList: s.hview === 'list', isKanban: s.hview === 'kanban', kanban: hKanban, toList: () => this.setState({ hview: 'list' }), toKanban: () => this.setState({ hview: 'kanban' }),
+      listBtn: s.hview === 'list' ? 'var(--color-accent-700)' : 'var(--color-neutral-700)', kanbanBtn: s.hview === 'kanban' ? 'var(--color-accent-700)' : 'var(--color-neutral-700)',
+      listBorder: s.hview === 'list' ? 'var(--color-accent)' : 'var(--color-divider)', kanbanBorder: s.hview === 'kanban' ? 'var(--color-accent)' : 'var(--color-divider)' };
     const lfSet = k => e => this.setState({ lf: { ...s.lf, [k]: e.target.value } });
 
     const q = s.q.trim().toLowerCase();
@@ -1585,7 +1757,7 @@ class Component extends DCLogic {
       nav, show, loading: L, skeleton, opsOpen: s.opsOpen, opsChevron: s.opsOpen ? 'rotate(180deg)' : 'none', whOpts, locOpts: allLocs, productOpts,
       goDashboard: () => this.go('dashboard'), goProducts: () => this.go('products', { pm: 'list', psel: null }), goReceipt: () => this.go('receipt'), goReceipts: () => this.go('receipts'),
       goDeliveries: () => this.go('deliveries'), goTransfers: () => this.go('transfers'), goAdjustments: () => this.go('adjustments'), goDelivery: () => this.go('delivery'), goTransfer: () => this.go('transfer'),
-      goHistory: () => this.go('history'), goWarehouses: () => this.go('warehouses'), goProfile: () => this.go('profile'), goLogout: () => { try { window.sessionStorage.removeItem(SESSION_KEY); } catch (e) { /* nothing to clear */ } window.location.replace('Auth.dc.html'); },
+      goHistory: () => this.go('history'), goWarehouses: () => this.go('warehouses'), goProfile: () => this.go('profile'), goLogout: async () => { try { if (window.SSAuth) await window.SSAuth.signOut(); window.sessionStorage.removeItem(SESSION_KEY); window.localStorage.removeItem(SESSION_KEY); } catch (e) { /* leave anyway */ } window.location.replace('Auth.dc.html'); },
       goAlerts: () => this.go('alerts'), isMgr, isStaff, role: s.role, firstName, staff, staffTasks, noStaffTasks: staffTasks.length === 0,
       toggleOps: () => this.setState({ opsOpen: !s.opsOpen }),
       profileOpen: s.profileOpen, toggleProfile: () => this.setState({ profileOpen: !s.profileOpen, alertsOpen: false }),
@@ -1597,33 +1769,36 @@ class Component extends DCLogic {
       onSearch: e => this.setState({ q: e.target.value, searchOpen: true }), openSearch: () => this.setState({ searchOpen: true }),
       onSearchKey: e => { if (e.key === 'Enter' && searchResults.length) searchResults[0].pick(e); },
       closeSearchSoon: () => { clearTimeout(this._st); this._st = setTimeout(() => this.setState({ searchOpen: false }), 150); },
-      wh: s.wh, onWh: e => this.setState({ wh: e.target.value }), cat: s.cat, onCat: e => this.setState({ cat: e.target.value }),
+      wh: s.wh, onWh: e => this.setState({ wh: e.target.value, loc: 'All' }), loc: s.loc, onLoc: e => this.setState({ loc: e.target.value }), dashLocOpts, catOpts, supplierOpts, customerOpts, cat: s.cat, onCat: e => this.setState({ cat: e.target.value }),
       rcCard: opCard('Receipt'), dvCard: opCard('Delivery'), stop: e => e.stopPropagation(),
       printRc: () => this.printDoc('rc'), printDv: () => this.printDoc('dv'),
       rcCancel: () => { const ref = s.rc.ref; this.patch('rc', { status: 'Canceled', error: null }); this.setState(x => ({ ops: x.ops.map(o => o.ref === ref ? { ...o, status: 'Canceled' } : o) })); this.toast({ title: `${ref} canceled`, lines: ['No stock was changed.'] }); },
       dvCancel: () => { const ref = dv.ref; this.patch('dv', { canceled: true, error: null }); this.setState(x => ({ ops: x.ops.map(o => o.ref === ref ? { ...o, status: 'Canceled' } : o) })); this.toast({ title: `${ref} canceled`, lines: ['No stock was changed.'] }); },
       rcPipe: pipe(['Draft', 'Ready', 'Done'], s.rc.status === 'Canceled' ? 'Draft' : s.rc.status), dvPipe: pipe(['Draft', 'Waiting', 'Ready', 'Done'], dvStatus === 'Canceled' ? 'Draft' : dvStatus),
       trPipe: pipe(['Draft', 'Waiting', 'Ready', 'Done'], trStatus === 'Canceled' ? 'Draft' : trStatus), rcCanceled: s.rc.status === 'Canceled', dvCanceled: !!dv.canceled, trCanceled: !!tr.canceled,
-      rcDoc: { ref: s.rc.ref, partner: rcOp.partner, origin: rcOp.origin || '—', date: isoOf(rcOp.date), dest: s.rc.dest, onDest: e => this.patch('rc', { dest: e.target.value }) },
-      dvDoc: { ref: dv.ref, partner: dvOp.partner, address: ADDR[dvOp.partner] || '—', date: isoOf(dvOp.date), wh: `Delivery — ${dvOp.wh}`,
-        doneText: `Shipped to ${dvOp.partner} · ${dv.doneAt}${dv.packages ? ` · ${dv.packages} packages` : ''}` },
+      rcDoc: { ref: s.rc.ref, partner: s.rc.partner, origin: s.rc.origin, date: s.rc.date, dest: s.rc.dest, roHead: !rcIsDraft || isStaff, destOpts: whLocs(rcOp.wh), wh: rcOp.wh,
+        onPartner: e => this.editDoc('rc', { partner: e.target.value }), onOrigin: e => this.editDoc('rc', { origin: e.target.value }), onDate: e => this.editDoc('rc', { date: e.target.value }), onDest: e => this.editDoc('rc', { dest: e.target.value }) },
+      dvDoc: { ref: dv.ref, partner: dv.partner, addr: dv.addr, date: dv.date, wh: `Delivery — ${dvOp.wh}`, roHead: !dvIsDraft || isStaff,
+        onPartner: e => { const v = e.target.value; this.editDoc('dv', { partner: v, ...(ADDR[v] && !dv.addr ? { addr: ADDR[v] } : {}) }); }, onAddr: e => this.editDoc('dv', { addr: e.target.value }), onDate: e => this.editDoc('dv', { date: e.target.value }),
+        doneText: `Shipped to ${dv.partner} · ${dv.doneAt}${dv.packages ? ` · ${dv.packages} packages` : ''}` },
+      rcIsDraft, rcIsReady: s.rc.status === 'Ready', rcDraftLines, dvDraftLines, rcMgrDraft: rcIsDraft && isMgr, dvIsDraft, dvNotDraft: !dvIsDraft, dvMgrDraft: dvIsDraft && isMgr,
       kpi, kpiAll: () => this.setState({ type: 'All', statuses: [], cat: 'All' }), kpiReceipts: kpiSet('Receipt'), kpiDeliveries: kpiSet('Delivery'), kpiTransfers: kpiSet('Internal'),
       typeOpts, statusOpts, opRows, noOps: opRows.length === 0, filtersActive, list,
-      clearFilters: () => this.setState({ type: 'All', statuses: [], wh: 'All', cat: 'All' }),
+      clearFilters: () => this.setState({ type: 'All', statuses: [], wh: 'All', loc: 'All', cat: 'All' }),
       rc: { status: s.rc.status, tone: T[ST[s.rc.status]], hasError: !!s.rc.error, error: s.rc.error, done: rcDone, result: s.rc.result || [], doneAt: s.rc.doneAt,
         totalReceived: fmt(sumRec), totalExpected: fmt(s.rc.lines.reduce((a, l) => a + l.expected, 0)) },
-      rcNotDone: !rcDone && s.rc.status !== 'Canceled' && isMgr, rcViewOnly: !rcDone && s.rc.status !== 'Canceled' && isStaff, rcLocked: rcDone || s.rc.status === 'Canceled' || isStaff, rcLines, rcSteps, validate: () => this.validate(),
+      rcNotDone: !rcDone && s.rc.status !== 'Canceled' && isMgr, rcViewOnly: !rcDone && s.rc.status !== 'Canceled' && isStaff, rcLocked: rcDone || s.rc.status === 'Canceled' || isStaff, rcNotDraft: !rcIsDraft, rcLines, rcSteps, validate: () => this.validate(),
       fillExpected: () => this.patch('rc', { error: null, lines: s.rc.lines.map(l => ({ ...l, received: String(l.expected) })) }),
       dv: { status: dvStatus, tone: T[ST[dvStatus]], hasError: !!dv.error, error: dv.error, done: dvDone, active: !dvDone && !dv.canceled, result: dv.result || [], doneAt: dv.doneAt, packages: dv.packages,
-        canAct: dv.step < 2 || isMgr, awaitMgr: dv.step === 2 && isStaff, canCancel: isMgr, primaryLabel: dvLabels[Math.min(dv.step, 2)], canBack: dv.step === 1 || dv.step === 2, showPack: dv.step >= 1, packReadOnly: dv.step !== 1, isValidate: dv.step === 2,
+        canAct: isMgr || (!dvIsDraft && dv.step < 2), awaitMgr: !dvIsDraft && dv.step === 2 && isStaff, canCancel: isMgr, primaryLabel: dvIsDraft ? 'To Do' : dvLabels[Math.min(dv.step, 2)], canBack: !dvIsDraft && (dv.step === 1 || dv.step === 2), showPack: dv.step >= 1, packReadOnly: dv.step !== 1, isValidate: dv.step === 2,
         packBorder: dv.error && dv.step === 1 ? ERR_BORDER : 'var(--color-divider)' },
       dvLines, dvSteps: steps(['Pick', 'Pack', 'Validate'], Math.min(dv.step, 2), dvDone), dvPrimary: () => this.dvPrimary(),
       dvBack: () => this.patch('dv', { step: dv.step - 1, error: null }), setPackages: e => this.patch('dv', { packages: e.target.value.replace(/\D/g, ''), error: null }),
-      tr: { ref: tr.ref, src: tr.src, dst: tr.dst, hasError: !!tr.error, error: tr.error, done: tr.done, active: !tr.done && !tr.canceled, locked: tr.done || !!tr.canceled, doneAt: tr.done ? tr.doneAt : '', result: tr.result, status: trStatus, tone: T[ST[trStatus]] },
+      tr: { ref: tr.ref, isDraft: trStatus === 'Draft', isReady: trStatus !== 'Draft', primaryLabel: trStatus === 'Draft' ? 'To Do' : 'Validate transfer', src: tr.src, dst: tr.dst, hasError: !!tr.error, error: tr.error, done: tr.done, active: !tr.done && !tr.canceled, locked: tr.done || !!tr.canceled, doneAt: tr.done ? tr.doneAt : '', result: tr.result, status: trStatus, tone: T[ST[trStatus]] },
       trLines, trSteps: steps(['Draft', 'Ready', 'Done'], tr.done ? 2 : 1, tr.done), trValidate: () => this.trValidate(),
-      setSrc: e => this.patch('tr', { src: e.target.value, error: null }), setDst: e => this.patch('tr', { dst: e.target.value, error: null }),
-      swapLocs: () => this.patch('tr', { src: tr.dst, dst: tr.src, error: null }),
-      addTrLine: () => this.patch('tr', { lines: [...tr.lines, { pid: s.products.find(p => !tr.lines.some(l => l.pid === p.id))?.id || 'steel', qty: '' }] }),
+      setSrc: e => this.editDoc('tr', { src: e.target.value }), setDst: e => this.editDoc('tr', { dst: e.target.value }),
+      swapLocs: () => this.editDoc('tr', { src: tr.dst, dst: tr.src }),
+      addTrLine: () => this.addLine('tr'), addRcLine: () => this.addLine('rc'), addDvLine: () => this.addLine('dv'), rcToDo: () => this.toDo('rc'),
       adjModes, adjIsCount: adj.mode === 'count', adjIsDelta: adj.mode !== 'count',
       adj: { pid: adj.pid, loc: adj.loc, counted: adj.counted, delta: adj.delta, note: adj.note, deltaLabel: adj.mode === 'add' ? 'Add' : 'Remove',
         deltaHint: adj.mode === 'add' ? `${ap.uom} to add` : `${ap.uom} to remove`,
@@ -1661,16 +1836,19 @@ class Component extends DCLogic {
       locDraftSet: Object.fromEntries(['name', 'kind'].map(k => [k, e => this.setState({ locDraft: { ...s.locDraft, [k]: e.target.value }, whErr: null })])),
       pf, pfSet2, pwRules, initials: pf.name.split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() || '·',
       pfHasErr: !!pf.err, pfHasPwErr: !!pf.pwErr,
-      saveProfile: () => { if (!pf.name.trim()) return this.patch('pf', { err: 'Name can’t be empty.' });
+      saveProfile: async () => { if (!pf.name.trim()) return this.patch('pf', { err: 'Name can’t be empty.' });
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pf.email)) return this.patch('pf', { err: 'Enter a valid email address.' });
-        this.toast({ title: 'Profile saved', lines: [pf.name, pf.email] }); },
-      changePw: () => { if (!pf.cur) return this.patch('pf', { pwErr: 'Enter your current password.' });
+        if (pf.email.trim().toLowerCase() !== String(s.email0).toLowerCase()) return this.patch('pf', { err: 'Changing your sign-in email isn’t supported yet. Your name was not saved either — set the email back and try again.' });
+        try { if (window.SSAuth) await window.SSAuth.updateName(pf.name.trim()); } catch (e) { return this.patch('pf', { err: e.message }); }
+        this.patch('pf', { err: null }); this.toast({ title: 'Profile saved', lines: [pf.name.trim(), pf.email] }); },
+      changePw: async () => { if (!pf.cur) return this.patch('pf', { pwErr: 'Enter your current password.' });
         if (!pwRules.every(r => r.ok)) return this.patch('pf', { pwErr: 'The new password doesn’t meet the requirements.' });
-        this.patch('pf', { cur: '', nw: '', conf: '', pwErr: null }); this.toast({ title: 'Password changed', lines: ['Other devices will be signed out.'] }); },
-      lf, lfFrom: lfSet('from'), lfTo: lfSet('to'), lfType: lfSet('type'), lfPid: lfSet('pid'), lfRef: lfSet('ref'),
+        try { await window.SSAuth.changePassword(pf.cur, pf.nw); } catch (e) { return this.patch('pf', { pwErr: e.message }); }
+        this.patch('pf', { cur: '', nw: '', conf: '', pwErr: null }); this.toast({ title: 'Password changed', lines: ['Use the new password next time you sign in.'] }); },
+      lf, lfFrom: lfSet('from'), lfTo: lfSet('to'), lfType: lfSet('type'), lfStatus: lfSet('status'), hist, lfPid: lfSet('pid'), lfRef: lfSet('ref'),
       lfActive: JSON.stringify(lf) !== JSON.stringify(LF0) || s.wh !== 'All', lfClear: () => this.setState({ lf: LF0, wh: 'All' }),
       ledgerRows, noLedger: ledgerRows.length === 0,
-      ledgerIn: ledgerFiltered.filter(m => m.kind === 'in').length, ledgerOut: ledgerFiltered.filter(m => m.kind === 'out').length,
+      ledgerIn: ledgerFiltered.filter(m => !m.plan && m.kind === 'in').length, ledgerOut: ledgerFiltered.filter(m => !m.plan && m.kind === 'out').length,
       hasToast: !!s.toast, toast: s.toast || { title: '', lines: [] }, closeToast: () => this.setState({ toast: null }),
     };
   }

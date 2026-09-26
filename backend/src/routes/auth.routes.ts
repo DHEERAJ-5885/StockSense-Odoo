@@ -1,5 +1,7 @@
-import { Router } from "express";
+import { Router, type Response } from "express";
 import { supabase } from "../db/supabase";
+import { resetService } from "../services/resetService";
+import { ResetError } from "../services/passwordReset";
 
 const router = Router();
 
@@ -268,44 +270,47 @@ router.post("/login", async (req, res) => {
 });
 
 /**
- * FORGOT PASSWORD
+ * PASSWORD RESET (emailed 6-digit code, sent with Nodemailer)
+ *   POST /forgot-password      { email }                    -> emails a code
+ *   POST /verify-reset-code    { email, code }              -> { resetToken }
+ *   POST /reset-password       { email, resetToken, password }
  */
+function resetFailure(res: Response, error: unknown, fallback: string) {
+  if (error instanceof ResetError) {
+    return res.status(error.status).json({ success: false, message: error.message });
+  }
+  console.error(fallback, error);
+  return res.status(500).json({ success: false, message: fallback });
+}
+
 router.post("/forgot-password", async (req, res) => {
   try {
-    const { email } = req.body;
-
-    const cleanEmail = String(email || "").trim().toLowerCase();
-
-    if (!cleanEmail) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required.",
-      });
-    }
-
-    const { error } =
-      await supabase.auth.resetPasswordForEmail(cleanEmail);
-
-    if (error) {
-      console.error("Forgot password error:", error);
-
-      return res.status(400).json({
-        success: false,
-        message: error.message || "Unable to send reset email",
-      });
-    }
-
+    await resetService.request(req.body?.email);
+    // Same answer whether or not the email has an account.
     return res.json({
       success: true,
-      message: "Password reset email sent successfully.",
+      message: "If an account uses that email, a 6-digit code is on its way.",
     });
   } catch (error) {
-    console.error("Forgot password unexpected error:", error);
+    return resetFailure(res, error, "Unable to send the reset code");
+  }
+});
 
-    return res.status(500).json({
-      success: false,
-      message: "Unable to send reset email",
-    });
+router.post("/verify-reset-code", (req, res) => {
+  try {
+    const resetToken = resetService.verify(req.body?.email, req.body?.code);
+    return res.json({ success: true, message: "Code accepted", data: { resetToken } });
+  } catch (error) {
+    return resetFailure(res, error, "Unable to check the code");
+  }
+});
+
+router.post("/reset-password", async (req, res) => {
+  try {
+    await resetService.reset(req.body?.email, req.body?.resetToken, req.body?.password);
+    return res.json({ success: true, message: "Password updated" });
+  } catch (error) {
+    return resetFailure(res, error, "Unable to reset the password");
   }
 });
 

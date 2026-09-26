@@ -10,6 +10,7 @@
 <helmet>
 <link rel="stylesheet" href="styles.css">
 <script src="_ds_bundle.js"></script>
+<script src="stocksense-auth.js"></script>
 <style>
 body{margin:0;background:var(--color-bg)}
 a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
@@ -26,7 +27,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <form onSubmit="{{ submitLogin }}" style="display:flex;flex-direction:column;gap:var(--space-4)">
             <div><h1 style="margin:0;font-weight:400">Sign in</h1><div style="font-size:14px;color:var(--color-neutral-700)">Welcome back. Your warehouse is where you left it.</div></div>
             <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="padding:10px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25);font-size:14px">{{ error }}</div></sc-if>
-            <div class="field"><label>Login ID</label><input class="input" value="{{ f.login }}" onChange="{{ set.login }}" style="min-height:44px" autoComplete="username"></div>
+            <div class="field"><label>{{ loginFieldLabel }}</label><input class="input" value="{{ f.login }}" onChange="{{ set.login }}" style="min-height:44px" autoComplete="username"></div>
             <div class="field">
               <div style="display:flex;justify-content:space-between;align-items:baseline"><label style="font-size:12px;color:color-mix(in srgb, var(--color-text) 70%, transparent);margin-bottom:5px">Password</label><button type="button" class="btn btn-ghost" onClick="{{ toForgot }}" style="font-size:12px;padding:2px 4px">Forgot password?</button></div>
               <div style="position:relative"><input class="input" type="{{ pwType }}" value="{{ f.password }}" onChange="{{ set.password }}" style="min-height:44px;padding-right:64px" autoComplete="current-password"><button type="button" onClick="{{ togglePw }}" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;font:inherit;font-size:12px;color:var(--color-accent-700);cursor:pointer;padding:6px">{{ pwLabel }}</button></div>
@@ -34,7 +35,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <label class="radio" style="font-size:13px"><input type="checkbox" checked="{{ f.remember }}" onChange="{{ toggleRemember }}"><span class="dot" style="border-radius:3px"></span>Keep me signed in on this device</label>
             <button type="submit" class="btn btn-primary" disabled="{{ busy }}" style="min-height:46px;font-size:16px">{{ loginLabel }}</button>
             <div style="font-size:14px;color:var(--color-neutral-700);text-align:center">New to StockSense? <button type="button" class="btn btn-ghost" onClick="{{ toSignup }}" style="display:inline;font-size:14px;padding:2px 4px">Create an account</button></div>
-            <div style="font-size:12px;color:var(--color-neutral-700);text-align:center;line-height:1.5">Demo logins (any password of 6+ characters): <strong style="font-weight:600">priya.nair</strong> Inventory Manager · <strong style="font-weight:600">anya.khan</strong> Warehouse Staff</div>
+            <sc-if value="{{ isLocal }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--color-neutral-700);text-align:center;line-height:1.5">Demo accounts — <strong style="font-weight:600">priya.nair</strong> / Priya@2026 (Inventory Manager) · <strong style="font-weight:600">anya.khan</strong> / Anya@2026 (Warehouse Staff)</div></sc-if>
           </form>
         </sc-if>
 
@@ -50,8 +51,8 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
                 <sc-for list="{{ roleOpts }}" as="o" hint-placeholder-count="2"><button type="button" class="seg-opt" onClick="{{ o.pick }}" style="flex:1;justify-content:center;border:0;border-left:{{ o.divider }};background:transparent;font:inherit;font-size:14px;min-height:44px;color:{{ o.color }};box-shadow:{{ o.shadow }}">{{ o.label }}</button></sc-for>
               </div>
             </div>
-            <div class="field"><label>Password</label><input class="input" type="password" value="{{ f.password }}" onChange="{{ set.password }}" style="min-height:44px"></div>
-            <div class="field"><label>Re-enter password</label><input class="input" type="password" value="{{ f.confirm }}" onChange="{{ set.confirm }}" style="min-height:44px"></div>
+            <div class="field"><label>Password</label><div style="position:relative"><input class="input" type="{{ pwType }}" value="{{ f.password }}" onChange="{{ set.password }}" style="min-height:44px;padding-right:64px" autoComplete="new-password"><button type="button" onClick="{{ togglePw }}" aria-label="Show or hide password" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;font:inherit;font-size:12px;color:var(--color-accent-700);cursor:pointer;padding:6px">{{ pwLabel }}</button></div></div>
+            <div class="field"><label>Re-enter password</label><div style="position:relative"><input class="input" type="{{ pwType }}" value="{{ f.confirm }}" onChange="{{ set.confirm }}" style="min-height:44px;padding-right:64px" autoComplete="new-password"><button type="button" onClick="{{ togglePw }}" aria-label="Show or hide password" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;font:inherit;font-size:12px;color:var(--color-accent-700);cursor:pointer;padding:6px">{{ pwLabel }}</button></div></div>
             <div style="display:flex;flex-direction:column;gap:4px;font-size:12px">
               <sc-for list="{{ pwRules }}" as="r" hint-placeholder-count="3"><div style="display:flex;gap:6px;color:{{ r.color }}"><span>{{ r.mark }}</span>{{ r.label }}</div></sc-for>
             </div>
@@ -93,7 +94,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="font-size:13px;color:oklch(0.46 0.14 27)">{{ error }}</div></sc-if>
             <button type="submit" class="btn btn-primary" disabled="{{ busy }}" style="min-height:46px;font-size:16px">{{ verifyLabel }}</button>
             <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--color-neutral-700)">
-              <span>Demo code: <span style="font-variant-numeric:lining-nums tabular-nums;color:var(--color-text)">482913</span></span>
+              <sc-if value="{{ isLocal }}" hint-placeholder-val="{{ false }}"><span>Demo code: <span style="font-variant-numeric:lining-nums tabular-nums;color:var(--color-text)">482913</span></span></sc-if>
               <sc-if value="{{ canResend }}" hint-placeholder-val="{{ false }}"><button type="button" class="btn btn-ghost" onClick="{{ resend }}" style="font-size:13px;padding:2px 4px">Resend code</button></sc-if>
               <sc-if value="{{ waitResend }}" hint-placeholder-val="{{ true }}"><span style="font-variant-numeric:lining-nums tabular-nums">Resend in 0:{{ resendIn }}</span></sc-if>
             </div>
@@ -104,13 +105,21 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <form onSubmit="{{ submitReset }}" style="display:flex;flex-direction:column;gap:var(--space-4)">
             <div><h1 style="margin:0;font-weight:400">Set a new password</h1><div style="font-size:14px;color:var(--color-neutral-700)">Choose something you haven’t used here before.</div></div>
             <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="padding:10px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25);font-size:14px">{{ error }}</div></sc-if>
-            <div class="field"><label>New password</label><input class="input" type="password" value="{{ f.password }}" onChange="{{ set.password }}" style="min-height:44px"></div>
-            <div class="field"><label>Confirm new password</label><input class="input" type="password" value="{{ f.confirm }}" onChange="{{ set.confirm }}" style="min-height:44px"></div>
+            <div class="field"><label>New password</label><div style="position:relative"><input class="input" type="{{ pwType }}" value="{{ f.password }}" onChange="{{ set.password }}" style="min-height:44px;padding-right:64px" autoComplete="new-password"><button type="button" onClick="{{ togglePw }}" aria-label="Show or hide password" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;font:inherit;font-size:12px;color:var(--color-accent-700);cursor:pointer;padding:6px">{{ pwLabel }}</button></div></div>
+            <div class="field"><label>Confirm new password</label><div style="position:relative"><input class="input" type="{{ pwType }}" value="{{ f.confirm }}" onChange="{{ set.confirm }}" style="min-height:44px;padding-right:64px" autoComplete="new-password"><button type="button" onClick="{{ togglePw }}" aria-label="Show or hide password" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;font:inherit;font-size:12px;color:var(--color-accent-700);cursor:pointer;padding:6px">{{ pwLabel }}</button></div></div>
             <div style="display:flex;flex-direction:column;gap:4px;font-size:12px">
               <sc-for list="{{ pwRules }}" as="r" hint-placeholder-count="3"><div style="display:flex;gap:6px;color:{{ r.color }}"><span>{{ r.mark }}</span>{{ r.label }}</div></sc-for>
             </div>
             <button type="submit" class="btn btn-primary" style="min-height:46px;font-size:16px">Update password</button>
           </form>
+        </sc-if>
+
+        <sc-if value="{{ is.check }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:var(--space-4);animation:ssIn .35s ease-out">
+            <span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--color-accent);color:var(--color-accent-700)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></span>
+            <div><h1 style="margin:0;font-weight:400">Check your email</h1><div style="font-size:14px;color:var(--color-neutral-700)">We sent a confirmation link to <span style="color:var(--color-text)">{{ f.email }}</span>. Open it, then sign in.</div></div>
+            <button class="btn btn-primary" onClick="{{ toLogin }}" style="min-height:46px;font-size:16px">Back to sign in</button>
+          </div>
         </sc-if>
 
         <sc-if value="{{ is.done }}" hint-placeholder-val="{{ false }}">
@@ -122,7 +131,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         </sc-if>
       </div>
     </div>
-    <div style="font-size:12px;color:var(--color-neutral-700)">© 2026 StockSense · Help · Privacy</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--color-neutral-700)"><span>© 2026 StockSense · Help · Privacy</span><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:{{ modeDot }}"></span>{{ modeNote }}</span></div>
   </section>
 
   <aside style="flex:1 1 460px;display:flex;flex-direction:column;justify-content:center;gap:var(--space-6);padding:var(--space-8) clamp(28px,6vw,96px);border-left:1px solid var(--color-divider)">
@@ -138,30 +147,25 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;startMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;login&quot;,&quot;signup&quot;,&quot;forgot&quot;,&quot;otp&quot;,&quot;reset&quot;,&quot;done&quot;],&quot;default&quot;:&quot;login&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
-const DEMO_OTP = '482913';
-const TAKEN_IDS = ['priya.nair', 'ravi.mehta', 'anya.khan'];
-const TAKEN_EMAILS = ['priya.nair@stocksense.app', 'ravi.mehta@stocksense.app', 'anya.khan@stocksense.app'];
-// Demo directory. Any other Login ID signs in as an Inventory Manager; sign-up uses the role picked on the form.
-const USERS = {
-  'priya.nair': { name: 'Priya Nair', role: 'Inventory Manager' },
-  'ravi.mehta': { name: 'Ravi Mehta', role: 'Inventory Manager' },
-  'anya.khan': { name: 'Anya Khan', role: 'Warehouse Staff' },
+// All sign-in work (Supabase or browser-only demo users) lives in stocksense-auth.js.
+const auth = async () => {
+  for (let i = 0; i < 60 && !window.SSAuth; i++) await new Promise(r => setTimeout(r, 100));
+  const A = window.SSAuth;
+  if (!A) throw new Error('The sign-in service failed to load. Reload the page.');
+  await A.ready();
+  return A;
 };
-const SESSION_KEY = 'stocksense.session';
-const titleCase = id => id.split(/[._\-\s]+/).filter(Boolean).map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
 class Component extends DCLogic {
-  state = { mode: this.props.startMode ?? 'login', f: { login: 'priya.nair', email: 'priya.nair@stocksense.app', password: '', confirm: '', name: '', role: 'Inventory Manager', remember: true },
-    showPw: false, error: null, busy: false, otp: ['', '', '', '', '', ''], resendIn: 0 };
+  state = { mode: this.props.startMode ?? 'login', f: { login: '', email: '', password: '', confirm: '', name: '', role: 'Inventory Manager', remember: true },
+    showPw: false, error: null, busy: false, otp: ['', '', '', '', '', ''], resendIn: 0, authMode: 'checking' };
   otpRefs = [0, 1, 2, 3, 4, 5].map(() => React.createRef());
+  componentDidMount() { auth().then(A => this.setState({ authMode: A.mode })).catch(() => this.setState({ authMode: 'offline' })); }
   componentWillUnmount() { clearInterval(this._iv); clearTimeout(this._bt); }
-  to(mode) { this.setState({ mode, error: null, busy: false, f: { ...this.state.f, password: '', confirm: '' } }); }
+  to(mode) { this.setState({ mode, showPw: false, error: null, busy: false, f: { ...this.state.f, password: '', confirm: '' } }); }
   busyThen(fn) { this.setState({ busy: true, error: null }); clearTimeout(this._bt); this._bt = setTimeout(() => { this.setState({ busy: false }); fn(); }, 700); }
   startResend() { clearInterval(this._iv); this.setState({ resendIn: 30 }); this._iv = setInterval(() => this.setState(s => { if (s.resendIn <= 1) clearInterval(this._iv); return { resendIn: Math.max(0, s.resendIn - 1) }; }), 1000); }
-  // Hand the signed-in user (and their role) to the app, then open it.
-  enterApp(user) {
-    try { window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(user)); } catch (e) { /* app falls back to the demo manager */ }
-    window.location.replace('StockSense.dc.html');
-  }
+  // The signed-in user (name and role) is already saved by SSAuth; open the app.
+  enterApp() { window.location.replace('StockSense.dc.html'); }
   validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
   setOtp(i, v) {
     const d = v.replace(/\D/g, '').slice(-1);
@@ -187,7 +191,10 @@ class Component extends DCLogic {
     const roleOpts = ['Inventory Manager', 'Warehouse Staff'].map((l, i) => { const on = f.role === l;
       return { label: l, divider: i ? '1px solid var(--color-divider)' : '0', color: on ? 'var(--color-accent-700)' : 'var(--color-text)', shadow: on ? 'inset 0 0 0 1px var(--color-accent)' : 'none', pick: () => this.setState({ f: { ...s.f, role: l } }) }; });
     return {
-      is: { login: m === 'login', signup: m === 'signup', forgot: m === 'forgot', otp: m === 'otp', reset: m === 'reset', done: m === 'done' },
+      is: { login: m === 'login', signup: m === 'signup', forgot: m === 'forgot', otp: m === 'otp', reset: m === 'reset', done: m === 'done', check: m === 'check' },
+      isLocal: s.authMode === 'local',
+      modeNote: { supabase: 'Connected to Supabase — accounts are stored in the database', local: 'Demo mode — accounts are saved only in this browser, not in the database', offline: 'Can’t reach Supabase — check your connection', checking: 'Connecting…' }[s.authMode] || '',
+      modeDot: { supabase: 'oklch(0.55 0.12 150)', local: 'oklch(0.65 0.13 70)', offline: 'oklch(0.55 0.15 27)', checking: 'var(--color-neutral-500)' }[s.authMode] || 'var(--color-neutral-500)', loginFieldLabel: s.authMode === 'supabase' ? 'Login ID or email' : 'Login ID',
       inReset: ['forgot', 'otp', 'reset'].includes(m),
       f, set, error: s.error, hasError: !!s.error, busy: s.busy,
       pwType: s.showPw ? 'text' : 'password', pwLabel: s.showPw ? 'Hide' : 'Show', togglePw: () => this.setState({ showPw: !s.showPw }),
@@ -197,34 +204,43 @@ class Component extends DCLogic {
       toLogin: () => this.to('login'), toSignup: () => { this.to('signup'); this.setState(x => ({ f: { ...x.f, login: '', email: '', name: '' } })); }, toForgot: () => this.to('forgot'),
       roleOpts, pwRules, resetSteps, otpBoxes,
       canResend: s.resendIn === 0, waitResend: s.resendIn > 0, resendIn: String(s.resendIn).padStart(2, '0'),
-      resend: () => { this.setState({ otp: ['', '', '', '', '', ''], error: null }); this.startResend(); },
+      resend: async () => { try { const A = await auth(); await A.sendResetCode(f.email); this.setState({ otp: ['', '', '', '', '', ''], error: null }); this.startResend(); } catch (err) { this.setState({ error: err.message }); } },
       onOtpPaste: e => { const t = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6); if (t) { e.preventDefault(); this.setState({ otp: [...t.padEnd(6, ' ')].map(c => c.trim()), error: null }); } },
-      submitLogin: e => { e.preventDefault();
-        if (!f.login.trim() || f.password.length < 6) return this.setState({ error: 'Invalid Login Id or Password' });
-        const id = f.login.trim().toLowerCase(); const known = USERS[id];
-        const user = { loginId: id, name: known ? known.name : (titleCase(id) || id), email: `${id}@stocksense.app`, role: known ? known.role : 'Inventory Manager' };
-        this.busyThen(() => this.enterApp(user)); },
-      submitSignup: e => { e.preventDefault();
+      submitLogin: async e => { e.preventDefault();
+        if (!f.login.trim() || !f.password) return this.setState({ error: 'Invalid Login Id or Password' });
+        this.setState({ busy: true, error: null });
+        try { const A = await auth(); await A.signIn(f.login, f.password, f.remember); this.enterApp(); }
+        catch (err) { this.setState({ busy: false, error: err.message }); } },
+      submitSignup: async e => { e.preventDefault();
         const id = f.login.trim();
         if (id.length < 6 || id.length > 12) return this.setState({ error: 'Login ID must be between 6 and 12 characters.' });
-        if (TAKEN_IDS.includes(id.toLowerCase())) return this.setState({ error: 'That Login ID is already taken.' });
         if (!f.name.trim()) return this.setState({ error: 'Enter your full name.' });
         if (!this.validEmail(f.email)) return this.setState({ error: 'Enter a valid work email.' });
-        if (TAKEN_EMAILS.includes(f.email.trim().toLowerCase())) return this.setState({ error: 'An account with this email already exists.' });
         if (!pwOk) return this.setState({ error: 'Your password doesn’t meet the requirements below.' });
         if (f.password !== f.confirm) return this.setState({ error: 'The two passwords don’t match.' });
-        const user = { loginId: id.toLowerCase(), name: f.name.trim(), email: f.email.trim().toLowerCase(), role: f.role };
-        this.busyThen(() => this.enterApp(user)); },
-      submitForgot: e => { e.preventDefault();
+        this.setState({ busy: true, error: null });
+        try {
+          const A = await auth(); const r = await A.signUp({ loginId: id, name: f.name, email: f.email, role: f.role, password: f.password, remember: f.remember });
+          if (r.needsConfirmation) this.setState({ busy: false, mode: 'check', f: { ...f, password: '', confirm: '' } }); else this.enterApp();
+        } catch (err) { this.setState({ busy: false, error: err.message }); } },
+      submitForgot: async e => { e.preventDefault();
         if (!this.validEmail(f.email)) return this.setState({ error: 'Enter the email you sign in with.' });
-        this.busyThen(() => { this.setState({ mode: 'otp', otp: ['', '', '', '', '', ''] }); this.startResend(); setTimeout(() => this.otpRefs[0].current?.focus(), 50); }); },
-      submitOtp: e => { e.preventDefault(); const code = s.otp.join('');
+        this.setState({ busy: true, error: null });
+        try {
+          const A = await auth(); await A.sendResetCode(f.email);
+          this.setState({ busy: false, mode: 'otp', otp: ['', '', '', '', '', ''] }); this.startResend(); setTimeout(() => this.otpRefs[0].current?.focus(), 50);
+        } catch (err) { this.setState({ busy: false, error: err.message }); } },
+      submitOtp: async e => { e.preventDefault(); const code = s.otp.join('');
         if (code.length < 6) return this.setState({ error: 'Enter all 6 digits.' });
-        this.busyThen(() => code === DEMO_OTP ? this.to('reset') : this.setState({ error: 'That code doesn’t match. Check the latest email and try again.' })); },
-      submitReset: e => { e.preventDefault();
+        this.setState({ busy: true, error: null });
+        try { const A = await auth(); await A.verifyResetCode(f.email, code); this.to('reset'); }
+        catch (err) { this.setState({ busy: false, error: err.message }); } },
+      submitReset: async e => { e.preventDefault();
         if (!pwOk) return this.setState({ error: 'Your password doesn’t meet the requirements below.' });
         if (f.password !== f.confirm) return this.setState({ error: 'The two passwords don’t match.' });
-        this.to('done'); },
+        this.setState({ busy: true, error: null });
+        try { const A = await auth(); await A.setNewPassword(f.email, f.password); this.to('done'); }
+        catch (err) { this.setState({ busy: false, error: err.message }); } },
     };
   }
 }
