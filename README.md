@@ -85,3 +85,6 @@ Tweaks (props on `StockSense.dc.html`): `startScreen`, `simulateLoading`, `empty
 ## Dashboard Integration
 
 The StockSense dashboard now consumes live inventory and operations data through the backend APIs, including products, receipts, deliveries, internal transfers, warehouses, and locations.
+
+### Backend API Integration
+The dashboard is connected to the live backend APIs for inventory and operations data.
