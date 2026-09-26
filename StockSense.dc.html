@@ -40,10 +40,12 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         <button onClick="{{ goHistory }}" style="display:flex;align-items:center;gap:10px;min-height:38px;padding:0 10px;border:0;border-radius:var(--radius-md);font:inherit;font-size:14px;text-align:left;cursor:pointer;background:{{ nav.history.bg }};color:{{ nav.history.fg }}">Move History</button>
       </div>
     </sc-if>
+    <sc-if value="{{ isMgr }}" hint-placeholder-val="{{ true }}">
     <div style="height:1px;background:var(--color-divider);margin:var(--space-2) 10px"></div>
     <div style="padding:4px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Settings</div>
     <button onClick="{{ goWarehouses }}" style="display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:0 10px;border:0;border-radius:var(--radius-md);font:inherit;font-size:14px;text-align:left;cursor:pointer;background:{{ nav.warehouses.bg }};color:{{ nav.warehouses.fg }}">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"></path><path d="M6 18h12"></path><path d="M6 14h12"></path><rect width="12" height="12" x="6" y="10"></rect></svg>Warehouses</button>
+    </sc-if>
   </nav>
   <div id="ss-profile" style="margin-top:auto;position:relative">
     <sc-if value="{{ profileOpen }}" hint-placeholder-val="{{ false }}">
@@ -54,7 +56,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
     </sc-if>
     <button onClick="{{ toggleProfile }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:1px solid var(--color-divider);border-radius:var(--radius-md);background:transparent;font:inherit;text-align:left;cursor:pointer;color:var(--color-text)" style-hover="border-color:var(--color-accent)">
       <span style="width:34px;height:34px;flex:none;border-radius:50%;border:1px solid var(--color-accent);display:grid;place-items:center;font-family:var(--font-heading);font-size:15px;color:var(--color-accent-700)">{{ initials }}</span>
-      <span style="display:flex;flex-direction:column;line-height:1.25;min-width:0"><span style="font-size:13px">{{ pf.name }}</span><span style="font-size:11px;color:var(--color-neutral-700)">Inventory Manager</span></span>
+      <span style="display:flex;flex-direction:column;line-height:1.25;min-width:0"><span style="font-size:13px">{{ pf.name }}</span><span style="font-size:11px;color:var(--color-neutral-700)">{{ role }}</span></span>
     </button>
   </div>
 </aside>
@@ -108,7 +110,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
     <sc-if value="{{ show.dashboard }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;flex-direction:column;gap:var(--space-6)">
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
-          <div><div style="font-size:12px;color:var(--color-neutral-700)">Saturday, 26 September 2026</div><h1 style="margin:2px 0 0;font-weight:400;font-size:40px">Good afternoon, Priya</h1></div>
+          <div><div style="font-size:12px;color:var(--color-neutral-700)">Saturday, 26 September 2026</div><h1 style="margin:2px 0 0;font-weight:400;font-size:40px">Good afternoon, {{ firstName }}</h1></div>
           <button class="btn btn-primary" onClick="{{ goReceipt }}" style="min-height:42px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V3"></path><path d="m6 11 6 6 6-6"></path><path d="M19 21H5"></path></svg>Receive goods</button>
         </div>
 
@@ -243,6 +245,68 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
       </div>
     </sc-if>
 
+    <sc-if value="{{ show.staffHome }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:var(--space-6)">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div><div style="font-size:12px;color:var(--color-neutral-700)">Saturday, 26 September 2026 · {{ role }}</div><h1 style="margin:2px 0 0;font-weight:400;font-size:40px">Good afternoon, {{ firstName }}</h1></div>
+          <div style="display:flex;gap:var(--space-2);flex-wrap:wrap">
+            <button class="btn btn-primary" onClick="{{ goAdjustments }}" style="min-height:48px;font-size:15px">Record a count</button>
+            <button class="btn btn-secondary" onClick="{{ goTransfers }}" style="min-height:48px;font-size:15px">Move stock</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-3)">
+          <div class="card" onClick="{{ staff.goPick }}" style="cursor:pointer;gap:4px;padding:var(--space-4)" style-hover="border-color:var(--color-accent)">
+            <div class="card-kicker" style="color:var(--color-accent-700)">To pick &amp; pack</div>
+            <div style="font-family:var(--font-heading);font-size:44px;line-height:1;font-variant-numeric:lining-nums tabular-nums">{{ staff.pick }}</div>
+            <div style="font-size:12px;color:var(--color-neutral-700)">{{ staff.pickWaiting }} more waiting on stock</div>
+          </div>
+          <div class="card" onClick="{{ staff.goMoves }}" style="cursor:pointer;gap:4px;padding:var(--space-4)" style-hover="border-color:var(--color-accent)">
+            <div class="card-kicker" style="color:var(--color-accent-700)">Transfers to do</div>
+            <div style="font-family:var(--font-heading);font-size:44px;line-height:1;font-variant-numeric:lining-nums tabular-nums">{{ staff.moves }}</div>
+            <div style="font-size:12px;color:var(--color-neutral-700)">{{ staff.movesLate }} late</div>
+          </div>
+          <div class="card" onClick="{{ goAlerts }}" style="cursor:pointer;gap:4px;padding:var(--space-4)" style-hover="border-color:var(--color-accent)">
+            <div class="card-kicker" style="color:var(--color-accent-700)">Shelves to check</div>
+            <div style="font-family:var(--font-heading);font-size:44px;line-height:1;font-variant-numeric:lining-nums tabular-nums">{{ staff.check }}</div>
+            <div style="font-size:12px;color:var(--color-neutral-700)">{{ staff.checkOut }} out of stock</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--space-6);align-items:flex-start">
+          <section style="flex:2 1 560px;min-width:0;display:flex;flex-direction:column;gap:var(--space-2)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between"><h3 style="margin:0">My tasks</h3><span style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ staffTasks.length }} open</span></div>
+            <div style="overflow-x:auto">
+              <table class="table" style="min-width:680px">
+                <thead><tr><th>Task</th><th>Reference</th><th>For / route</th><th>Products</th><th>Scheduled</th><th style="text-align:right">Status</th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ staffTasks }}" as="r" hint-placeholder-count="4">
+                    <tr onClick="{{ r.open }}" style="cursor:pointer">
+                      <td style="padding:14px var(--space-2);white-space:nowrap;font-size:15px">{{ r.task }}</td>
+                      <td style="padding:14px var(--space-2);white-space:nowrap;font-variant-numeric:lining-nums tabular-nums;color:var(--color-accent-700)">{{ r.ref }}</td>
+                      <td style="padding:14px var(--space-2)"><div style="line-height:1.3">{{ r.partner }}</div><div style="font-size:11px;color:var(--color-neutral-700)">{{ r.wh }}</div></td>
+                      <td style="padding:14px var(--space-2);font-size:13px;font-variant-numeric:lining-nums tabular-nums">{{ r.summary }}</td>
+                      <td style="padding:14px var(--space-2);white-space:nowrap;font-variant-numeric:lining-nums tabular-nums">{{ r.date }}</td>
+                      <td style="padding:14px var(--space-2);text-align:right"><span class="tag" style="background:{{ r.tone.bg }};color:{{ r.tone.fg }}">{{ r.status }}</span></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <sc-if value="{{ noStaffTasks }}" hint-placeholder-val="{{ false }}"><div style="padding:40px 16px;border:1px dashed var(--color-divider);border-radius:var(--radius-md);text-align:center;font-size:14px;color:var(--color-neutral-700)">Nothing to pick or move right now.</div></sc-if>
+          </section>
+          <section class="card" style="flex:1 1 300px;padding:var(--space-4);gap:var(--space-2)">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h4 style="margin:0">Check these shelves</h4><button class="btn btn-ghost" onClick="{{ goAlerts }}" style="font-size:13px;padding:4px 6px">See all →</button></div>
+            <sc-for list="{{ lowPreview }}" as="a" hint-placeholder-count="2">
+              <button onClick="{{ a.pick }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:6px 8px;border:0;border-top:1px solid var(--color-divider);background:transparent;font:inherit;text-align:left;cursor:pointer;color:var(--color-text)" style-hover="background:var(--color-neutral-200)">
+                <span style="display:flex;flex-direction:column;line-height:1.3"><span style="font-size:14px">{{ a.name }}</span><span style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ a.onHand }} / min {{ a.min }} {{ a.uom }}</span></span>
+                <span class="tag" style="background:{{ a.tone.bg }};color:{{ a.tone.fg }}">{{ a.label }}</span>
+              </button>
+            </sc-for>
+            <sc-if value="{{ noAlerts }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--color-neutral-700)">Every product is above its minimum.</div></sc-if>
+          </section>
+        </div>
+      </div>
+    </sc-if>
+
     <sc-if value="{{ show.alerts }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:var(--space-4)">
         <div><div style="font-size:12px;color:var(--color-neutral-700)">Inventory</div><h1 style="margin:2px 0 0;font-weight:400">Low stock alerts</h1>
@@ -293,6 +357,13 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <button class="btn btn-secondary" onClick="{{ printRc }}" style="min-height:44px">Print PDF</button>
             <div style="flex:1"></div>
             <button class="btn btn-ghost" onClick="{{ rcCancel }}" style="min-height:44px;color:oklch(0.46 0.14 27)">Cancel receipt</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ rcViewOnly }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
+            <span style="flex:1 1 260px;font-size:14px;color:var(--color-neutral-800)">View only. An Inventory Manager receives and validates incoming goods.</span>
+            <button class="btn btn-secondary" onClick="{{ printRc }}" style="min-height:44px">Print PDF</button>
           </div>
         </sc-if>
 
@@ -409,7 +480,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
               <button onClick="{{ list.toList }}" aria-label="List view" style="width:42px;height:42px;display:grid;place-items:center;background:transparent;cursor:pointer;border:1px solid {{ list.listBorder }};border-radius:var(--radius-md) 0 0 var(--radius-md);color:{{ list.listBtn }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"></path><path d="M3 6h18"></path><path d="M3 18h18"></path></svg></button>
               <button onClick="{{ list.toKanban }}" aria-label="Kanban view" style="width:42px;height:42px;display:grid;place-items:center;background:transparent;cursor:pointer;border:1px solid {{ list.kanbanBorder }};margin-left:-1px;border-radius:0 var(--radius-md) var(--radius-md) 0;color:{{ list.kanbanBtn }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect width="6" height="16" x="4" y="4" rx="1"></rect><rect width="6" height="10" x="14" y="4" rx="1"></rect></svg></button>
             </div>
-            <button class="btn btn-primary" onClick="{{ list.onCta }}" style="min-height:42px">{{ list.cta }}</button>
+            <sc-if value="{{ list.showCta }}" hint-placeholder-val="{{ true }}"><button class="btn btn-primary" onClick="{{ list.onCta }}" style="min-height:42px">{{ list.cta }}</button></sc-if>
           </div>
         </div>
         <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--space-4);padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
@@ -493,11 +564,12 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
         </div>
         <sc-if value="{{ dv.active }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;gap:var(--space-2);flex-wrap:wrap;padding:var(--space-3) 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
-            <button class="btn btn-primary" onClick="{{ dvPrimary }}" style="min-height:48px;min-width:170px;font-size:15px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ dv.primaryLabel }}</button>
+            <sc-if value="{{ dv.canAct }}" hint-placeholder-val="{{ true }}"><button class="btn btn-primary" onClick="{{ dvPrimary }}" style="min-height:48px;min-width:170px;font-size:15px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ dv.primaryLabel }}</button></sc-if>
+            <sc-if value="{{ dv.awaitMgr }}" hint-placeholder-val="{{ false }}"><span style="align-self:center;font-size:14px;color:var(--color-neutral-800)">Picked and packed. An Inventory Manager validates the delivery.</span></sc-if>
             <sc-if value="{{ dv.canBack }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary" onClick="{{ dvBack }}" style="min-height:48px">Back</button></sc-if>
             <div style="flex:1"></div>
             <button class="btn btn-secondary" onClick="{{ printDv }}" style="min-height:48px">Print PDF</button>
-            <button class="btn btn-ghost" onClick="{{ dvCancel }}" style="min-height:48px;color:oklch(0.46 0.14 27)">Cancel delivery</button>
+            <sc-if value="{{ dv.canCancel }}" hint-placeholder-val="{{ true }}"><button class="btn btn-ghost" onClick="{{ dvCancel }}" style="min-height:48px;color:oklch(0.46 0.14 27)">Cancel delivery</button></sc-if>
           </div>
         </sc-if>
         <sc-if value="{{ dv.hasError }}" hint-placeholder-val="{{ false }}">
@@ -706,7 +778,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
           <div style="display:flex;flex-direction:column;gap:var(--space-3)">
             <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
               <div><div style="font-size:12px;color:var(--color-neutral-700)">Catalogue</div><h1 style="margin:2px 0 0;font-weight:400">Products</h1></div>
-              <button class="btn btn-primary" onClick="{{ newProduct }}" style="min-height:42px">New product</button>
+              <sc-if value="{{ isMgr }}" hint-placeholder-val="{{ true }}"><button class="btn btn-primary" onClick="{{ newProduct }}" style="min-height:42px">New product</button></sc-if>
             </div>
             <div style="display:flex;gap:var(--space-4);border-bottom:1px solid var(--color-divider)">
               <sc-for list="{{ pTabs }}" as="t" hint-placeholder-count="2"><button onClick="{{ t.pick }}" style="border:0;background:transparent;font:inherit;font-size:15px;padding:8px 2px;margin-bottom:-1px;cursor:pointer;color:{{ t.color }};border-bottom:1px solid {{ t.border }}">{{ t.label }}</button></sc-for>
@@ -721,7 +793,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"></path><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>
                 <div style="font-family:var(--font-heading);font-size:26px">No products yet</div>
                 <div style="font-size:14px;color:var(--color-neutral-700);max-width:40ch">Add the first item you stock. You can set an opening quantity now or receive it later.</div>
-                <button class="btn btn-primary" onClick="{{ newProduct }}" style="min-height:44px">Add your first product</button>
+                <sc-if value="{{ isMgr }}" hint-placeholder-val="{{ true }}"><button class="btn btn-primary" onClick="{{ newProduct }}" style="min-height:44px">Add your first product</button></sc-if>
               </div>
             </sc-if>
             <sc-if value="{{ pHasPool }}" hint-placeholder-val="{{ true }}">
@@ -747,7 +819,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
                         <td style="padding:12px var(--space-2);font-size:13px;color:var(--color-neutral-700)">{{ p.uom }}</td>
                         <td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums;font-size:13px">{{ p.costText }}</td>
                         <td style="padding:6px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums">
-                          <sc-if value="{{ p.notEditing }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:flex-end;align-items:center;gap:8px"><span>{{ p.onHand }}</span><button class="btn btn-ghost" onClick="{{ p.startUpd }}" style="font-size:12px;padding:4px 6px">Update</button></div></sc-if>
+                          <sc-if value="{{ p.notEditing }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:flex-end;align-items:center;gap:8px"><span>{{ p.onHand }}</span><sc-if value="{{ p.canUpdate }}" hint-placeholder-val="{{ true }}"><button class="btn btn-ghost" onClick="{{ p.startUpd }}" style="font-size:12px;padding:4px 6px">Update</button></sc-if></div></sc-if>
                           <sc-if value="{{ p.editing }}" hint-placeholder-val="{{ false }}"><div onClick="{{ stop }}" style="display:flex;justify-content:flex-end;align-items:center;gap:4px"><input class="input" inputMode="numeric" value="{{ p.updVal }}" onChange="{{ p.onUpd }}" style="width:80px;min-height:40px;text-align:right;font-variant-numeric:lining-nums tabular-nums"><button class="btn btn-primary" onClick="{{ p.applyUpd }}" style="min-height:40px;padding:0 10px">Save</button><button class="btn btn-ghost btn-icon" onClick="{{ p.cancelUpd }}" aria-label="Cancel" style="width:32px;height:40px;color:var(--color-neutral-700)">✕</button></div><sc-if value="{{ p.hasUpdErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:oklch(0.46 0.14 27);margin-top:2px">{{ p.updErr }}</div></sc-if></sc-if>
                         </td>
                         <td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums;color:{{ p.freeColor }}">{{ p.free }}</td>
@@ -767,10 +839,10 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
               <thead><tr><th>Category</th><th style="text-align:right">Products</th><th style="text-align:right">Units on hand</th></tr></thead>
               <tbody><sc-for list="{{ catRows }}" as="c" hint-placeholder-count="4"><tr><td style="padding:12px var(--space-2);font-size:15px">{{ c.name }}</td><td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums">{{ c.count }}</td><td style="padding:12px var(--space-2);text-align:right;font-variant-numeric:lining-nums tabular-nums">{{ c.units }}</td></tr></sc-for></tbody>
             </table>
-            <div style="display:flex;gap:var(--space-2);align-items:flex-end">
+            <sc-if value="{{ isMgr }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:var(--space-2);align-items:flex-end">
               <div class="field" style="flex:1"><label>New category</label><input class="input" placeholder="e.g. Packaging" value="{{ newCat }}" onChange="{{ onNewCat }}" style="min-height:42px"></div>
               <button class="btn btn-primary" onClick="{{ addCat }}" style="min-height:42px">Add category</button>
-            </div>
+            </div></sc-if>
             <sc-if value="{{ hasCatErr }}" hint-placeholder-val="{{ false }}"><div role="alert" style="font-size:13px;color:oklch(0.46 0.14 27)">{{ catErr }}</div></sc-if>
           </div>
         </sc-if>
@@ -809,7 +881,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
                 <div style="display:flex;align-items:center;gap:12px"><h1 style="margin:0;font-weight:400">{{ pd.name }}</h1><span class="tag" style="background:{{ pd.tone.bg }};color:{{ pd.tone.fg }}">{{ pd.label }}</span></div>
                 <div style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">{{ pd.sku }} · {{ pd.cat }} · {{ pd.uom }}</div>
               </div>
-              <button class="btn btn-secondary" onClick="{{ editProduct }}" style="min-height:42px">Edit product</button>
+              <sc-if value="{{ isMgr }}" hint-placeholder-val="{{ true }}"><button class="btn btn-secondary" onClick="{{ editProduct }}" style="min-height:42px">Edit product</button></sc-if>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
               <div style="padding:var(--space-3) 0"><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">On hand</div><div style="font-family:var(--font-heading);font-size:40px;line-height:1.1;font-variant-numeric:lining-nums tabular-nums">{{ pd.onHandText }} <span style="font-size:16px;color:var(--color-neutral-700)">{{ pd.uom }}</span></div></div>
@@ -832,12 +904,12 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
               <section class="card" style="flex:1 1 300px;padding:var(--space-4);gap:var(--space-3)">
                 <h4 style="margin:0">Reordering rule</h4>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3)">
-                  <div class="field"><label>Min quantity</label><input class="input" inputMode="numeric" value="{{ rr.min }}" onChange="{{ rrSet.min }}" style="min-height:44px;font-variant-numeric:lining-nums tabular-nums"></div>
-                  <div class="field"><label>Max quantity</label><input class="input" inputMode="numeric" value="{{ rr.max }}" onChange="{{ rrSet.max }}" style="min-height:44px;font-variant-numeric:lining-nums tabular-nums"></div>
+                  <div class="field"><label>Min quantity</label><input class="input" inputMode="numeric" value="{{ rr.min }}" onChange="{{ rrSet.min }}" readOnly="{{ isStaff }}" style="min-height:44px;font-variant-numeric:lining-nums tabular-nums"></div>
+                  <div class="field"><label>Max quantity</label><input class="input" inputMode="numeric" value="{{ rr.max }}" onChange="{{ rrSet.max }}" readOnly="{{ isStaff }}" style="min-height:44px;font-variant-numeric:lining-nums tabular-nums"></div>
                 </div>
-                <div class="field"><label>Preferred supplier</label><input class="input" value="{{ rr.supplier }}" onChange="{{ rrSet.supplier }}" style="min-height:44px"></div>
+                <div class="field"><label>Preferred supplier</label><input class="input" value="{{ rr.supplier }}" onChange="{{ rrSet.supplier }}" readOnly="{{ isStaff }}" style="min-height:44px"></div>
                 <sc-if value="{{ hasRrErr }}" hint-placeholder-val="{{ false }}"><div role="alert" style="font-size:13px;color:oklch(0.46 0.14 27)">{{ rrErr }}</div></sc-if>
-                <button class="btn btn-primary" onClick="{{ saveRules }}" style="align-self:flex-start;min-height:42px">Save rule</button>
+                <sc-if value="{{ isMgr }}" hint-placeholder-val="{{ true }}"><button class="btn btn-primary" onClick="{{ saveRules }}" style="align-self:flex-start;min-height:42px">Save rule</button></sc-if>
               </section>
             </div>
             <section style="display:flex;flex-direction:column;gap:var(--space-2)">
@@ -915,14 +987,14 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
       <div style="display:flex;flex-direction:column;gap:var(--space-4)">
         <div style="display:flex;align-items:center;gap:var(--space-4)">
           <span style="width:64px;height:64px;border-radius:50%;border:1px solid var(--color-accent);display:grid;place-items:center;font-family:var(--font-heading);font-size:26px;color:var(--color-accent-700)">{{ initials }}</span>
-          <div><h1 style="margin:0;font-weight:400">My Profile</h1><div style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--color-neutral-700)"><span class="tag tag-accent">Inventory Manager</span>Access: Main Warehouse, Warehouse 2</div></div>
+          <div><h1 style="margin:0;font-weight:400">My Profile</h1><div style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--color-neutral-700)"><span class="tag tag-accent">{{ role }}</span>Access: Main Warehouse, Warehouse 2</div></div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:var(--space-6);align-items:flex-start">
           <section class="card" style="flex:1 1 360px;padding:var(--space-4) var(--space-6);gap:var(--space-3)">
             <h4 style="margin:0">Details</h4>
             <div class="field"><label>Full name</label><input class="input" value="{{ pf.name }}" onChange="{{ pfSet2.name }}" style="min-height:44px"></div>
             <div class="field"><label>Email</label><input class="input" type="email" value="{{ pf.email }}" onChange="{{ pfSet2.email }}" style="min-height:44px"></div>
-            <div class="field"><label>Role</label><input class="input" value="Inventory Manager" readOnly="{{ true }}" style="min-height:44px;color:var(--color-neutral-700)"><div style="font-size:12px;margin-top:4px;color:var(--color-neutral-700)">Roles are assigned by an administrator.</div></div>
+            <div class="field"><label>Role</label><input class="input" value="{{ role }}" readOnly="{{ true }}" style="min-height:44px;color:var(--color-neutral-700)"><div style="font-size:12px;margin-top:4px;color:var(--color-neutral-700)">Roles are assigned by an administrator.</div></div>
             <sc-if value="{{ pfHasErr }}" hint-placeholder-val="{{ false }}"><div role="alert" style="font-size:13px;color:oklch(0.46 0.14 27)">{{ pf.err }}</div></sc-if>
             <button class="btn btn-primary" onClick="{{ saveProfile }}" style="align-self:flex-start;min-height:44px">Save details</button>
           </section>
@@ -1036,6 +1108,14 @@ const steps = (labels, idx, allDone) => labels.map((l, i) => {
     border: past || cur ? 'var(--color-accent)' : 'var(--color-divider)', color: past || cur ? 'var(--color-accent-800)' : 'var(--color-neutral-600)',
     bg: cur ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent' };
 });
+const SESSION_KEY = 'stocksense.session';
+const MGR = 'Inventory Manager';
+const DEMO_USER = { loginId: 'priya.nair', name: 'Priya Nair', email: 'priya.nair@stocksense.app', role: MGR };
+// The signed-in user comes from the login page; opening this file directly falls back to the demo manager.
+const loadUser = () => {
+  try { const u = JSON.parse(window.sessionStorage.getItem(SESSION_KEY)); if (u && u.name && (u.role === MGR || u.role === 'Warehouse Staff')) return { ...DEMO_USER, ...u }; } catch (e) { /* no session */ }
+  return DEMO_USER;
+};
 const ADDR = { 'Brightdesk Offices': '4th Floor, Baner Road, Pune', 'Harbor Interiors': 'Shop 7, North Main Road, Koregaon Park, Pune', 'Apex Fabrication': 'Plot 22, MIDC Bhosari, Pune' };
 const homeOf = o => o.wh === 'Warehouse 2' ? 'WH2/Stock' : 'WH/Main Store';
 const isoOf = d => { const t = new Date(dayOf(d)); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; };
@@ -1064,7 +1144,7 @@ class Component extends DCLogic {
     rc: initDoc(O0[0], P0, L0), dv: initDoc(O0[1], P0, L0), tr: initDoc(O0[2], P0, L0), docs: {}, adj: ADJ0,
     pm: 'list', psel: null, pq: '', pcat: 'All', pstock: 'All', pform: PF0, perr: {}, pedit: null, rr: { min: '', max: '', supplier: '' }, rrErr: null, newCat: '', catErr: null,
     whForm: null, whErr: null, whEdit: null, whDraft: { address: '', manager: '' }, locAdd: null, locDraft: { name: '', kind: 'Rack' },
-    pf: { name: 'Priya Nair', email: 'priya.nair@stocksense.app', cur: '', nw: '', conf: '', err: null, pwErr: null },
+    role: loadUser().role, pf: { name: loadUser().name, email: loadUser().email, cur: '', nw: '', conf: '', err: null, pwErr: null },
     lq: '', lview: 'list', pupd: null, q: '', searchOpen: false, alertsOpen: false, profileOpen: false, toast: null, lf: LF0,
   };
   componentDidMount() {
@@ -1101,7 +1181,7 @@ class Component extends DCLogic {
   }
   restore(snap) {
     this._snap = JSON.stringify(snap);
-    const patch = { screen: snap.screen, loading: false, alertsOpen: false, profileOpen: false, searchOpen: false };
+    const patch = { screen: snap.screen === 'warehouses' && this.state.role !== MGR ? 'dashboard' : snap.screen, loading: false, alertsOpen: false, profileOpen: false, searchOpen: false };
     if (snap.screen === 'products') Object.assign(patch, { pm: snap.pm || 'list', psel: snap.psel });
     if (snap.ref) Object.assign(patch, this.docPatch(snap.ref));
     this.setState(patch);
@@ -1118,6 +1198,7 @@ class Component extends DCLogic {
     this.go(SCREEN_OF[o.type], this.docPatch(ref));
   }
   go(screen, patch = {}) {
+    if (screen === 'warehouses' && this.state.role !== MGR) screen = 'dashboard';
     clearTimeout(this._lt);
     const load = this.props.simulateLoading ?? true;
     this.setState({ screen, loading: load, alertsOpen: false, profileOpen: false, searchOpen: false, ...patch });
@@ -1162,6 +1243,7 @@ class Component extends DCLogic {
       if (vals.every(v => v === 0)) return this.patch('dv', { error: 'Pick at least one product before packing.' });
       return this.patch('dv', { step: 1, error: null });
     }
+    if (dv.step === 2 && this.state.role !== MGR) return this.patch('dv', { error: 'Only an Inventory Manager can validate a delivery. Picking and packing are done.' });
     if (dv.step === 1) {
       const n = Number(dv.packages);
       if (!dv.packages || !Number.isInteger(n) || n < 1) return this.patch('dv', { error: 'Enter how many packages this order was packed into.' });
@@ -1236,7 +1318,7 @@ class Component extends DCLogic {
     }
     const id = 'p' + Date.now();
     const np = { id, name: f.name.trim(), sku, cat: f.cat, uom: f.uom, onHand: init, min: 0, max: 0, supplier: '', loc: init ? { [f.loc]: init } : {}, created: true };
-    const moves = init ? [{ ts: '2026-09-26T' + hm(), ref: `WH/ADJ/${String(seq).padStart(4, '0')}`, type: 'Adjustment', pid: id, from: 'Opening balance', to: f.loc, qty: init, kind: 'in', user: 'Priya Nair', wh: this.whOf(f.loc), fresh: true }] : [];
+    const moves = init ? [{ ts: '2026-09-26T' + hm(), ref: `WH/ADJ/${String(seq).padStart(4, '0')}`, type: 'Adjustment', pid: id, from: 'Opening balance', to: f.loc, qty: init, kind: 'in', user: this.state.pf.name, wh: this.whOf(f.loc), fresh: true }] : [];
     this.setState({ products: [...products, np], ledger: [...moves, ...ledger], seq: init ? seq + 1 : seq, perr: {} }, () => this.openProduct(id));
     this.toast({ title: 'Product created', lines: [`${np.name} · ${sku}`, init ? `Opening stock +${fmt(init)} ${np.uom}` : 'No opening stock'] });
   }
@@ -1308,14 +1390,16 @@ class Component extends DCLogic {
 
   renderVals() {
     const s = this.state;
+    const isMgr = s.role === MGR; const isStaff = !isMgr;
+    const firstName = s.pf.name.split(/\s+/)[0] || s.pf.name;
     const pById = Object.fromEntries(s.products.map(p => [p.id, p]));
     const navKeys = ['dashboard', 'products', 'receipts', 'deliveries', 'transfers', 'adjustments', 'history', 'warehouses'];
     const activeKey = { receipt: 'receipts', delivery: 'deliveries', transfer: 'transfers' }[s.screen] || s.screen;
     const nav = Object.fromEntries(navKeys.map(k => [k, k === activeKey ? { bg: 'color-mix(in srgb, var(--color-accent) 13%, transparent)', fg: 'var(--color-accent-800)' } : { bg: 'transparent', fg: 'var(--color-text)' }]));
     const L = s.loading;
     const isList = ['receipts', 'deliveries', 'transfers'].includes(s.screen);
-    const show = { dashboard: s.screen === 'dashboard' && !L, receipt: s.screen === 'receipt' && !L, delivery: s.screen === 'delivery' && !L, transfer: s.screen === 'transfer' && !L,
-      adjust: s.screen === 'adjustments' && !L, history: s.screen === 'history' && !L, list: isList && !L, products: s.screen === 'products' && !L, warehouses: s.screen === 'warehouses' && !L, profile: s.screen === 'profile' && !L, alerts: s.screen === 'alerts' && !L };
+    const show = { dashboard: s.screen === 'dashboard' && !L && isMgr, staffHome: s.screen === 'dashboard' && !L && isStaff, receipt: s.screen === 'receipt' && !L, delivery: s.screen === 'delivery' && !L, transfer: s.screen === 'transfer' && !L,
+      adjust: s.screen === 'adjustments' && !L, history: s.screen === 'history' && !L, list: isList && !L, products: s.screen === 'products' && !L, warehouses: s.screen === 'warehouses' && !L && isMgr, profile: s.screen === 'profile' && !L, alerts: s.screen === 'alerts' && !L };
     const allLocs = s.whs.flatMap(w => w.locs.map(l => ({ value: l.name, label: `${l.name} — ${w.name}`, wh: w.name })));
     const whOpts = s.whs.map(w => ({ name: w.name }));
     const productOpts = s.products.map(p => ({ id: p.id, name: p.name }));
@@ -1360,6 +1444,11 @@ class Component extends DCLogic {
       (s.wh === 'All' || o.wh === s.wh) && (s.cat === 'All' || o.items.some(([id]) => pById[id].cat === s.cat))).map(opRow);
     const filtersActive = s.type !== 'All' || s.statuses.length > 0 || s.wh !== 'All' || s.cat !== 'All';
 
+    const staffTasks = s.ops.filter(o => ['Delivery', 'Internal'].includes(o.type) && PENDING.includes(o.status) && (s.wh === 'All' || o.wh === s.wh))
+      .sort((a, b) => dayOf(a.date) - dayOf(b.date)).map(o => ({ ...opRow(o), task: o.type === 'Delivery' ? 'Pick & pack' : 'Move stock' }));
+    const staff = { pick: byType('Delivery').filter(o => o.status === 'Ready').length, pickWaiting: byType('Delivery').filter(o => o.status === 'Waiting').length,
+      moves: byType('Internal').length, movesLate: byType('Internal').filter(o => dayOf(o.date) < TODAY).length, check: low.length, checkOut: low.filter(p => p.onHand <= 0).length,
+      goPick: () => this.go('deliveries', { statuses: PENDING, lq: '' }), goMoves: () => this.go('transfers', { statuses: PENDING, lq: '' }) };
     const LISTS = { receipts: ['Receipt', 'Receipts', 'Receive goods', 'receipt'], deliveries: ['Delivery', 'Delivery Orders', 'Open WH/OUT/0013', 'delivery'], transfers: ['Internal', 'Internal Transfers', 'Open WH/INT/0006', 'transfer'] };
     const LD = LISTS[s.screen] || LISTS.receipts;
     const lq = s.lq.trim().toLowerCase();
@@ -1368,7 +1457,7 @@ class Component extends DCLogic {
     const kanbanStatuses = LD[0] === 'Receipt' ? ['Draft', 'Ready', 'Done', 'Canceled'] : ['Draft', 'Waiting', 'Ready', 'Done', 'Canceled'];
     const kanban = kanbanStatuses.map(st => { const rows = listRows.filter(r => r.status === st); return { label: st, count: rows.length, rows, dot: T[ST[st]].fg, empty: rows.length === 0 }; });
     const isKanban = s.lview === 'kanban';
-    const list = { title: LD[1], cta: 'New', onCta: () => this.go(LD[3]), rows: listRows, empty: listRows.length === 0, count: listRows.length,
+    const list = { showCta: isMgr || LD[0] === 'Internal', title: LD[1], cta: 'New', onCta: () => this.go(LD[3]), rows: listRows, empty: listRows.length === 0, count: listRows.length,
       isList: !isKanban, isKanban, kanban, q: s.lq, onQ: e => this.setState({ lq: e.target.value }),
       toList: () => this.setState({ lview: 'list' }), toKanban: () => this.setState({ lview: 'kanban' }),
       listBtn: isKanban ? 'var(--color-neutral-700)' : 'var(--color-accent-700)', kanbanBtn: isKanban ? 'var(--color-accent-700)' : 'var(--color-neutral-700)',
@@ -1388,7 +1477,7 @@ class Component extends DCLogic {
       }
       const bad = !rcDone && s.rc.error && (r === null || r <= 0);
       return { name: p.name, sku: p.sku, uom: p.uom, onHand: fmt(p.onHand), expected: fmt(l.expected), received: l.received, note, noteColor,
-        readOnly: rcDone, inputBorder: bad ? ERR_BORDER : 'var(--color-divider)', onInput: e => this.setReceived(i, e.target.value) };
+        readOnly: rcDone || isStaff, inputBorder: bad ? ERR_BORDER : 'var(--color-divider)', onInput: e => this.setReceived(i, e.target.value) };
     });
     const rcSteps = steps(['Draft', 'Ready', 'Done'], { Draft: 0, Ready: 1, Done: 2 }[s.rc.status], rcDone);
     const sumRec = s.rc.lines.reduce((a, l) => a + (Number(l.received) || 0), 0);
@@ -1440,7 +1529,7 @@ class Component extends DCLogic {
       (s.pstock === 'All' || stockOf(p).label === s.pstock)).map(p => { const st = stockOf(p);
       const reserved = s.ops.filter(o => o.type === 'Delivery' && PENDING.includes(o.status)).reduce((a, o) => a + o.items.filter(([id]) => id === p.id).reduce((b, [, q]) => b + q, 0), 0);
       const editing = s.pupd && s.pupd.pid === p.id;
-      return { ...p, onHand: fmt(p.onHand), label: st.label, tone: st.tone, open: () => !editing && this.openProduct(p.id),
+      return { ...p, canUpdate: isMgr, onHand: fmt(p.onHand), label: st.label, tone: st.tone, open: () => !editing && this.openProduct(p.id),
         costText: p.cost ? inr(p.cost) : '—', free: fmt(Math.max(0, p.onHand - reserved)), freeColor: p.onHand - reserved < 0 || p.onHand === 0 ? T.red.fg : 'var(--color-text)',
         editing, notEditing: !editing, updVal: editing ? s.pupd.val : '', updErr: editing && s.pupd.err ? s.pupd.err : '', hasUpdErr: !!(editing && s.pupd.err),
         startUpd: e => { e.stopPropagation(); this.setState({ pupd: { pid: p.id, val: String(p.onHand), err: null } }); },
@@ -1496,8 +1585,8 @@ class Component extends DCLogic {
       nav, show, loading: L, skeleton, opsOpen: s.opsOpen, opsChevron: s.opsOpen ? 'rotate(180deg)' : 'none', whOpts, locOpts: allLocs, productOpts,
       goDashboard: () => this.go('dashboard'), goProducts: () => this.go('products', { pm: 'list', psel: null }), goReceipt: () => this.go('receipt'), goReceipts: () => this.go('receipts'),
       goDeliveries: () => this.go('deliveries'), goTransfers: () => this.go('transfers'), goAdjustments: () => this.go('adjustments'), goDelivery: () => this.go('delivery'), goTransfer: () => this.go('transfer'),
-      goHistory: () => this.go('history'), goWarehouses: () => this.go('warehouses'), goProfile: () => this.go('profile'), goLogout: () => { window.location.replace('Auth.dc.html'); },
-      goAlerts: () => this.go('alerts'),
+      goHistory: () => this.go('history'), goWarehouses: () => this.go('warehouses'), goProfile: () => this.go('profile'), goLogout: () => { try { window.sessionStorage.removeItem(SESSION_KEY); } catch (e) { /* nothing to clear */ } window.location.replace('Auth.dc.html'); },
+      goAlerts: () => this.go('alerts'), isMgr, isStaff, role: s.role, firstName, staff, staffTasks, noStaffTasks: staffTasks.length === 0,
       toggleOps: () => this.setState({ opsOpen: !s.opsOpen }),
       profileOpen: s.profileOpen, toggleProfile: () => this.setState({ profileOpen: !s.profileOpen, alertsOpen: false }),
       alertsOpen: s.alertsOpen, toggleAlerts: () => this.setState({ alertsOpen: !s.alertsOpen, profileOpen: false }),
@@ -1523,10 +1612,10 @@ class Component extends DCLogic {
       clearFilters: () => this.setState({ type: 'All', statuses: [], wh: 'All', cat: 'All' }),
       rc: { status: s.rc.status, tone: T[ST[s.rc.status]], hasError: !!s.rc.error, error: s.rc.error, done: rcDone, result: s.rc.result || [], doneAt: s.rc.doneAt,
         totalReceived: fmt(sumRec), totalExpected: fmt(s.rc.lines.reduce((a, l) => a + l.expected, 0)) },
-      rcNotDone: !rcDone && s.rc.status !== 'Canceled', rcLocked: rcDone || s.rc.status === 'Canceled', rcLines, rcSteps, validate: () => this.validate(),
+      rcNotDone: !rcDone && s.rc.status !== 'Canceled' && isMgr, rcViewOnly: !rcDone && s.rc.status !== 'Canceled' && isStaff, rcLocked: rcDone || s.rc.status === 'Canceled' || isStaff, rcLines, rcSteps, validate: () => this.validate(),
       fillExpected: () => this.patch('rc', { error: null, lines: s.rc.lines.map(l => ({ ...l, received: String(l.expected) })) }),
       dv: { status: dvStatus, tone: T[ST[dvStatus]], hasError: !!dv.error, error: dv.error, done: dvDone, active: !dvDone && !dv.canceled, result: dv.result || [], doneAt: dv.doneAt, packages: dv.packages,
-        primaryLabel: dvLabels[Math.min(dv.step, 2)], canBack: dv.step === 1 || dv.step === 2, showPack: dv.step >= 1, packReadOnly: dv.step !== 1, isValidate: dv.step === 2,
+        canAct: dv.step < 2 || isMgr, awaitMgr: dv.step === 2 && isStaff, canCancel: isMgr, primaryLabel: dvLabels[Math.min(dv.step, 2)], canBack: dv.step === 1 || dv.step === 2, showPack: dv.step >= 1, packReadOnly: dv.step !== 1, isValidate: dv.step === 2,
         packBorder: dv.error && dv.step === 1 ? ERR_BORDER : 'var(--color-divider)' },
       dvLines, dvSteps: steps(['Pick', 'Pack', 'Validate'], Math.min(dv.step, 2), dvDone), dvPrimary: () => this.dvPrimary(),
       dvBack: () => this.patch('dv', { step: dv.step - 1, error: null }), setPackages: e => this.patch('dv', { packages: e.target.value.replace(/\D/g, ''), error: null }),

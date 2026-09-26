@@ -13,8 +13,24 @@ npx serve .          # or: python3 -m http.server 8000
 Open `http://localhost:3000` (or `:8000`). `index.html` → Login → Dashboard.
 
 - Login: any Login ID + password of 6+ chars. Wrong → "Invalid Login Id or Password".
+- Demo logins: `priya.nair` and `ravi.mehta` sign in as **Inventory Manager**, `anya.khan` as **Warehouse Staff**. Any other Login ID signs in as a manager; sign-up uses the role picked on the form.
 - Forgot password demo OTP: **482913**
-- All data is in-memory sample data; refresh resets it.
+- All data is in-memory sample data; refresh resets it (including anything done as a different role).
+
+## Roles
+
+The login page passes the user's name and role to the app (`sessionStorage`). This is a front-end prototype only; real enforcement belongs in the API and database rules.
+
+| Area | Inventory Manager | Warehouse Staff |
+|---|---|---|
+| Dashboard | KPIs, alerts, all operations | Task view: pick & pack, transfers, shelves to check |
+| Receipts | Create, validate, cancel | View only (can print PDF) |
+| Deliveries | Create, pick, pack, validate, cancel | Pick and pack; manager validates |
+| Internal transfers | Full access | Full access |
+| Inventory adjustments | Full access | Full access |
+| Products, categories, reorder rules | Create, edit | View only |
+| Warehouses (settings) | Full access | Hidden |
+| Move history | Read | Read |
 
 ## About these files
 

@@ -34,6 +34,7 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
             <label class="radio" style="font-size:13px"><input type="checkbox" checked="{{ f.remember }}" onChange="{{ toggleRemember }}"><span class="dot" style="border-radius:3px"></span>Keep me signed in on this device</label>
             <button type="submit" class="btn btn-primary" disabled="{{ busy }}" style="min-height:46px;font-size:16px">{{ loginLabel }}</button>
             <div style="font-size:14px;color:var(--color-neutral-700);text-align:center">New to StockSense? <button type="button" class="btn btn-ghost" onClick="{{ toSignup }}" style="display:inline;font-size:14px;padding:2px 4px">Create an account</button></div>
+            <div style="font-size:12px;color:var(--color-neutral-700);text-align:center;line-height:1.5">Demo logins (any password of 6+ characters): <strong style="font-weight:600">priya.nair</strong> Inventory Manager · <strong style="font-weight:600">anya.khan</strong> Warehouse Staff</div>
           </form>
         </sc-if>
 
@@ -140,6 +141,14 @@ a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
 const DEMO_OTP = '482913';
 const TAKEN_IDS = ['priya.nair', 'ravi.mehta', 'anya.khan'];
 const TAKEN_EMAILS = ['priya.nair@stocksense.app', 'ravi.mehta@stocksense.app', 'anya.khan@stocksense.app'];
+// Demo directory. Any other Login ID signs in as an Inventory Manager; sign-up uses the role picked on the form.
+const USERS = {
+  'priya.nair': { name: 'Priya Nair', role: 'Inventory Manager' },
+  'ravi.mehta': { name: 'Ravi Mehta', role: 'Inventory Manager' },
+  'anya.khan': { name: 'Anya Khan', role: 'Warehouse Staff' },
+};
+const SESSION_KEY = 'stocksense.session';
+const titleCase = id => id.split(/[._\-\s]+/).filter(Boolean).map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
 class Component extends DCLogic {
   state = { mode: this.props.startMode ?? 'login', f: { login: 'priya.nair', email: 'priya.nair@stocksense.app', password: '', confirm: '', name: '', role: 'Inventory Manager', remember: true },
     showPw: false, error: null, busy: false, otp: ['', '', '', '', '', ''], resendIn: 0 };
@@ -148,7 +157,11 @@ class Component extends DCLogic {
   to(mode) { this.setState({ mode, error: null, busy: false, f: { ...this.state.f, password: '', confirm: '' } }); }
   busyThen(fn) { this.setState({ busy: true, error: null }); clearTimeout(this._bt); this._bt = setTimeout(() => { this.setState({ busy: false }); fn(); }, 700); }
   startResend() { clearInterval(this._iv); this.setState({ resendIn: 30 }); this._iv = setInterval(() => this.setState(s => { if (s.resendIn <= 1) clearInterval(this._iv); return { resendIn: Math.max(0, s.resendIn - 1) }; }), 1000); }
-  enterApp() { window.location.replace('StockSense.dc.html'); }
+  // Hand the signed-in user (and their role) to the app, then open it.
+  enterApp(user) {
+    try { window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(user)); } catch (e) { /* app falls back to the demo manager */ }
+    window.location.replace('StockSense.dc.html');
+  }
   validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
   setOtp(i, v) {
     const d = v.replace(/\D/g, '').slice(-1);
@@ -188,7 +201,9 @@ class Component extends DCLogic {
       onOtpPaste: e => { const t = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6); if (t) { e.preventDefault(); this.setState({ otp: [...t.padEnd(6, ' ')].map(c => c.trim()), error: null }); } },
       submitLogin: e => { e.preventDefault();
         if (!f.login.trim() || f.password.length < 6) return this.setState({ error: 'Invalid Login Id or Password' });
-        this.busyThen(() => this.enterApp()); },
+        const id = f.login.trim().toLowerCase(); const known = USERS[id];
+        const user = { loginId: id, name: known ? known.name : (titleCase(id) || id), email: `${id}@stocksense.app`, role: known ? known.role : 'Inventory Manager' };
+        this.busyThen(() => this.enterApp(user)); },
       submitSignup: e => { e.preventDefault();
         const id = f.login.trim();
         if (id.length < 6 || id.length > 12) return this.setState({ error: 'Login ID must be between 6 and 12 characters.' });
@@ -198,7 +213,8 @@ class Component extends DCLogic {
         if (TAKEN_EMAILS.includes(f.email.trim().toLowerCase())) return this.setState({ error: 'An account with this email already exists.' });
         if (!pwOk) return this.setState({ error: 'Your password doesn’t meet the requirements below.' });
         if (f.password !== f.confirm) return this.setState({ error: 'The two passwords don’t match.' });
-        this.busyThen(() => this.enterApp()); },
+        const user = { loginId: id.toLowerCase(), name: f.name.trim(), email: f.email.trim().toLowerCase(), role: f.role };
+        this.busyThen(() => this.enterApp(user)); },
       submitForgot: e => { e.preventDefault();
         if (!this.validEmail(f.email)) return this.setState({ error: 'Enter the email you sign in with.' });
         this.busyThen(() => { this.setState({ mode: 'otp', otp: ['', '', '', '', '', ''] }); this.startResend(); setTimeout(() => this.otpRefs[0].current?.focus(), 50); }); },
