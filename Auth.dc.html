@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<script src="_ds_bundle.js"></script>
+<style>
+body{margin:0;background:var(--color-bg)}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
+@keyframes ssIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="display:flex;flex-wrap:wrap;min-height:100vh;font-variant-numeric:lining-nums">
+  <section style="flex:1 1 460px;display:flex;flex-direction:column;padding:var(--space-6) var(--space-8)">
+    <div style="display:flex;align-items:baseline;gap:2px;font-family:var(--font-heading);font-size:26px;font-weight:600">Stock<em style="font-weight:400;color:var(--color-accent-700)">Sense</em></div>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:var(--space-8) 0">
+      <div style="width:100%;max-width:400px;display:flex;flex-direction:column;gap:var(--space-4)">
+
+        <sc-if value="{{ is.login }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submitLogin }}" style="display:flex;flex-direction:column;gap:var(--space-4)">
+            <div><h1 style="margin:0;font-weight:400">Sign in</h1><div style="font-size:14px;color:var(--color-neutral-700)">Welcome back. Your warehouse is where you left it.</div></div>
+            <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="padding:10px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25);font-size:14px">{{ error }}</div></sc-if>
+            <div class="field"><label>Login ID</label><input class="input" value="{{ f.login }}" onChange="{{ set.login }}" style="min-height:44px" autoComplete="username"></div>
+            <div class="field">
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><label style="font-size:12px;color:color-mix(in srgb, var(--color-text) 70%, transparent);margin-bottom:5px">Password</label><button type="button" class="btn btn-ghost" onClick="{{ toForgot }}" style="font-size:12px;padding:2px 4px">Forgot password?</button></div>
+              <div style="position:relative"><input class="input" type="{{ pwType }}" value="{{ f.password }}" onChange="{{ set.password }}" style="min-height:44px;padding-right:64px" autoComplete="current-password"><button type="button" onClick="{{ togglePw }}" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;font:inherit;font-size:12px;color:var(--color-accent-700);cursor:pointer;padding:6px">{{ pwLabel }}</button></div>
+            </div>
+            <label class="radio" style="font-size:13px"><input type="checkbox" checked="{{ f.remember }}" onChange="{{ toggleRemember }}"><span class="dot" style="border-radius:3px"></span>Keep me signed in on this device</label>
+            <button type="submit" class="btn btn-primary" disabled="{{ busy }}" style="min-height:46px;font-size:16px">{{ loginLabel }}</button>
+            <div style="font-size:14px;color:var(--color-neutral-700);text-align:center">New to StockSense? <button type="button" class="btn btn-ghost" onClick="{{ toSignup }}" style="display:inline;font-size:14px;padding:2px 4px">Create an account</button></div>
+          </form>
+        </sc-if>
+
+        <sc-if value="{{ is.signup }}" hint-placeholder-val="{{ false }}">
+          <form onSubmit="{{ submitSignup }}" style="display:flex;flex-direction:column;gap:var(--space-4)">
+            <div><h1 style="margin:0;font-weight:400">Create your account</h1><div style="font-size:14px;color:var(--color-neutral-700)">One ledger for every shelf, rack and warehouse.</div></div>
+            <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="padding:10px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25);font-size:14px">{{ error }}</div></sc-if>
+            <div class="field"><label>Login ID</label><input class="input" placeholder="6–12 characters" value="{{ f.login }}" onChange="{{ set.login }}" style="min-height:44px"></div>
+            <div class="field"><label>Full name</label><input class="input" value="{{ f.name }}" onChange="{{ set.name }}" style="min-height:44px"></div>
+            <div class="field"><label>Work email</label><input class="input" type="email" value="{{ f.email }}" onChange="{{ set.email }}" style="min-height:44px"></div>
+            <div class="field"><label>Role</label>
+              <div class="seg" style="display:flex">
+                <sc-for list="{{ roleOpts }}" as="o" hint-placeholder-count="2"><button type="button" class="seg-opt" onClick="{{ o.pick }}" style="flex:1;justify-content:center;border:0;border-left:{{ o.divider }};background:transparent;font:inherit;font-size:14px;min-height:44px;color:{{ o.color }};box-shadow:{{ o.shadow }}">{{ o.label }}</button></sc-for>
+              </div>
+            </div>
+            <div class="field"><label>Password</label><input class="input" type="password" value="{{ f.password }}" onChange="{{ set.password }}" style="min-height:44px"></div>
+            <div class="field"><label>Re-enter password</label><input class="input" type="password" value="{{ f.confirm }}" onChange="{{ set.confirm }}" style="min-height:44px"></div>
+            <div style="display:flex;flex-direction:column;gap:4px;font-size:12px">
+              <sc-for list="{{ pwRules }}" as="r" hint-placeholder-count="3"><div style="display:flex;gap:6px;color:{{ r.color }}"><span>{{ r.mark }}</span>{{ r.label }}</div></sc-for>
+            </div>
+            <button type="submit" class="btn btn-primary" disabled="{{ busy }}" style="min-height:46px;font-size:16px">{{ signupLabel }}</button>
+            <div style="font-size:14px;color:var(--color-neutral-700);text-align:center">Already have an account? <button type="button" class="btn btn-ghost" onClick="{{ toLogin }}" style="display:inline;font-size:14px;padding:2px 4px">Sign in</button></div>
+          </form>
+        </sc-if>
+
+        <sc-if value="{{ inReset }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <sc-for list="{{ resetSteps }}" as="s" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:8px">
+                <sc-if value="{{ s.line }}" hint-placeholder-val="{{ false }}"><span style="width:22px;height:1px;background:{{ s.lineColor }}"></span></sc-if>
+                <span style="width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;border:1px solid {{ s.border }};color:{{ s.color }}">{{ s.mark }}</span>
+                <span style="font-size:12px;color:{{ s.color }}">{{ s.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ is.forgot }}" hint-placeholder-val="{{ false }}">
+          <form onSubmit="{{ submitForgot }}" style="display:flex;flex-direction:column;gap:var(--space-4)">
+            <div><h1 style="margin:0;font-weight:400">Reset your password</h1><div style="font-size:14px;color:var(--color-neutral-700)">We’ll email a 6-digit code to the address on your account.</div></div>
+            <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="padding:10px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25);font-size:14px">{{ error }}</div></sc-if>
+            <div class="field"><label>Work email</label><input class="input" type="email" value="{{ f.email }}" onChange="{{ set.email }}" style="min-height:44px"></div>
+            <button type="submit" class="btn btn-primary" disabled="{{ busy }}" style="min-height:46px;font-size:16px">{{ sendLabel }}</button>
+            <button type="button" class="btn btn-ghost" onClick="{{ toLogin }}" style="align-self:center;font-size:14px">�? Back to sign in</button>
+          </form>
+        </sc-if>
+
+        <sc-if value="{{ is.otp }}" hint-placeholder-val="{{ false }}">
+          <form onSubmit="{{ submitOtp }}" style="display:flex;flex-direction:column;gap:var(--space-4)">
+            <div><h1 style="margin:0;font-weight:400">Enter the code</h1><div style="font-size:14px;color:var(--color-neutral-700)">Sent to <span style="color:var(--color-text)">{{ f.email }}</span>. It expires in 10 minutes.</div></div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px" onPaste="{{ onOtpPaste }}">
+              <sc-for list="{{ otpBoxes }}" as="b" hint-placeholder-count="6">
+                <input ref="{{ b.ref }}" inputMode="numeric" maxLength="1" aria-label="{{ b.aria }}" value="{{ b.value }}" onChange="{{ b.onChange }}" onKeyDown="{{ b.onKey }}" class="input" style="height:58px;padding:0;text-align:center;font-family:var(--font-heading);font-size:30px;font-variant-numeric:lining-nums tabular-nums;border-color:{{ b.border }}">
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="font-size:13px;color:oklch(0.46 0.14 27)">{{ error }}</div></sc-if>
+            <button type="submit" class="btn btn-primary" disabled="{{ busy }}" style="min-height:46px;font-size:16px">{{ verifyLabel }}</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--color-neutral-700)">
+              <span>Demo code: <span style="font-variant-numeric:lining-nums tabular-nums;color:var(--color-text)">482913</span></span>
+              <sc-if value="{{ canResend }}" hint-placeholder-val="{{ false }}"><button type="button" class="btn btn-ghost" onClick="{{ resend }}" style="font-size:13px;padding:2px 4px">Resend code</button></sc-if>
+              <sc-if value="{{ waitResend }}" hint-placeholder-val="{{ true }}"><span style="font-variant-numeric:lining-nums tabular-nums">Resend in 0:{{ resendIn }}</span></sc-if>
+            </div>
+          </form>
+        </sc-if>
+
+        <sc-if value="{{ is.reset }}" hint-placeholder-val="{{ false }}">
+          <form onSubmit="{{ submitReset }}" style="display:flex;flex-direction:column;gap:var(--space-4)">
+            <div><h1 style="margin:0;font-weight:400">Set a new password</h1><div style="font-size:14px;color:var(--color-neutral-700)">Choose something you haven’t used here before.</div></div>
+            <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="padding:10px 14px;border:1px solid oklch(0.62 0.13 27);border-radius:var(--radius-md);color:oklch(0.43 0.14 27);background:oklch(0.97 0.015 25);font-size:14px">{{ error }}</div></sc-if>
+            <div class="field"><label>New password</label><input class="input" type="password" value="{{ f.password }}" onChange="{{ set.password }}" style="min-height:44px"></div>
+            <div class="field"><label>Confirm new password</label><input class="input" type="password" value="{{ f.confirm }}" onChange="{{ set.confirm }}" style="min-height:44px"></div>
+            <div style="display:flex;flex-direction:column;gap:4px;font-size:12px">
+              <sc-for list="{{ pwRules }}" as="r" hint-placeholder-count="3"><div style="display:flex;gap:6px;color:{{ r.color }}"><span>{{ r.mark }}</span>{{ r.label }}</div></sc-for>
+            </div>
+            <button type="submit" class="btn btn-primary" style="min-height:46px;font-size:16px">Update password</button>
+          </form>
+        </sc-if>
+
+        <sc-if value="{{ is.done }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:var(--space-4);animation:ssIn .35s ease-out">
+            <span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:1px solid oklch(0.55 0.09 150);color:oklch(0.42 0.09 150)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+            <div><h1 style="margin:0;font-weight:400">Password updated</h1><div style="font-size:14px;color:var(--color-neutral-700)">Sign in with your new password to continue.</div></div>
+            <button class="btn btn-primary" onClick="{{ toLogin }}" style="min-height:46px;font-size:16px">Back to sign in</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--color-neutral-700)">© 2026 StockSense · Help · Privacy</div>
+  </section>
+
+  <aside style="flex:1 1 460px;display:flex;flex-direction:column;justify-content:center;gap:var(--space-6);padding:var(--space-8) clamp(28px,6vw,96px);border-left:1px solid var(--color-divider)">
+    <div class="card-kicker" style="color:var(--color-accent-700)">One steel order, four moves</div>
+    <div style="display:flex;flex-direction:column">
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:oklch(0.42 0.1 150);font-variant-numeric:lining-nums tabular-nums">+100</span><span style="font-size:14px">kg Steel received from Northline Metals</span></div>
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:var(--color-neutral-700);font-variant-numeric:lining-nums tabular-nums">⇄ 40</span><span style="font-size:14px">Main Store → Production Rack, total unchanged</span></div>
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">−20</span><span style="font-size:14px">kg delivered to Apex Fabrication</span></div>
+      <div style="display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)"><span style="font-family:var(--font-heading);font-size:34px;color:oklch(0.47 0.15 27);font-variant-numeric:lining-nums tabular-nums">−3</span><span style="font-size:14px">kg damaged, logged as an adjustment</span></div>
+    </div>
+    <p style="margin:0;font-family:var(--font-heading);font-size:30px;line-height:1.2;max-width:22ch">Every movement, <em>one ledger.</em></p>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;login&quot;,&quot;signup&quot;,&quot;forgot&quot;,&quot;otp&quot;,&quot;reset&quot;,&quot;done&quot;],&quot;default&quot;:&quot;login&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const DEMO_OTP = '482913';
+const TAKEN_IDS = ['priya.nair', 'ravi.mehta', 'anya.khan'];
+const TAKEN_EMAILS = ['priya.nair@stocksense.app', 'ravi.mehta@stocksense.app', 'anya.khan@stocksense.app'];
+class Component extends DCLogic {
+  state = { mode: this.props.startMode ?? 'login', f: { login: 'priya.nair', email: 'priya.nair@stocksense.app', password: '', confirm: '', name: '', role: 'Inventory Manager', remember: true },
+    showPw: false, error: null, busy: false, otp: ['', '', '', '', '', ''], resendIn: 0 };
+  otpRefs = [0, 1, 2, 3, 4, 5].map(() => React.createRef());
+  componentWillUnmount() { clearInterval(this._iv); clearTimeout(this._bt); }
+  to(mode) { this.setState({ mode, error: null, busy: false, f: { ...this.state.f, password: '', confirm: '' } }); }
+  busyThen(fn) { this.setState({ busy: true, error: null }); clearTimeout(this._bt); this._bt = setTimeout(() => { this.setState({ busy: false }); fn(); }, 700); }
+  startResend() { clearInterval(this._iv); this.setState({ resendIn: 30 }); this._iv = setInterval(() => this.setState(s => { if (s.resendIn <= 1) clearInterval(this._iv); return { resendIn: Math.max(0, s.resendIn - 1) }; }), 1000); }
+  enterApp() { window.location.href = 'StockSense.dc.html'; }
+  validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+  setOtp(i, v) {
+    const d = v.replace(/\D/g, '').slice(-1);
+    this.setState(s => { const otp = [...s.otp]; otp[i] = d; return { otp, error: null }; });
+    if (d && i < 5) this.otpRefs[i + 1].current?.focus();
+  }
+  renderVals() {
+    const s = this.state, f = s.f, m = s.mode;
+    const set = Object.fromEntries(['login', 'email', 'password', 'confirm', 'name'].map(k => [k, e => this.setState({ f: { ...s.f, [k]: e.target.value }, error: null })]));
+    const pw = f.password;
+    const rules = [['More than 8 characters', pw.length > 8], ['A lowercase and an uppercase letter', /[a-z]/.test(pw) && /[A-Z]/.test(pw)], ['A special character (e.g. ! @ # $)', /[^A-Za-z0-9]/.test(pw)]];
+    const pwOk = rules.every(r => r[1]);
+    const pwRules = rules.map(([label, ok]) => ({ label, mark: ok ? '✓' : '·', color: ok ? 'oklch(0.42 0.09 150)' : 'var(--color-neutral-700)' }));
+    const stepIdx = { forgot: 0, otp: 1, reset: 2 }[m] ?? 0;
+    const resetSteps = ['Email', 'Code', 'New password'].map((label, i) => {
+      const past = i < stepIdx, cur = i === stepIdx;
+      return { label, line: i > 0, lineColor: i <= stepIdx ? 'var(--color-accent)' : 'var(--color-divider)', mark: past ? '✓' : String(i + 1),
+        border: past || cur ? 'var(--color-accent)' : 'var(--color-divider)', color: past || cur ? 'var(--color-accent-800)' : 'var(--color-neutral-600)' };
+    });
+    const otpBoxes = s.otp.map((v, i) => ({ value: v, ref: this.otpRefs[i], aria: `Digit ${i + 1}`, border: s.error ? 'oklch(0.62 0.13 27)' : v ? 'var(--color-accent)' : 'var(--color-divider)',
+      onChange: e => this.setOtp(i, e.target.value),
+      onKey: e => { if (e.key === 'Backspace' && !s.otp[i] && i > 0) this.otpRefs[i - 1].current?.focus(); } }));
+    const roleOpts = ['Inventory Manager', 'Warehouse Staff'].map((l, i) => { const on = f.role === l;
+      return { label: l, divider: i ? '1px solid var(--color-divider)' : '0', color: on ? 'var(--color-accent-700)' : 'var(--color-text)', shadow: on ? 'inset 0 0 0 1px var(--color-accent)' : 'none', pick: () => this.setState({ f: { ...s.f, role: l } }) }; });
+    return {
+      is: { login: m === 'login', signup: m === 'signup', forgot: m === 'forgot', otp: m === 'otp', reset: m === 'reset', done: m === 'done' },
+      inReset: ['forgot', 'otp', 'reset'].includes(m),
+      f, set, error: s.error, hasError: !!s.error, busy: s.busy,
+      pwType: s.showPw ? 'text' : 'password', pwLabel: s.showPw ? 'Hide' : 'Show', togglePw: () => this.setState({ showPw: !s.showPw }),
+      toggleRemember: () => this.setState({ f: { ...f, remember: !f.remember } }),
+      loginLabel: s.busy ? 'Signing in…' : 'Sign in', signupLabel: s.busy ? 'Creating account…' : 'Create account',
+      sendLabel: s.busy ? 'Sending…' : 'Send code', verifyLabel: s.busy ? 'Verifying…' : 'Verify code',
+      toLogin: () => this.to('login'), toSignup: () => { this.to('signup'); this.setState(x => ({ f: { ...x.f, login: '', email: '', name: '' } })); }, toForgot: () => this.to('forgot'),
+      roleOpts, pwRules, resetSteps, otpBoxes,
+      canResend: s.resendIn === 0, waitResend: s.resendIn > 0, resendIn: String(s.resendIn).padStart(2, '0'),
+      resend: () => { this.setState({ otp: ['', '', '', '', '', ''], error: null }); this.startResend(); },
+      onOtpPaste: e => { const t = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6); if (t) { e.preventDefault(); this.setState({ otp: [...t.padEnd(6, ' ')].map(c => c.trim()), error: null }); } },
+      submitLogin: e => { e.preventDefault();
+        if (!f.login.trim() || f.password.length < 6) return this.setState({ error: 'Invalid Login Id or Password' });
+        this.busyThen(() => this.enterApp()); },
+      submitSignup: e => { e.preventDefault();
+        const id = f.login.trim();
+        if (id.length < 6 || id.length > 12) return this.setState({ error: 'Login ID must be between 6 and 12 characters.' });
+        if (TAKEN_IDS.includes(id.toLowerCase())) return this.setState({ error: 'That Login ID is already taken.' });
+        if (!f.name.trim()) return this.setState({ error: 'Enter your full name.' });
+        if (!this.validEmail(f.email)) return this.setState({ error: 'Enter a valid work email.' });
+        if (TAKEN_EMAILS.includes(f.email.trim().toLowerCase())) return this.setState({ error: 'An account with this email already exists.' });
+        if (!pwOk) return this.setState({ error: 'Your password doesn’t meet the requirements below.' });
+        if (f.password !== f.confirm) return this.setState({ error: 'The two passwords don’t match.' });
+        this.busyThen(() => this.enterApp()); },
+      submitForgot: e => { e.preventDefault();
+        if (!this.validEmail(f.email)) return this.setState({ error: 'Enter the email you sign in with.' });
+        this.busyThen(() => { this.setState({ mode: 'otp', otp: ['', '', '', '', '', ''] }); this.startResend(); setTimeout(() => this.otpRefs[0].current?.focus(), 50); }); },
+      submitOtp: e => { e.preventDefault(); const code = s.otp.join('');
+        if (code.length < 6) return this.setState({ error: 'Enter all 6 digits.' });
+        this.busyThen(() => code === DEMO_OTP ? this.to('reset') : this.setState({ error: 'That code doesn’t match. Check the latest email and try again.' })); },
+      submitReset: e => { e.preventDefault();
+        if (!pwOk) return this.setState({ error: 'Your password doesn’t meet the requirements below.' });
+        if (f.password !== f.confirm) return this.setState({ error: 'The two passwords don’t match.' });
+        this.to('done'); },
+    };
+  }
+}
+</script>
+</body>
+</html>
