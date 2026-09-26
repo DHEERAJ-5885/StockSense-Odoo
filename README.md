@@ -81,3 +81,7 @@ Tweaks (props on `StockSense.dc.html`): `startScreen`, `simulateLoading`, `empty
 - Buttons are outlined (accent border, transparent fill) — never solid.
 - Tablet: hit targets ≥ 44px on floor-staff actions (qty inputs 48px).
 - Icons: Lucide (inline SVG).
+
+## Dashboard Integration
+
+The StockSense dashboard now consumes live inventory and operations data through the backend APIs, including products, receipts, deliveries, internal transfers, warehouses, and locations.
